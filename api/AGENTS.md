@@ -7,42 +7,6 @@ A NestJS API that:
 2. holds a local copy of the Rebrickable catalog (sets, parts, colors, inventories)
 3. computes matching (match % + missing parts) between owned parts and the catalog of sets
 
-## Dependencies
-
-Every dependency below is a deliberate choice, not a default. If you're about to add something not on this list, check whether an existing dependency or a Node built-in already covers it before reaching for npm.
-
-### Database & ORM
-- **`drizzle-orm`** — type-safe, close to SQL (no separate codegen/query-engine step like Prisma). Lets the matching query be written as raw SQL with the index, not assembled through an abstract query builder.
-- **`drizzle-kit`** (dev dependency) — migration generation and execution.
-- **`postgres`** (postgres.js driver) — Drizzle's recommended default driver for new projects; faster than `pg`.
-
-### Auth
-- **`@nestjs/jwt`** — token signing/verification, official Nest wrapper over `jsonwebtoken`.
-- **`@nestjs/passport` + `passport` + `passport-jwt`** — idiomatic way to guard Nest endpoints (`@UseGuards(AuthGuard('jwt'))`), not custom-rolled auth middleware.
-- **`argon2`** — password hashing. Chosen over bcrypt: it's the current OWASP-recommended algorithm. Note it has a native compiled dependency — verify it installs cleanly on the target deploy platform (e.g. Railway/Render/Fly.io) before relying on it; if it ever causes deployment friction, bcrypt is the documented fallback.
-- **MVP scope:** access token only, no refresh-token rotation. Legitimate simplification for a project with a small number of users; revisit if the user base grows.
-
-### Validation & config
-- **`zod`** — chosen over `class-validator`/`class-transformer` specifically because schemas can be shared with `packages/shared-types` and reused for frontend form validation — one schema defines both the type and the validation, instead of duplicating logic per side.
-- **`nestjs-zod`** — thin adapter wiring Zod schemas into Nest's `ValidationPipe`.
-- **`@nestjs/config`** — env variable loading, validated through the same Zod schemas.
-
-### Rate limiting
-- **`@nestjs/throttler`** — protects two specific weak points, not a generic "best practice" add: (1) `/auth/login` is a brute-force target even on a small app, (2) the matching endpoint is the most computationally expensive route in the app and needs protection from accidental hammering (e.g. a buggy frontend retry loop). Low setup cost (a decorator), real protection for the two spots that matter.
-
-### Security headers
-- **`helmet`** — sets standard security-related HTTP headers (CSP, X-Frame-Options, etc.). Low cost, applied once at bootstrap; worth having in place before any public deployment rather than retrofitting it later.
-
-### Data import
-- **`csv-parse`** — streaming CSV parser. `inventory_parts.csv` has millions of rows; must be processed line-by-line/in chunks, never loaded fully into memory.
-- **gzip decompression** — Node's built-in `zlib`, no extra dependency needed to unpack `.csv.gz`.
-- **file downloads** — Node 18+'s native `fetch`, no extra HTTP client needed for a one-off download script.
-
-### Deliberately not included
-- **`axios`** — native `fetch` is sufficient; an HTTP client dependency just for its syntax isn't justified.
-- **`winston` / `pino`** — Nest's built-in `Logger` is sufficient for this project's scale. Revisit if structured logging to an external system becomes a real production need.
-- **`uuid`** — Node's native `crypto.randomUUID()` (or Postgres's `gen_random_uuid()` at the column level) covers this without an extra package.
-
 ## Module structure (target)
 
 ```
