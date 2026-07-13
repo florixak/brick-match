@@ -1,8 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { eq, sql } from 'drizzle-orm';
 import { parse } from 'csv-parse';
-import { createReadStream } from 'fs';
+import { createReadStream, existsSync } from 'fs';
 import { join } from 'path';
+import { createGunzip } from 'zlib';
 import { DatabaseService } from '../database/database.service';
 import {
   colors,
@@ -18,8 +19,23 @@ const BATCH_SIZE = 1000;
 
 type CsvRecord = Record<string, string>;
 
+function resolveCsvPath(filename: string): { path: string; gzip: boolean } {
+  const filePath = join(DATA_DIR, filename);
+  if (filename.endsWith('.gz')) {
+    return { path: filePath, gzip: true };
+  }
+  const gzPath = `${filePath}.gz`;
+  if (existsSync(gzPath)) {
+    return { path: gzPath, gzip: true };
+  }
+  return { path: filePath, gzip: false };
+}
+
 function readCsv(filename: string): AsyncIterable<CsvRecord> {
-  return createReadStream(join(DATA_DIR, filename)).pipe(
+  const { path, gzip } = resolveCsvPath(filename);
+  const stream = createReadStream(path);
+  const source = gzip ? stream.pipe(createGunzip()) : stream;
+  return source.pipe(
     parse({ columns: true, skip_empty_lines: true, trim: true }),
   ) as AsyncIterable<CsvRecord>;
 }
@@ -160,14 +176,15 @@ export class ImportService {
         });
     }
 
-    // Pass 2: set parentId for themes that have one
-    const withParent = allThemes.filter((t) => t.parentId !== null);
-    for (const theme of withParent) {
+    // Pass 2: sync parentId from source for every theme (null clears removed parents)
+    for (const theme of allThemes) {
       await this.db
         .update(themes)
         .set({ parentId: theme.parentId })
         .where(eq(themes.id, theme.id));
     }
+
+    const withParent = allThemes.filter((t) => t.parentId !== null);
 
     this.logger.log(
       `  → ${allThemes.length} rows (${withParent.length} with parent)`,
