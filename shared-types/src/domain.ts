@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const PartRefSchema = z.object({
   partNum: z.string(),
-  colorId: z.number().int(),
+  colorId: z.number().int().nonnegative(),
 });
 export type PartRef = z.infer<typeof PartRefSchema>;
 

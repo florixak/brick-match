@@ -1,24 +1,11 @@
 # AGENTS.md — backend (api)
 
-> Place this file at `api/AGENTS.md`. Context from the root AGENTS.md still applies here.
-
 ## What this app does
 
 A NestJS API that:
 1. manages users and their owned parts (`user_owned_parts`)
 2. holds a local copy of the Rebrickable catalog (sets, parts, colors, inventories)
 3. computes matching (match % + missing parts) between owned parts and the catalog of sets
-
-## Module structure (target)
-
-```
-api/src/
-├── catalog/          entities and services for parts/colors/sets/inventory_parts (read-only catalog)
-├── owned-parts/       CRUD over user_owned_parts
-├── matching/           MatchingService — the core of the project, see below
-├── import/             script/CLI for importing Rebrickable CSV into the DB
-└── auth/                registration, login, guards
-```
 
 ## Dependencies
 
@@ -43,7 +30,7 @@ Every dependency here is justified architecturally, not added by default. If you
 
 `api/src/common/pipes/zod-validation.pipe.ts`:
 
-No DTO class is needed at all — the schema and its inferred type both come straight from `packages/shared-types`:
+No DTO class is needed at all — the schema and its inferred type both come straight from `@lego-matcher/shared-types`:
 ```typescript
 import { AddOwnedPartRequestSchema, AddOwnedPartRequest } from '@lego-matcher/shared-types';
 
@@ -67,6 +54,40 @@ addPart(@Body() dto: AddOwnedPartRequest) { /* typed and validated */ }
 - **`axios`** — native `fetch` is sufficient.
 - **`winston`/`pino`** — Nest's built-in `Logger` is enough at this project's scale; revisit if structured/external logging becomes an actual operational need.
 - **`uuid`** — Node's native `crypto.randomUUID()` (or Postgres's `gen_random_uuid()` at the column level) covers this without an extra package.
+- **`class-validator` / `class-transformer`** — deliberately absent. Some versions of the Nest CLI starter scaffold include them by default; if `nest new api` adds them to `package.json`, remove them — they'd be dead weight given the Zod-based validation approach above.
+
+## API versioning
+
+Built into `@nestjs/common`, no extra package. URI versioning, e.g. `/v1/owned-parts`:
+
+```typescript
+// api/src/main.ts
+import { VersioningType } from '@nestjs/common';
+
+app.enableVersioning({
+  type: VersioningType.URI,
+  defaultVersion: '1',
+});
+```
+
+```typescript
+// api/src/owned-parts/owned-parts.controller.ts
+@Controller({ path: 'owned-parts', version: '1' })
+export class OwnedPartsController { /* ... */ }
+```
+
+`defaultVersion: '1'` means requests without an explicit version fall back to v1 — safe to enable this from the start even before a v2 ever exists. When a v2 of an endpoint is needed later, add a second controller with `version: '2'`; both run side by side, no rewrite of the rest of the app.
+
+## Module structure (target)
+
+```text
+api/src/
+├── catalog/          entities and services for parts/colors/sets/inventory_parts (read-only catalog)
+├── owned-parts/       CRUD over user_owned_parts
+├── matching/           MatchingService — the core of the project, see below
+├── import/             script/CLI for importing Rebrickable CSV into the DB
+└── auth/                registration, login, guards
+```
 
 ## Data model
 
@@ -186,7 +207,7 @@ Import script (runnable as a Nest CLI command, not an HTTP endpoint):
 ## Conventions
 
 - TypeScript strict mode enabled
-- Import request/response Zod schemas and their inferred types from `packages/shared-types`; don't redefine validation rules locally with `class-validator`
+- Import request/response Zod schemas and their inferred types from `@lego-matcher/shared-types`; don't redefine validation rules locally with `class-validator`
 - Write `MatchingService` tests against a small seed dataset (a few sets, a few parts), not the full imported catalog — tests must be fast and deterministic
 
 ## Commands (fill in once the project is set up)
