@@ -30,6 +30,10 @@ export class AppConfigService {
     return this.configService.get('JWT_EXPIRES_IN', { infer: true });
   }
 
+  get frontendUrl(): string[] {
+    return this.configService.get('FRONTEND_URL', { infer: true });
+  }
+
   get isProduction(): boolean {
     return this.nodeEnv === 'production';
   }
