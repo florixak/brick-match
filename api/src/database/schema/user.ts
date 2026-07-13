@@ -25,7 +25,7 @@ export const userOwnedParts = pgTable(
     id: serial('id').primaryKey(),
     userId: uuid('user_id')
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, { onDelete: 'cascade' }),
     partNum: text('part_num')
       .notNull()
       .references(() => parts.partNum),

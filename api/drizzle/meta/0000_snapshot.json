@@ -433,7 +433,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "user_owned_parts_part_num_parts_part_num_fk": {

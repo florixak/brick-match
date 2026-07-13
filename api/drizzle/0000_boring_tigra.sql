@@ -61,7 +61,7 @@ ALTER TABLE "inventory_parts" ADD CONSTRAINT "inventory_parts_color_id_colors_co
 ALTER TABLE "parts" ADD CONSTRAINT "parts_part_cat_id_part_categories_id_fk" FOREIGN KEY ("part_cat_id") REFERENCES "public"."part_categories"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "sets" ADD CONSTRAINT "sets_theme_id_themes_id_fk" FOREIGN KEY ("theme_id") REFERENCES "public"."themes"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "themes" ADD CONSTRAINT "themes_parent_id_themes_id_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."themes"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "user_owned_parts" ADD CONSTRAINT "user_owned_parts_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "user_owned_parts" ADD CONSTRAINT "user_owned_parts_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "user_owned_parts" ADD CONSTRAINT "user_owned_parts_part_num_parts_part_num_fk" FOREIGN KEY ("part_num") REFERENCES "public"."parts"("part_num") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "user_owned_parts" ADD CONSTRAINT "user_owned_parts_color_id_colors_color_id_fk" FOREIGN KEY ("color_id") REFERENCES "public"."colors"("color_id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 CREATE UNIQUE INDEX "inventory_parts_unique" ON "inventory_parts" USING btree ("set_num","part_num","color_id","is_spare");--> statement-breakpoint
