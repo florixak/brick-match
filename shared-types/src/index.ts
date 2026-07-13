@@ -2,4 +2,4 @@ export * from "./domain";
 export * from "./auth";
 export * from "./owned-parts";
 export * from "./matches";
-export * from "./errors";
+export * from "./api-response";
