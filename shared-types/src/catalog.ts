@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ApiSuccessResponseSchema } from "./api-response";
 
 export const SearchSetsQuerySchema = z.object({
   search: z.string().optional(),
@@ -19,6 +20,11 @@ export const SearchSetsResponseSchema = z.object({
 });
 export type SearchSetsResponse = z.infer<typeof SearchSetsResponseSchema>;
 
+export const SearchSetsApiResponseSchema = ApiSuccessResponseSchema(
+  SearchSetsResponseSchema,
+);
+export type SearchSetsApiResponse = z.infer<typeof SearchSetsApiResponseSchema>;
+
 export const SearchPartsQuerySchema = z.object({
   search: z.string().optional(),
   limit: z.coerce.number().int().positive().max(100).optional(),
@@ -36,6 +42,13 @@ export const SearchPartsResponseSchema = z.object({
 });
 export type SearchPartsResponse = z.infer<typeof SearchPartsResponseSchema>;
 
+export const SearchPartsApiResponseSchema = ApiSuccessResponseSchema(
+  SearchPartsResponseSchema,
+);
+export type SearchPartsApiResponse = z.infer<
+  typeof SearchPartsApiResponseSchema
+>;
+
 export const ColorSchema = z.object({
   colorId: z.number().int().positive(),
   name: z.string(),
@@ -48,3 +61,8 @@ export const ColorsResponseSchema = z.object({
   colors: z.array(ColorSchema),
 });
 export type ColorsResponse = z.infer<typeof ColorsResponseSchema>;
+
+export const ColorsApiResponseSchema = ApiSuccessResponseSchema(
+  ColorsResponseSchema,
+);
+export type ColorsApiResponse = z.infer<typeof ColorsApiResponseSchema>;

@@ -1,15 +1,14 @@
 import { z } from "zod";
+import { ApiSuccessResponseSchema } from "./api-response";
 import { OwnedPartSchema } from "./domain";
 
-/** Manually add (or increment) a single part+color the user owns. */
 export const AddOwnedPartRequestSchema = z.object({
   partNum: z.string().min(1),
-  colorId: z.number().int().nonnegative(),
+  colorId: z.number().int().positive(),
   quantity: z.number().int().positive(),
 });
 export type AddOwnedPartRequest = z.infer<typeof AddOwnedPartRequestSchema>;
 
-/** Add a whole set by number — the backend expands its inventory_parts into user_owned_parts. */
 export const AddSetRequestSchema = z.object({
   setNum: z.string().min(1),
 });
@@ -19,3 +18,25 @@ export const OwnedPartsResponseSchema = z.object({
   parts: z.array(OwnedPartSchema),
 });
 export type OwnedPartsResponse = z.infer<typeof OwnedPartsResponseSchema>;
+
+export const AddOwnedPartResponseSchema = OwnedPartSchema;
+export type AddOwnedPartResponse = z.infer<typeof AddOwnedPartResponseSchema>;
+
+export const AddSetResponseSchema = OwnedPartsResponseSchema;
+export type AddSetResponse = z.infer<typeof AddSetResponseSchema>;
+
+export const OwnedPartsApiResponseSchema = ApiSuccessResponseSchema(
+  OwnedPartsResponseSchema,
+);
+export type OwnedPartsApiResponse = z.infer<typeof OwnedPartsApiResponseSchema>;
+
+export const AddOwnedPartApiResponseSchema = ApiSuccessResponseSchema(
+  AddOwnedPartResponseSchema,
+);
+export type AddOwnedPartApiResponse = z.infer<
+  typeof AddOwnedPartApiResponseSchema
+>;
+
+export const AddSetApiResponseSchema =
+  ApiSuccessResponseSchema(AddSetResponseSchema);
+export type AddSetApiResponse = z.infer<typeof AddSetApiResponseSchema>;

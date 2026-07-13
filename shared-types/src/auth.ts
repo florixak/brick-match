@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ApiSuccessResponseSchema } from "./api-response";
 
 export const RegisterRequestSchema = z.object({
   email: z.string().email(),
@@ -16,3 +17,11 @@ export const AuthResponseSchema = z.object({
   accessToken: z.string(),
 });
 export type AuthResponse = z.infer<typeof AuthResponseSchema>;
+
+export const LoginApiResponseSchema =
+  ApiSuccessResponseSchema(AuthResponseSchema);
+export type LoginApiResponse = z.infer<typeof LoginApiResponseSchema>;
+
+export const RegisterApiResponseSchema =
+  ApiSuccessResponseSchema(AuthResponseSchema);
+export type RegisterApiResponse = z.infer<typeof RegisterApiResponseSchema>;
