@@ -8,6 +8,11 @@ import {
 import { ApiErrorResponse } from '@lego-matcher/shared-types';
 import type { Request, Response } from 'express';
 
+type ExceptionResponseBody = {
+  message?: string | string[];
+  errors?: Record<string, string[]>;
+};
+
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost): void {
@@ -20,37 +25,51 @@ export class HttpExceptionFilter implements ExceptionFilter {
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
 
+    const responseBody = this.extractResponseBody(exception);
+
     const body: ApiErrorResponse = {
       statusCode: status,
-      message: this.extractMessage(exception),
+      message: responseBody.message,
       path: request.url,
       timestamp: new Date().toISOString(),
+      ...(responseBody.errors ? { errors: responseBody.errors } : {}),
     };
 
     response.status(status).json(body);
   }
 
-  private extractMessage(exception: unknown): string {
+  private extractResponseBody(exception: unknown): {
+    message: string;
+    errors?: Record<string, string[]>;
+  } {
     if (exception instanceof HttpException) {
       const response = exception.getResponse();
       if (typeof response === 'string') {
-        return response;
+        return { message: response };
       }
       if (typeof response === 'object' && response !== null) {
-        const message = (response as { message?: string | string[] }).message;
-        if (Array.isArray(message)) {
-          return message.join(', ');
-        }
-        if (typeof message === 'string') {
-          return message;
-        }
+        const { message, errors } = response as ExceptionResponseBody;
+        return {
+          message: this.formatMessage(message),
+          errors,
+        };
       }
     }
 
     if (exception instanceof Error) {
-      return exception.message;
+      return { message: exception.message };
     }
 
-    return 'Internal server error';
+    return { message: 'Internal server error' };
+  }
+
+  private formatMessage(message: string | string[] | undefined): string {
+    if (Array.isArray(message)) {
+      return message.join('; ');
+    }
+    if (typeof message === 'string' && message.length > 0) {
+      return message;
+    }
+    return 'Bad Request';
   }
 }

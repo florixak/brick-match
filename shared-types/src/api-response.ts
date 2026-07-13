@@ -40,5 +40,6 @@ export const ApiErrorResponseSchema = z.object({
   message: z.string(),
   path: z.string(),
   timestamp: z.string(),
+  errors: z.record(z.string(), z.array(z.string())).optional(),
 });
 export type ApiErrorResponse = z.infer<typeof ApiErrorResponseSchema>;
