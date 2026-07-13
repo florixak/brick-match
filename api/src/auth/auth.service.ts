@@ -13,12 +13,9 @@ import { JwtService } from '@nestjs/jwt';
 import * as argon2 from 'argon2';
 import { eq } from 'drizzle-orm';
 import { DatabaseService } from 'src/database/database.service';
+import { isUniqueViolation } from 'src/database/pg-error';
 import { users } from 'src/database/schema';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
-
-function isUniqueViolation(err: unknown): boolean {
-  return (err as { code?: string })?.code === '23505';
-}
 
 @Injectable()
 export class AuthService {
