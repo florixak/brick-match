@@ -1,26 +1,84 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import {
+  AuthResponse,
+  LoginRequest,
+  RegisterRequest,
+} from '@lego-matcher/shared-types';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import * as argon2 from 'argon2';
+import { eq } from 'drizzle-orm';
+import { DatabaseService } from 'src/database/database.service';
+import { users } from 'src/database/schema';
+import { JwtPayload } from './interfaces/jwt-payload.interface';
+
+function isUniqueViolation(err: unknown): boolean {
+  return (err as { code?: string })?.code === '23505';
+}
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly jwtService: JwtService,
+  ) {}
+
+  async login({ email, password }: LoginRequest): Promise<AuthResponse> {
+    const [user] = await this.databaseService.db
+      .select()
+      .from(users)
+      .where(eq(users.email, email))
+      .limit(1);
+
+    if (!user) {
+      throw new UnauthorizedException('Invalid email or password');
+    }
+
+    const isPasswordValid = await argon2.verify(user.passwordHash, password);
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid email or password');
+    }
+
+    const payload: JwtPayload = {
+      sub: user.id,
+      email: user.email,
+    };
+    const accessToken = await this.jwtService.signAsync(payload);
+    return { accessToken };
   }
 
-  findAll() {
-    return `This action returns all auth`;
-  }
+  async register(data: RegisterRequest): Promise<AuthResponse> {
+    const hashedPassword = await argon2.hash(data.password);
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
+    let user;
+    try {
+      [user] = await this.databaseService.db
+        .insert(users)
+        .values({
+          email: data.email,
+          passwordHash: hashedPassword,
+        })
+        .returning();
+    } catch (error) {
+      if (isUniqueViolation(error)) {
+        throw new BadRequestException('User with this email already exists');
+      }
+      throw error;
+    }
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
+    if (!user) {
+      throw new InternalServerErrorException('Failed to register user');
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+    const payload: JwtPayload = {
+      sub: user.id,
+      email: user.email,
+    };
+    const accessToken = await this.jwtService.signAsync(payload);
+    return { accessToken };
   }
 }
