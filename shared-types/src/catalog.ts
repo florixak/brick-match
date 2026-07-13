@@ -10,7 +10,7 @@ export const SetSummarySchema = z.object({
   setNum: z.string(),
   name: z.string(),
   year: z.number().int(),
-  numParts: z.number().int(),
+  numParts: z.number().int().nonnegative(),
 });
 export type SetSummary = z.infer<typeof SetSummarySchema>;
 
@@ -37,7 +37,7 @@ export const SearchPartsResponseSchema = z.object({
 export type SearchPartsResponse = z.infer<typeof SearchPartsResponseSchema>;
 
 export const ColorSchema = z.object({
-  colorId: z.number().int(),
+  colorId: z.number().int().positive(),
   name: z.string(),
   rgb: z.string().length(6),
   isTrans: z.boolean(),
