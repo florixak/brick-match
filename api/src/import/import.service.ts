@@ -13,7 +13,7 @@ import {
   themes,
 } from '../database/schema/catalog';
 
-const DATA_DIR = join(__dirname, '..', 'data');
+const DATA_DIR = join(process.cwd(), 'data');
 const BATCH_SIZE = 1000;
 
 type CsvRecord = Record<string, string>;

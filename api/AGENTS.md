@@ -80,7 +80,7 @@ export class OwnedPartsController { /* ... */ }
 
 ## Module structure (target)
 
-```
+```text
 api/src/
 ├── catalog/          entities and services for parts/colors/sets/inventory_parts (read-only catalog)
 ├── owned-parts/       CRUD over user_owned_parts
