@@ -29,11 +29,15 @@ export class ResponseInterceptor<T> implements NestInterceptor {
   private isApiSuccessResponse(
     value: unknown,
   ): value is ApiSuccessResponse<unknown> {
-    return (
-      value !== null &&
-      typeof value === 'object' &&
-      'data' in value &&
-      'meta' in value
-    );
+    if (value === null || typeof value !== 'object') {
+      return false;
+    }
+
+    if (!('data' in value) || !('meta' in value)) {
+      return false;
+    }
+
+    const { meta } = value as { meta: unknown };
+    return meta !== null && typeof meta === 'object' && !Array.isArray(meta);
   }
 }
