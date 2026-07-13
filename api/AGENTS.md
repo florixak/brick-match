@@ -1,5 +1,7 @@
 # AGENTS.md — backend (api)
 
+> Place this file at `api/AGENTS.md`. Context from the root AGENTS.md still applies here.
+
 ## What this app does
 
 A NestJS API that:
@@ -35,8 +37,22 @@ Every dependency here is justified architecturally, not added by default. If you
 
 ### Validation & config
 - **`zod`** — chosen over Nest's default `class-validator`/`class-transformer` specifically because `packages/shared-types` is shared with the frontend. A Zod schema defines type + validation in one place and can be reused for frontend form validation too — `class-validator`'s decorator-on-class approach can't be shared that way.
-- **`nestjs-zod`** — thin adapter wiring Zod schemas into Nest's `ValidationPipe`, avoids writing custom glue code.
 - **`@nestjs/config`** — loads and validates env vars (DB connection string, JWT secret); validate through the same Zod schemas for consistency.
+
+**`nestjs-zod` dependency.** Might be added later only for documenation purpose with Swagger.
+
+`api/src/common/pipes/zod-validation.pipe.ts`:
+
+No DTO class is needed at all — the schema and its inferred type both come straight from `packages/shared-types`:
+```typescript
+import { AddOwnedPartRequestSchema, AddOwnedPartRequest } from '@lego-matcher/shared-types';
+
+@Post()
+@UsePipes(new ZodValidationPipe(AddOwnedPartRequestSchema))
+addPart(@Body() dto: AddOwnedPartRequest) { /* typed and validated */ }
+```
+
+**Known trade-off:** `nestjs-zod` additionally offers auto-generated OpenAPI/Swagger docs from Zod schemas and less per-route boilerplate. Not needed for the MVP (no Swagger, few endpoints) — revisit if API documentation becomes a real need; adding it later doesn't require touching the schemas themselves.
 
 ### Security
 - **`@nestjs/throttler`** — rate limiting on two specific attack/failure surfaces, not a generic "best practice" add: (1) `/auth/login` is a brute-force target even on a small app; (2) the matching endpoint is the most computationally expensive route, and needs protection from accidental overload (e.g. a buggy frontend retry loop), not just malicious traffic.
@@ -88,7 +104,7 @@ This separation matters because the catalog import runs repeatedly (e.g. monthly
 - **Unique constraint** on `(user_id, part_num, color_id)` — adding a part the user already owns should increment `quantity` via upsert, not create a duplicate row.
 
 ### Deliberate simplifications for the MVP
-1. **One inventory version per set.** Rebrickable tracks multiple inventory revisions per set; the import always takes the latest version. Versioning is out of scope for the MVP.
+1. **One inventory version per set.** Rebrickable tracks multiple inventory revisions per set; the import always takes the latest version.
 2. **Adding a set expands into `user_owned_parts`.** There is no separate "owned sets" entity — adding a set just upserts (adds quantities from) its `inventory_parts` rows into `user_owned_parts`. This keeps the model simple, but means "removing a set" would need to subtract exactly what was added — worth deciding explicitly whether to support removal in the MVP, or only additions.
 3. **Match results are never persisted.** They're computed on demand for every query, not cached in a materialized table. The index should make this fast enough without caching — but this is a prediction, not a verified fact (the spike was dropped), so if Sprint 1 shows it's too slow, add caching/a materialized view as a fix at that point, not as a pre-built part of the plan.
 
@@ -170,14 +186,14 @@ Import script (runnable as a Nest CLI command, not an HTTP endpoint):
 ## Conventions
 
 - TypeScript strict mode enabled
-- Import shared types (request/response shapes) from `packages/shared-types`, don't redefine them in the backend
+- Import request/response Zod schemas and their inferred types from `packages/shared-types`; don't redefine validation rules locally with `class-validator`
 - Write `MatchingService` tests against a small seed dataset (a few sets, a few parts), not the full imported catalog — tests must be fast and deterministic
 
 ## Commands (fill in once the project is set up)
 
 ```
-npm run start:dev      # local dev server
-npm run test            # unit tests
-npm run import:catalog  # runs the Rebrickable data import
-npm run db:migrate      # Drizzle migrations
+pnpm --filter api dev             # local dev server
+pnpm --filter api test             # unit tests
+pnpm --filter api import:catalog   # runs the Rebrickable data import
+pnpm --filter api db:migrate       # Drizzle migrations
 ```

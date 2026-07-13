@@ -1,0 +1,10 @@
+packages:
+  - 'api'
+  - 'shared-types'
+  # web will be added here once frontend is created
+
+allowBuilds:
+  '@scarf/scarf': true
+  argon2: true
+  esbuild: true
+  unrs-resolver: true
