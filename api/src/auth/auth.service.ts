@@ -17,6 +17,10 @@ import { isUniqueViolation } from 'src/database/pg-error';
 import { users } from 'src/database/schema';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 
+// Precomputed argon2id hash used when no user exists, to equalize login timing.
+const DUMMY_PASSWORD_HASH =
+  '$argon2id$v=19$m=65536,t=3,p=4$XmNPV746wiJMtxTZarTY+Q$waq7RG3gYtLbmEzhTeisXZwj6vxcQPAuwOO1XMMpUgY';
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -31,12 +35,12 @@ export class AuthService {
       .where(eq(users.email, email))
       .limit(1);
 
-    if (!user) {
-      throw new UnauthorizedException('Invalid email or password');
-    }
+    const isPasswordValid = await argon2.verify(
+      user?.passwordHash ?? DUMMY_PASSWORD_HASH,
+      password,
+    );
 
-    const isPasswordValid = await argon2.verify(user.passwordHash, password);
-    if (!isPasswordValid) {
+    if (!user || !isPasswordValid) {
       throw new UnauthorizedException('Invalid email or password');
     }
 
