@@ -6,7 +6,7 @@ import {
   type RegisterRequest,
   RegisterRequestSchema,
 } from '@lego-matcher/shared-types';
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ZodValidationPipe } from 'src/common/pipes/zod-validation.pipe';
 import { AuthService } from './auth.service';
@@ -18,6 +18,7 @@ export class AuthController {
 
   @Post('login')
   @ApiOperation({ summary: 'Login a user' })
+  @HttpCode(200)
   async login(
     @Body(new ZodValidationPipe(LoginRequestSchema)) loginRequest: LoginRequest,
   ): Promise<LoginApiResponse> {
