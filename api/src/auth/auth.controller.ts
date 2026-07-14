@@ -10,6 +10,7 @@ import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ZodValidationPipe } from 'src/common/pipes/zod-validation.pipe';
 import { AuthService } from './auth.service';
+import { AuthThrottle } from 'src/common/decorators/throttle.decorator';
 
 @Controller({ path: 'auth', version: '1' })
 @ApiTags('Auth')
@@ -17,6 +18,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
+  @AuthThrottle()
   @ApiOperation({ summary: 'Login a user' })
   @HttpCode(200)
   async login(
@@ -30,6 +32,7 @@ export class AuthController {
   }
 
   @Post('register')
+  @AuthThrottle()
   @ApiOperation({ summary: 'Register a user' })
   async register(
     @Body(new ZodValidationPipe(RegisterRequestSchema))
