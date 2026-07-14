@@ -11,7 +11,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ZodValidationPipe } from 'src/common/pipes/zod-validation.pipe';
 import { AuthService } from './auth.service';
 
-@Controller('auth')
+@Controller({ path: 'auth', version: '1' })
 @ApiTags('Auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
