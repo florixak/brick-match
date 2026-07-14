@@ -1,34 +1,44 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  LoginApiResponse,
+  type LoginRequest,
+  LoginRequestSchema,
+  RegisterApiResponse,
+  type RegisterRequest,
+  RegisterRequestSchema,
+} from '@lego-matcher/shared-types';
+import { Body, Controller, HttpCode, Post } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ZodValidationPipe } from 'src/common/pipes/zod-validation.pipe';
 import { AuthService } from './auth.service';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
 
-@Controller('auth')
+@Controller({ path: 'auth', version: '1' })
+@ApiTags('Auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post()
-  create(@Body() createAuthDto: CreateAuthDto) {
-    return this.authService.create(createAuthDto);
+  @Post('login')
+  @ApiOperation({ summary: 'Login a user' })
+  @HttpCode(200)
+  async login(
+    @Body(new ZodValidationPipe(LoginRequestSchema)) loginRequest: LoginRequest,
+  ): Promise<LoginApiResponse> {
+    const authResponse = await this.authService.login(loginRequest);
+    return {
+      data: { accessToken: authResponse.accessToken },
+      meta: {},
+    };
   }
 
-  @Get()
-  findAll() {
-    return this.authService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.authService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAuthDto: UpdateAuthDto) {
-    return this.authService.update(+id, updateAuthDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.authService.remove(+id);
+  @Post('register')
+  @ApiOperation({ summary: 'Register a user' })
+  async register(
+    @Body(new ZodValidationPipe(RegisterRequestSchema))
+    registerRequest: RegisterRequest,
+  ): Promise<RegisterApiResponse> {
+    const authResponse = await this.authService.register(registerRequest);
+    return {
+      data: { accessToken: authResponse.accessToken },
+      meta: {},
+    };
   }
 }

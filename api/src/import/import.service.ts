@@ -5,6 +5,7 @@ import { createReadStream, existsSync } from 'fs';
 import { join } from 'path';
 import { createGunzip } from 'zlib';
 import { DatabaseService } from '../database/database.service';
+import { isFkViolation } from '../database/pg-error';
 import {
   colors,
   inventoryParts,
@@ -64,11 +65,6 @@ async function processBatched<T>(
 
 function bool(value: string): boolean {
   return value.trim().toLowerCase() === 'true';
-}
-
-/** PostgreSQL FK violation error code. */
-function isFkViolation(err: unknown): boolean {
-  return (err as { code?: string })?.code === '23503';
 }
 
 @Injectable()

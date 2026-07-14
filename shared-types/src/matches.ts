@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ApiSuccessResponseSchema } from "./api-response";
 import { MatchResultSchema } from "./domain";
 
 export const GetMatchesQuerySchema = z.object({
@@ -11,3 +12,8 @@ export const GetMatchesResponseSchema = z.object({
   results: z.array(MatchResultSchema),
 });
 export type GetMatchesResponse = z.infer<typeof GetMatchesResponseSchema>;
+
+export const GetMatchesApiResponseSchema = ApiSuccessResponseSchema(
+  GetMatchesResponseSchema,
+);
+export type GetMatchesApiResponse = z.infer<typeof GetMatchesApiResponseSchema>;
