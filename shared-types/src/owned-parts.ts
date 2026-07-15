@@ -8,7 +8,7 @@ import { PaginationQuerySchema } from "./pagination";
 
 export const AddOwnedPartRequestSchema = z.object({
   partNum: z.string().min(1),
-  colorId: z.number().int().positive(),
+  colorId: z.number().int().min(0),
   quantity: z.number().int().positive(),
 });
 export type AddOwnedPartRequest = z.infer<typeof AddOwnedPartRequestSchema>;
@@ -67,3 +67,9 @@ export const GetOwnedPartsApiResponseSchema =
 export type GetOwnedPartsApiResponse = z.infer<
   typeof GetOwnedPartsApiResponseSchema
 >;
+
+export const RemoveOwnedPartQuerySchema = z.object({
+  partNum: z.string().min(0),
+  colorId: z.coerce.number().int().min(0),
+});
+export type RemoveOwnedPartQuery = z.infer<typeof RemoveOwnedPartQuerySchema>;
