@@ -39,7 +39,10 @@ export class CatalogService {
 
     return {
       data: { sets: results },
-      meta: {},
+      meta: {
+        total: results.length,
+        limit,
+      },
     };
   }
 
@@ -66,7 +69,10 @@ export class CatalogService {
 
     return {
       data: { parts: results },
-      meta: {},
+      meta: {
+        total: results.length,
+        limit,
+      },
     };
   }
 
@@ -83,7 +89,9 @@ export class CatalogService {
 
     return {
       data: { colors: results },
-      meta: {},
+      meta: {
+        total: results.length,
+      },
     };
   }
 }
