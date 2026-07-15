@@ -1,8 +1,11 @@
 import {
   ColorsApiResponse,
+  ColorsApiResponseSchema,
   SearchPartsApiResponse,
+  SearchPartsApiResponseSchema,
   SearchPartsQuerySchema,
   SearchSetsApiResponse,
+  SearchSetsApiResponseSchema,
   SearchSetsQuerySchema,
   type SearchPartsQuery,
   type SearchSetsQuery,
@@ -29,11 +32,12 @@ export class CatalogController {
     required: false,
     type: Number,
   })
-  getSets(
+  async getSets(
     @Query(new ZodValidationPipe(SearchSetsQuerySchema))
     query: SearchSetsQuery,
   ): Promise<SearchSetsApiResponse> {
-    return this.catalogService.searchSets(query);
+    const result = await this.catalogService.searchSets(query);
+    return SearchSetsApiResponseSchema.parse(result);
   }
 
   @Get('parts')
@@ -49,16 +53,18 @@ export class CatalogController {
     required: false,
     type: Number,
   })
-  getParts(
+  async getParts(
     @Query(new ZodValidationPipe(SearchPartsQuerySchema))
     query: SearchPartsQuery,
   ): Promise<SearchPartsApiResponse> {
-    return this.catalogService.searchParts(query);
+    const result = await this.catalogService.searchParts(query);
+    return SearchPartsApiResponseSchema.parse(result);
   }
 
   @Get('colors')
   @ApiOperation({ summary: 'Get colors' })
-  getColors(): Promise<ColorsApiResponse> {
-    return this.catalogService.getColors();
+  async getColors(): Promise<ColorsApiResponse> {
+    const result = await this.catalogService.getColors();
+    return ColorsApiResponseSchema.parse(result);
   }
 }
