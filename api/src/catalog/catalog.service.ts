@@ -15,7 +15,10 @@ export class CatalogService {
   constructor(private readonly databaseService: DatabaseService) {}
 
   async searchSets(query: SearchSetsQuery): Promise<SearchSetsApiResponse> {
-    const term = (query.search ?? '').trim().toLowerCase();
+    const term = (query.search ?? '')
+      .trim()
+      .toLowerCase()
+      .replace(/[\\%_]/g, '\\$&');
     const limit = query.limit ?? 10;
 
     if (!term) {
@@ -52,7 +55,10 @@ export class CatalogService {
   }
 
   async searchParts(query: SearchPartsQuery): Promise<SearchPartsApiResponse> {
-    const term = (query.search ?? '').trim().toLowerCase();
+    const term = (query.search ?? '')
+      .trim()
+      .toLowerCase()
+      .replace(/[\\%_]/g, '\\$&');
     const limit = query.limit ?? 10;
 
     if (!term) {
