@@ -1,5 +1,15 @@
 import { z } from "zod";
-import { ApiSuccessResponseSchema } from "./api-response";
+
+export const CatalogSearchMetaSchema = z.object({
+  count: z.number().int().nonnegative(),
+  limit: z.number().int().positive(),
+});
+export type CatalogSearchMeta = z.infer<typeof CatalogSearchMetaSchema>;
+
+export const CatalogListMetaSchema = z.object({
+  count: z.number().int().nonnegative(),
+});
+export type CatalogListMeta = z.infer<typeof CatalogListMetaSchema>;
 
 export const SearchSetsQuerySchema = z.object({
   search: z.string().optional(),
@@ -20,9 +30,10 @@ export const SearchSetsResponseSchema = z.object({
 });
 export type SearchSetsResponse = z.infer<typeof SearchSetsResponseSchema>;
 
-export const SearchSetsApiResponseSchema = ApiSuccessResponseSchema(
-  SearchSetsResponseSchema,
-);
+export const SearchSetsApiResponseSchema = z.object({
+  data: SearchSetsResponseSchema,
+  meta: CatalogSearchMetaSchema,
+});
 export type SearchSetsApiResponse = z.infer<typeof SearchSetsApiResponseSchema>;
 
 export const SearchPartsQuerySchema = z.object({
@@ -42,9 +53,10 @@ export const SearchPartsResponseSchema = z.object({
 });
 export type SearchPartsResponse = z.infer<typeof SearchPartsResponseSchema>;
 
-export const SearchPartsApiResponseSchema = ApiSuccessResponseSchema(
-  SearchPartsResponseSchema,
-);
+export const SearchPartsApiResponseSchema = z.object({
+  data: SearchPartsResponseSchema,
+  meta: CatalogSearchMetaSchema,
+});
 export type SearchPartsApiResponse = z.infer<
   typeof SearchPartsApiResponseSchema
 >;
@@ -62,7 +74,8 @@ export const ColorsResponseSchema = z.object({
 });
 export type ColorsResponse = z.infer<typeof ColorsResponseSchema>;
 
-export const ColorsApiResponseSchema = ApiSuccessResponseSchema(
-  ColorsResponseSchema,
-);
+export const ColorsApiResponseSchema = z.object({
+  data: ColorsResponseSchema,
+  meta: CatalogListMetaSchema,
+});
 export type ColorsApiResponse = z.infer<typeof ColorsApiResponseSchema>;
