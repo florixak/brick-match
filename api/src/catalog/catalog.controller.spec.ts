@@ -46,7 +46,7 @@ describe('CatalogController', () => {
           },
         ],
       },
-      meta: { total: 1, limit: 10 },
+      meta: { count: 1, limit: 10 },
     };
     catalogService.searchSets.mockResolvedValue(mockResponse);
 
@@ -69,7 +69,7 @@ describe('CatalogController', () => {
           },
         ],
       },
-      meta: { total: 1, limit: 10 },
+      meta: { count: 1, limit: 10 },
     };
     catalogService.searchParts.mockResolvedValue(mockResponse);
 
@@ -100,7 +100,7 @@ describe('CatalogController', () => {
           },
         ],
       },
-      meta: { total: 2 },
+      meta: { count: 2 },
     };
     catalogService.getColors.mockResolvedValue(mockResponse);
 
