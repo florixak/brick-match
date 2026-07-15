@@ -8,6 +8,7 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { and, asc, count, eq, or, sql } from 'drizzle-orm';
 import { DatabaseService } from 'src/database/database.service';
@@ -116,11 +117,24 @@ export class OwnedPartsService {
     };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} ownedPart`;
-  }
+  async remove(
+    userId: string,
+    partNum: string,
+    colorId: number,
+  ): Promise<void> {
+    const [deleted] = await this.databaseService.db
+      .delete(userOwnedParts)
+      .where(
+        and(
+          eq(userOwnedParts.userId, userId),
+          eq(userOwnedParts.partNum, partNum),
+          eq(userOwnedParts.colorId, colorId),
+        ),
+      )
+      .returning({ id: userOwnedParts.id });
 
-  remove(id: number) {
-    return `This action removes a #${id} ownedPart`;
+    if (!deleted) {
+      throw new NotFoundException('Owned part not found');
+    }
   }
 }
