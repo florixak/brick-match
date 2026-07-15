@@ -15,8 +15,15 @@ export class CatalogService {
   constructor(private readonly databaseService: DatabaseService) {}
 
   async searchSets(query: SearchSetsQuery): Promise<SearchSetsApiResponse> {
-    const term = (query.search ?? '').toLowerCase();
+    const term = (query.search ?? '').trim().toLowerCase();
     const limit = query.limit ?? 10;
+
+    if (!term) {
+      return {
+        data: { sets: [] },
+        meta: { count: 0, limit },
+      };
+    }
 
     const results = await this.databaseService.db
       .select({
@@ -27,12 +34,10 @@ export class CatalogService {
       })
       .from(sets)
       .where(
-        term
-          ? or(
-              sql`lower(${sets.name}) LIKE ${term + '%'}`,
-              sql`lower(${sets.setNum}) LIKE ${term + '%'}`,
-            )
-          : undefined,
+        or(
+          sql`lower(${sets.name}) LIKE ${term + '%'}`,
+          sql`lower(${sets.setNum}) LIKE ${term + '%'}`,
+        ),
       )
       .orderBy(asc(sets.name))
       .limit(limit);
@@ -40,15 +45,22 @@ export class CatalogService {
     return {
       data: { sets: results },
       meta: {
-        total: results.length,
+        count: results.length,
         limit,
       },
     };
   }
 
   async searchParts(query: SearchPartsQuery): Promise<SearchPartsApiResponse> {
-    const term = (query.search ?? '').toLowerCase();
+    const term = (query.search ?? '').trim().toLowerCase();
     const limit = query.limit ?? 10;
+
+    if (!term) {
+      return {
+        data: { parts: [] },
+        meta: { count: 0, limit },
+      };
+    }
 
     const results = await this.databaseService.db
       .select({
@@ -57,12 +69,10 @@ export class CatalogService {
       })
       .from(parts)
       .where(
-        term
-          ? or(
-              sql`lower(${parts.name}) LIKE ${term + '%'}`,
-              sql`lower(${parts.partNum}) LIKE ${term + '%'}`,
-            )
-          : undefined,
+        or(
+          sql`lower(${parts.name}) LIKE ${term + '%'}`,
+          sql`lower(${parts.partNum}) LIKE ${term + '%'}`,
+        ),
       )
       .orderBy(asc(parts.name))
       .limit(limit);
@@ -70,7 +80,7 @@ export class CatalogService {
     return {
       data: { parts: results },
       meta: {
-        total: results.length,
+        count: results.length,
         limit,
       },
     };
@@ -90,7 +100,7 @@ export class CatalogService {
     return {
       data: { colors: results },
       meta: {
-        total: results.length,
+        count: results.length,
       },
     };
   }

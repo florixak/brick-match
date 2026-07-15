@@ -12,6 +12,14 @@ function createSelectChain<T>(result: T) {
   return { select, from, where, orderBy, limit };
 }
 
+function createListSelectChain<T>(result: T) {
+  const orderBy = jest.fn().mockResolvedValue(result);
+  const from = jest.fn().mockReturnValue({ orderBy });
+  const select = jest.fn().mockReturnValue({ from });
+
+  return { select, from, orderBy };
+}
+
 describe('CatalogService', () => {
   let service: CatalogService;
   let selectChain: ReturnType<typeof createSelectChain>;
@@ -61,8 +69,17 @@ describe('CatalogService', () => {
     expect(result.data.sets[0].name).toBe("Kai's Fire Mech");
     expect(result.data.sets[0].year).toBe(2013);
     expect(result.data.sets[0].numParts).toBe(102);
+    expect(result.meta).toEqual({ count: 1, limit: 10 });
     expect(selectChain.select).toHaveBeenCalled();
     expect(selectChain.limit).toHaveBeenCalledWith(10);
+  });
+
+  it('should return empty sets when search is blank', async () => {
+    const result = await service.searchSets({ limit: 10 });
+
+    expect(result.data.sets).toEqual([]);
+    expect(result.meta).toEqual({ count: 0, limit: 10 });
+    expect(selectChain.select).not.toHaveBeenCalled();
   });
 
   it('should search sets by set number', async () => {
@@ -88,6 +105,14 @@ describe('CatalogService', () => {
     expect(result.data.sets[0].numParts).toBe(188);
     expect(selectChain.select).toHaveBeenCalled();
     expect(selectChain.limit).toHaveBeenCalledWith(10);
+  });
+
+  it('should return empty parts when search is blank', async () => {
+    const result = await service.searchParts({ limit: 10 });
+
+    expect(result.data.parts).toEqual([]);
+    expect(result.meta).toEqual({ count: 0, limit: 10 });
+    expect(selectChain.select).not.toHaveBeenCalled();
   });
 
   it('should search parts by name', async () => {
@@ -144,5 +169,33 @@ describe('CatalogService', () => {
     );
     expect(selectChain.select).toHaveBeenCalled();
     expect(selectChain.limit).toHaveBeenCalledWith(10);
+  });
+
+  it('should get colors', async () => {
+    const listChain = createListSelectChain([
+      {
+        colorId: 1,
+        name: 'Blue',
+        rgb: '0055BF',
+        isTrans: false,
+      },
+      {
+        colorId: 15,
+        name: 'Trans-Light Blue',
+        rgb: 'AEEFEC',
+        isTrans: true,
+      },
+    ]);
+    selectChain.select.mockImplementation(listChain.select);
+
+    const result = await service.getColors();
+
+    expect(result.data.colors).toHaveLength(2);
+    expect(result.data.colors[0].colorId).toBe(1);
+    expect(result.data.colors[0].name).toBe('Blue');
+    expect(result.data.colors[1].colorId).toBe(15);
+    expect(result.meta).toEqual({ count: 2 });
+    expect(listChain.select).toHaveBeenCalled();
+    expect(listChain.orderBy).toHaveBeenCalled();
   });
 });
