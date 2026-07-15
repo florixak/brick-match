@@ -23,6 +23,12 @@ export class CatalogController {
     description: 'The search query',
     required: false,
   })
+  @ApiQuery({
+    name: 'limit',
+    description: 'Maximum number of results',
+    required: false,
+    type: Number,
+  })
   getSets(
     @Query(new ZodValidationPipe(SearchSetsQuerySchema))
     query: SearchSetsQuery,
@@ -36,6 +42,12 @@ export class CatalogController {
     name: 'search',
     description: 'The search query',
     required: false,
+  })
+  @ApiQuery({
+    name: 'limit',
+    description: 'Maximum number of results',
+    required: false,
+    type: Number,
   })
   getParts(
     @Query(new ZodValidationPipe(SearchPartsQuerySchema))
