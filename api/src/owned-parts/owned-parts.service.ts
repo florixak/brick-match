@@ -99,7 +99,7 @@ export class OwnedPartsService {
         .innerJoin(colors, eq(userOwnedParts.colorId, colors.colorId))
         .where(whereClause)
         .orderBy(asc(parts.name))
-        .limit(pageSize as number)
+        .limit(pageSize)
         .offset(offset),
     ]);
 
@@ -109,8 +109,8 @@ export class OwnedPartsService {
     return {
       data: { items: ownedParts },
       meta: {
-        page: page as number,
-        limit: pageSize as number,
+        page,
+        limit: pageSize,
         totalItems,
         totalPages,
       },
