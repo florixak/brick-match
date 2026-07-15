@@ -41,7 +41,10 @@ export const parts = pgTable(
   },
   (table) => ({
     partsNameLowerIdx: index('parts_name_lower_idx').on(
-      sql`lower(${table.name})`,
+      sql`lower(${table.name})`.append(sql.raw(' text_pattern_ops')),
+    ),
+    partsPartNumLowerIdx: index('parts_part_num_lower_idx').on(
+      sql`lower(${table.partNum})`.append(sql.raw(' text_pattern_ops')),
     ),
   }),
 );
@@ -59,7 +62,10 @@ export const sets = pgTable(
   },
   (table) => ({
     setsNameLowerIdx: index('sets_name_lower_idx').on(
-      sql`lower(${table.name})`,
+      sql`lower(${table.name})`.append(sql.raw(' text_pattern_ops')),
+    ),
+    setsSetNumLowerIdx: index('sets_set_num_lower_idx').on(
+      sql`lower(${table.setNum})`.append(sql.raw(' text_pattern_ops')),
     ),
   }),
 );
