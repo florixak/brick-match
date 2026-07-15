@@ -1,3 +1,4 @@
+import { sql } from 'drizzle-orm';
 import {
   boolean,
   index,
@@ -29,23 +30,45 @@ export const themes = pgTable('themes', {
   parentId: integer('parent_id').references((): AnyPgColumn => themes.id),
 });
 
-export const parts = pgTable('parts', {
-  partNum: text('part_num').primaryKey(),
-  name: text('name').notNull(),
-  partCatId: integer('part_cat_id')
-    .notNull()
-    .references(() => partCategories.id),
-});
+export const parts = pgTable(
+  'parts',
+  {
+    partNum: text('part_num').primaryKey(),
+    name: text('name').notNull(),
+    partCatId: integer('part_cat_id')
+      .notNull()
+      .references(() => partCategories.id),
+  },
+  (table) => ({
+    partsNameLowerIdx: index('parts_name_lower_idx').on(
+      sql`lower(${table.name})`.append(sql.raw(' text_pattern_ops')),
+    ),
+    partsPartNumLowerIdx: index('parts_part_num_lower_idx').on(
+      sql`lower(${table.partNum})`.append(sql.raw(' text_pattern_ops')),
+    ),
+  }),
+);
 
-export const sets = pgTable('sets', {
-  setNum: text('set_num').primaryKey(),
-  name: text('name').notNull(),
-  year: smallint('year').notNull(),
-  themeId: integer('theme_id')
-    .notNull()
-    .references(() => themes.id),
-  numParts: integer('num_parts').notNull(),
-});
+export const sets = pgTable(
+  'sets',
+  {
+    setNum: text('set_num').primaryKey(),
+    name: text('name').notNull(),
+    year: smallint('year').notNull(),
+    themeId: integer('theme_id')
+      .notNull()
+      .references(() => themes.id),
+    numParts: integer('num_parts').notNull(),
+  },
+  (table) => ({
+    setsNameLowerIdx: index('sets_name_lower_idx').on(
+      sql`lower(${table.name})`.append(sql.raw(' text_pattern_ops')),
+    ),
+    setsSetNumLowerIdx: index('sets_set_num_lower_idx').on(
+      sql`lower(${table.setNum})`.append(sql.raw(' text_pattern_ops')),
+    ),
+  }),
+);
 
 export const inventoryParts = pgTable(
   'inventory_parts',
