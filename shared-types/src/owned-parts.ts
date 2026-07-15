@@ -69,7 +69,7 @@ export type GetOwnedPartsApiResponse = z.infer<
 >;
 
 export const RemoveOwnedPartQuerySchema = z.object({
-  partNum: z.string().min(0),
+  partNum: z.string().min(1),
   colorId: z.coerce.number().int().min(0),
 });
 export type RemoveOwnedPartQuery = z.infer<typeof RemoveOwnedPartQuerySchema>;
