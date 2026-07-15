@@ -1,6 +1,10 @@
 import { z } from "zod";
-import { ApiSuccessResponseSchema } from "./api-response";
+import {
+  ApiSuccessResponseSchema,
+  ApiSuccessResponseWithPaginationSchema,
+} from "./api-response";
 import { OwnedPartSchema } from "./domain";
+import { PaginationQuerySchema } from "./pagination";
 
 export const AddOwnedPartRequestSchema = z.object({
   partNum: z.string().min(1),
@@ -40,3 +44,26 @@ export type AddOwnedPartApiResponse = z.infer<
 export const AddSetApiResponseSchema =
   ApiSuccessResponseSchema(AddSetResponseSchema);
 export type AddSetApiResponse = z.infer<typeof AddSetApiResponseSchema>;
+
+export const OwnedPartDetailSchema = OwnedPartSchema.extend({
+  partName: z.string(),
+  colorName: z.string(),
+  colorRgb: z.string(),
+});
+export type OwnedPartDetail = z.infer<typeof OwnedPartDetailSchema>;
+
+export const GetOwnedPartsQuerySchema = PaginationQuerySchema.extend({
+  search: z.string().optional(),
+});
+export type GetOwnedPartsQuery = z.infer<typeof GetOwnedPartsQuerySchema>;
+
+export const GetOwnedPartsDataSchema = z.object({
+  items: z.array(OwnedPartDetailSchema),
+});
+export type GetOwnedPartsData = z.infer<typeof GetOwnedPartsDataSchema>;
+
+export const GetOwnedPartsApiResponseSchema =
+  ApiSuccessResponseWithPaginationSchema(GetOwnedPartsDataSchema);
+export type GetOwnedPartsApiResponse = z.infer<
+  typeof GetOwnedPartsApiResponseSchema
+>;
