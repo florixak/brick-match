@@ -1,8 +1,10 @@
 import {
   LoginApiResponse,
+  LoginApiResponseSchema,
   type LoginRequest,
   LoginRequestSchema,
   RegisterApiResponse,
+  RegisterApiResponseSchema,
   type RegisterRequest,
   RegisterRequestSchema,
 } from '@lego-matcher/shared-types';
@@ -25,10 +27,10 @@ export class AuthController {
     @Body(new ZodValidationPipe(LoginRequestSchema)) loginRequest: LoginRequest,
   ): Promise<LoginApiResponse> {
     const authResponse = await this.authService.login(loginRequest);
-    return {
+    return LoginApiResponseSchema.parse({
       data: { accessToken: authResponse.accessToken },
       meta: {},
-    };
+    });
   }
 
   @Post('register')
@@ -39,9 +41,9 @@ export class AuthController {
     registerRequest: RegisterRequest,
   ): Promise<RegisterApiResponse> {
     const authResponse = await this.authService.register(registerRequest);
-    return {
+    return RegisterApiResponseSchema.parse({
       data: { accessToken: authResponse.accessToken },
       meta: {},
-    };
+    });
   }
 }

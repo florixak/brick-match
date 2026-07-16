@@ -3,6 +3,7 @@ import {
   AddOwnedPartApiResponseSchema,
   AddOwnedPartRequestSchema,
   GetOwnedPartsApiResponse,
+  GetOwnedPartsApiResponseSchema,
   GetOwnedPartsQuerySchema,
   RemoveOwnedPartQuerySchema,
   type AddOwnedPartRequest,
@@ -52,7 +53,8 @@ export class OwnedPartsController {
     @Query(new ZodValidationPipe<GetOwnedPartsQuery>(GetOwnedPartsQuerySchema))
     query: GetOwnedPartsQuery,
   ): Promise<GetOwnedPartsApiResponse> {
-    return this.ownedPartsService.findAll(userId, query);
+    const result = await this.ownedPartsService.findAll(userId, query);
+    return GetOwnedPartsApiResponseSchema.parse(result);
   }
 
   @Delete()
