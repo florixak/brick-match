@@ -69,6 +69,7 @@ describe('OwnedPartsService', () => {
   let listChain: ReturnType<typeof createFindAllSelectChain>;
   let deleteChain: ReturnType<typeof createDeleteChain>;
   let select: jest.Mock;
+  let execute: jest.Mock;
 
   const userId = '11111111-1111-1111-1111-111111111111';
 
@@ -77,6 +78,7 @@ describe('OwnedPartsService', () => {
     countChain = createCountSelectChain([{ count: 0 }]);
     listChain = createFindAllSelectChain([]);
     deleteChain = createDeleteChain([]);
+    execute = jest.fn().mockResolvedValue({ rows: [] });
 
     select = jest
       .fn()
@@ -93,6 +95,7 @@ describe('OwnedPartsService', () => {
               insert: insertChain.insert,
               select,
               delete: deleteChain.delete,
+              execute,
             },
           },
         },
@@ -156,6 +159,43 @@ describe('OwnedPartsService', () => {
           quantity: 1,
         }),
       ).rejects.toThrow(InternalServerErrorException);
+    });
+  });
+
+  describe('addSet', () => {
+    it('should add all parts from a set', async () => {
+      execute.mockResolvedValue({
+        rows: [
+          { part_num: '3001', color_id: 1, quantity: 5 },
+          { part_num: '3003', color_id: 15, quantity: 2 },
+        ],
+      });
+
+      const result = await service.addSet(userId, { setNum: '6030-1' });
+
+      expect(result).toEqual({
+        parts: [
+          { partNum: '3001', colorId: 1, quantity: 5 },
+          { partNum: '3003', colorId: 15, quantity: 2 },
+        ],
+      });
+      expect(execute).toHaveBeenCalled();
+    });
+
+    it('should throw NotFoundException when set has no inventory parts', async () => {
+      execute.mockResolvedValue({ rows: [] });
+
+      await expect(
+        service.addSet(userId, { setNum: 'unknown-1' }),
+      ).rejects.toThrow(NotFoundException);
+    });
+
+    it('should throw BadRequestException when part or color is not in catalog', async () => {
+      execute.mockRejectedValue({ code: '23503' });
+
+      await expect(
+        service.addSet(userId, { setNum: '6030-1' }),
+      ).rejects.toThrow(BadRequestException);
     });
   });
 
