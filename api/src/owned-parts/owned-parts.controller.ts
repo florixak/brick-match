@@ -2,11 +2,15 @@ import {
   AddOwnedPartApiResponse,
   AddOwnedPartApiResponseSchema,
   AddOwnedPartRequestSchema,
+  AddSetApiResponse,
+  AddSetApiResponseSchema,
+  AddSetRequestSchema,
   GetOwnedPartsApiResponse,
   GetOwnedPartsApiResponseSchema,
   GetOwnedPartsQuerySchema,
   RemoveOwnedPartQuerySchema,
   type AddOwnedPartRequest,
+  type AddSetRequest,
   type GetOwnedPartsQuery,
   type RemoveOwnedPartQuery,
 } from '@lego-matcher/shared-types';
@@ -31,6 +35,17 @@ import { OwnedPartsService } from './owned-parts.service';
 @UseGuards(JwtAuthGuard)
 export class OwnedPartsController {
   constructor(private readonly ownedPartsService: OwnedPartsService) {}
+
+  @Post('sets')
+  @ApiOperation({ summary: 'Add all parts from an owned set' })
+  async addSet(
+    @CurrentUser('sub') userId: string,
+    @Body(new ZodValidationPipe(AddSetRequestSchema))
+    request: AddSetRequest,
+  ): Promise<AddSetApiResponse> {
+    const data = await this.ownedPartsService.addSet(userId, request);
+    return AddSetApiResponseSchema.parse({ data, meta: {} });
+  }
 
   @Post()
   @ApiOperation({ summary: 'Add an owned part' })
