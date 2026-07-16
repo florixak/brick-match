@@ -6,6 +6,7 @@ describe('OwnedPartsController', () => {
   let controller: OwnedPartsController;
   let ownedPartsService: {
     create: jest.Mock;
+    addSet: jest.Mock;
     findAll: jest.Mock;
     remove: jest.Mock;
   };
@@ -15,6 +16,7 @@ describe('OwnedPartsController', () => {
   beforeEach(async () => {
     ownedPartsService = {
       create: jest.fn(),
+      addSet: jest.fn(),
       findAll: jest.fn(),
       remove: jest.fn(),
     };
@@ -34,6 +36,27 @@ describe('OwnedPartsController', () => {
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
+  });
+
+  it('should add all parts from a set', async () => {
+    const request = { setNum: '6030-1' };
+    const mockResponse = {
+      parts: [
+        { partNum: '3001', colorId: 1, quantity: 5 },
+        { partNum: '3003', colorId: 15, quantity: 2 },
+      ],
+    };
+    ownedPartsService.addSet.mockResolvedValue(mockResponse);
+
+    const result = await controller.addSet(userId, request);
+
+    expect(ownedPartsService.addSet).toHaveBeenCalledWith(userId, {
+      setNum: '6030-1',
+    });
+    expect(result).toEqual({
+      data: mockResponse,
+      meta: {},
+    });
   });
 
   it('should create an owned part', async () => {
