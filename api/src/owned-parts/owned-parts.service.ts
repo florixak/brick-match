@@ -1,6 +1,8 @@
 import {
   AddOwnedPartRequest,
   AddOwnedPartResponse,
+  AddSetRequest,
+  AddSetResponse,
   GetOwnedPartsApiResponse,
   GetOwnedPartsQuery,
 } from '@lego-matcher/shared-types';
@@ -50,6 +52,46 @@ export class OwnedPartsService {
       }
 
       return ownedPart;
+    } catch (error) {
+      if (isFkViolation(error)) {
+        throw new BadRequestException('Part or color not found in catalog');
+      }
+      throw error;
+    }
+  }
+
+  async addSet(
+    userId: string,
+    request: AddSetRequest,
+  ): Promise<AddSetResponse> {
+    const { setNum } = request;
+    try {
+      const result = await this.databaseService.db.execute<{
+        part_num: string;
+        color_id: number;
+        quantity: number;
+      }>(sql`
+        INSERT INTO user_owned_parts (user_id, part_num, color_id, quantity)
+        SELECT ${userId}, part_num, color_id, SUM(quantity)::int
+        FROM inventory_parts
+        WHERE set_num = ${setNum}
+        GROUP BY part_num, color_id
+        ON CONFLICT (user_id, part_num, color_id)
+        DO UPDATE SET quantity = user_owned_parts.quantity + excluded.quantity
+        RETURNING part_num, color_id, quantity
+      `);
+
+      if (result.rows.length === 0) {
+        throw new NotFoundException('Set not found');
+      }
+
+      return {
+        parts: result.rows.map((row) => ({
+          partNum: row.part_num,
+          colorId: Number(row.color_id),
+          quantity: Number(row.quantity),
+        })),
+      };
     } catch (error) {
       if (isFkViolation(error)) {
         throw new BadRequestException('Part or color not found in catalog');
