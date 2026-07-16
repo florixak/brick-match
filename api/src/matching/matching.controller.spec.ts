@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { MatchingController } from './matching.controller';
 import { MatchingService } from './matching.service';
-import { GetMatchesApiResponseSchema } from '@lego-matcher/shared-types';
 
 describe('MatchingController', () => {
   let controller: MatchingController;
