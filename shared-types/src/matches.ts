@@ -3,8 +3,9 @@ import { ApiSuccessResponseSchema } from "./api-response";
 import { MatchResultSchema } from "./domain";
 
 export const GetMatchesQuerySchema = z.object({
-  /** Cap on how many results to return, sorted by matchPercentage descending. */
   limit: z.coerce.number().int().positive().max(200).optional(),
+  /** Fraction between 0 and 1 */
+  minMatchPercentage: z.coerce.number().min(0).max(1).optional(),
 });
 export type GetMatchesQuery = z.infer<typeof GetMatchesQuerySchema>;
 

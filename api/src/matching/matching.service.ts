@@ -11,7 +11,7 @@ import { DatabaseService } from 'src/database/database.service';
 import { userOwnedParts } from 'src/database/schema';
 
 const DEFAULT_LIMIT = 50;
-const MIN_MATCH_PERCENTAGE = 0;
+const DEFAULT_MIN_MATCH_PERCENTAGE = 0;
 
 type RankedSetRow = Omit<MatchResult, 'missingParts'>;
 
@@ -24,13 +24,19 @@ export class MatchingService {
     query: GetMatchesQuery = {},
   ): Promise<GetMatchesApiResponse> {
     const limit = query.limit ?? DEFAULT_LIMIT;
+    const minMatchPercentage =
+      query.minMatchPercentage ?? DEFAULT_MIN_MATCH_PERCENTAGE;
 
     const ownedParts = await this.loadOwnedParts(userId);
     if (ownedParts.length === 0) {
       return { data: { results: [] }, meta: { count: 0, limit } };
     }
 
-    const rankedSets = await this.rankSetsByMatch(userId, limit);
+    const rankedSets = await this.rankSetsByMatch(
+      userId,
+      limit,
+      minMatchPercentage,
+    );
     if (rankedSets.length === 0) {
       return { data: { results: [] }, meta: { count: 0, limit } };
     }
@@ -67,6 +73,7 @@ export class MatchingService {
   private async rankSetsByMatch(
     userId: string,
     limit: number,
+    minMatchPercentage: number,
   ): Promise<RankedSetRow[]> {
     const result = await this.databaseService.db.execute<{
       set_num: string;
@@ -113,7 +120,7 @@ export class MatchingService {
         AND (
           SUM(LEAST(COALESCE(o.quantity, 0), r.required_qty))::float
           / NULLIF(SUM(r.required_qty), 0)
-        ) >= ${MIN_MATCH_PERCENTAGE}
+        ) >= ${minMatchPercentage}
       ORDER BY match_percentage DESC
       LIMIT ${limit}
     `);
