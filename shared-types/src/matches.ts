@@ -4,7 +4,7 @@ import { MatchResultSchema } from "./domain";
 
 export const GetMatchesQuerySchema = z.object({
   /** Cap on how many results to return, sorted by matchPercentage descending. */
-  limit: z.coerce.number().int().positive().optional(),
+  limit: z.coerce.number().int().positive().max(200).optional(),
 });
 export type GetMatchesQuery = z.infer<typeof GetMatchesQuerySchema>;
 
