@@ -62,7 +62,7 @@ export type SearchPartsApiResponse = z.infer<
 >;
 
 export const ColorSchema = z.object({
-  colorId: z.number().int().positive(),
+  colorId: z.number().int(),
   name: z.string(),
   rgb: z.string().length(6),
   isTrans: z.boolean(),
