@@ -194,18 +194,18 @@ export class ImportService {
     await this.importParts();
     await this.importSets();
     const setInventoryMap = await this.buildSetInventoryMap();
-    await this.importInventoryParts(setInventoryMap);
     const referencedFigNums =
       await this.collectReferencedFigNums(setInventoryMap);
     const minifigInventoryMap =
       await this.buildMinifigInventoryMap(referencedFigNums);
     const minifigComponents =
       await this.preloadMinifigComponents(minifigInventoryMap);
-    await this.importExpandedMinifigParts(
+    const minifigParts = await this.accumulateAllMinifigParts(
       setInventoryMap,
       minifigInventoryMap,
       minifigComponents,
     );
+    await this.importInventoryParts(setInventoryMap, minifigParts);
     this.logger.log('Catalog import complete.');
   }
 
@@ -407,6 +407,7 @@ export class ImportService {
 
   private async importInventoryParts(
     inventoryMap: Map<number, string>,
+    minifigParts: Map<string, ExpandedPart> = new Map(),
   ): Promise<void> {
     this.logger.log('Importing inventory_parts (streaming)...');
     let imported = 0;
@@ -443,12 +444,22 @@ export class ImportService {
             skippedNonLatest++;
             continue;
           }
+          const isSpare = bool(r.is_spare);
+          const partNum = r.part_num;
+          const colorId = parseInt(r.color_id);
+          const directQty = parseInt(r.quantity);
+
+          // Merge minifig qty into direct qty at write time, then mark as handled.
+          const key = `${setNum}:${partNum}:${colorId}:${isSpare}`;
+          const minifigQty = minifigParts.get(key)?.quantity ?? 0;
+          minifigParts.delete(key);
+
           rows.push({
             setNum,
-            partNum: r.part_num,
-            colorId: parseInt(r.color_id),
-            quantity: parseInt(r.quantity),
-            isSpare: bool(r.is_spare),
+            partNum,
+            colorId,
+            quantity: directQty + minifigQty,
+            isSpare,
           });
         }
 
@@ -474,6 +485,37 @@ export class ImportService {
         }
       },
     );
+
+    // Remaining entries in minifigParts are minifig-only parts that never
+    // appeared in inventory_parts.csv — write them now with a replace upsert.
+    if (minifigParts.size > 0) {
+      const minifigOnlyRows = [...minifigParts.values()].map((r) => ({
+        setNum: r.setNum,
+        partNum: r.partNum,
+        colorId: r.colorId,
+        quantity: r.quantity,
+        isSpare: r.isSpare,
+      }));
+
+      for (let i = 0; i < minifigOnlyRows.length; i += BATCH_SIZE) {
+        const batch = minifigOnlyRows.slice(i, i + BATCH_SIZE);
+        try {
+          await upsertBatch(batch);
+          imported += batch.length;
+        } catch (batchErr) {
+          if (!isFkViolation(batchErr)) throw batchErr;
+          for (const row of batch) {
+            try {
+              await upsertBatch([row]);
+              imported++;
+            } catch (rowErr) {
+              if (!isFkViolation(rowErr)) throw rowErr;
+              skippedFkViolation++;
+            }
+          }
+        }
+      }
+    }
 
     this.logger.log(
       `  → ${imported} rows imported` +
@@ -566,45 +608,29 @@ export class ImportService {
   }
 
   /**
-   * Reads inventory_minifigs.csv, expands each minifig into its component
-   * parts scaled by the minifig quantity, and upserts into inventory_parts
-   * using additive ON CONFLICT (quantity += excluded.quantity) so that sets
-   * which share a part both directly and via a minifig accumulate correctly.
+   * Streams inventory_minifigs.csv and accumulates all expanded minifig
+   * component parts into a single in-memory map keyed by
+   * "${setNum}:${partNum}:${colorId}:${isSpare}". Quantities from multiple
+   * minifigs contributing the same part to the same set are summed here so
+   * the caller can merge with direct parts and write a single replace upsert.
    */
-  private async importExpandedMinifigParts(
+  private async accumulateAllMinifigParts(
     setInventoryMap: Map<number, string>,
     minifigInventoryMap: Map<string, number>,
     minifigComponents: Map<number, ComponentPart[]>,
-  ): Promise<void> {
-    this.logger.log('Importing expanded minifig parts...');
-    let expanded = 0;
+  ): Promise<Map<string, ExpandedPart>> {
+    this.logger.log(
+      'Accumulating minifig parts from inventory_minifigs.csv...',
+    );
     let totalSkippedUnknownFig = 0;
     let totalSkippedNoComponents = 0;
-    let skippedFkViolation = 0;
 
-    const upsertBatch = async (
-      rows: (typeof inventoryParts.$inferInsert)[],
-    ) => {
-      await this.db
-        .insert(inventoryParts)
-        .values(rows)
-        .onConflictDoUpdate({
-          target: [
-            inventoryParts.setNum,
-            inventoryParts.partNum,
-            inventoryParts.colorId,
-            inventoryParts.isSpare,
-          ],
-          set: {
-            quantity: sql`${inventoryParts.quantity} + excluded.quantity`,
-          },
-        });
-    };
+    const accumulated = new Map<string, ExpandedPart>();
 
     await processBatched(
       readCsv('inventory_minifigs.csv'),
       BATCH_SIZE,
-      async (batch) => {
+      (batch): Promise<void> => {
         const {
           expanded: expandedRows,
           skippedUnknownFig,
@@ -623,48 +649,30 @@ export class ImportService {
         totalSkippedUnknownFig += skippedUnknownFig;
         totalSkippedNoComponents += skippedNoComponents;
 
-        if (expandedRows.length === 0) return;
-
-        const rows: (typeof inventoryParts.$inferInsert)[] = expandedRows.map(
-          (r) => ({
-            setNum: r.setNum,
-            partNum: r.partNum,
-            colorId: r.colorId,
-            quantity: r.quantity,
-            isSpare: r.isSpare,
-          }),
-        );
-
-        try {
-          await upsertBatch(rows);
-          expanded += rows.length;
-        } catch (batchErr) {
-          if (!isFkViolation(batchErr)) throw batchErr;
-
-          for (const row of rows) {
-            try {
-              await upsertBatch([row]);
-              expanded++;
-            } catch (rowErr) {
-              if (!isFkViolation(rowErr)) throw rowErr;
-              skippedFkViolation++;
-            }
+        for (const row of expandedRows) {
+          const key = `${row.setNum}:${row.partNum}:${row.colorId}:${row.isSpare}`;
+          const existing = accumulated.get(key);
+          if (existing) {
+            existing.quantity += row.quantity;
+          } else {
+            accumulated.set(key, { ...row });
           }
         }
+
+        return Promise.resolve();
       },
     );
 
     this.logger.log(
-      `  → ${expanded} rows upserted` +
+      `  → ${accumulated.size} unique minifig part keys accumulated` +
         (totalSkippedUnknownFig
           ? `, ${totalSkippedUnknownFig} skipped (unknown fig inventory)`
           : '') +
         (totalSkippedNoComponents
           ? `, ${totalSkippedNoComponents} skipped (no components found)`
-          : '') +
-        (skippedFkViolation
-          ? `, ${skippedFkViolation} skipped (FK violation — unknown color/part)`
           : ''),
     );
+
+    return accumulated;
   }
 }
