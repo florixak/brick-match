@@ -118,7 +118,7 @@ export class MatchingService {
       LEFT JOIN owned o
         ON o.part_num = r.part_num AND o.color_id = r.color_id
       INNER JOIN sets s ON s.set_num = r.set_num
-      WHERE (${themeIdFilter} IS NULL OR s.theme_id = ${themeIdFilter})
+      ${themeIdFilter ? sql`WHERE s.theme_id = ${themeIdFilter}` : sql``}
       GROUP BY r.set_num, s.name
       HAVING
         SUM(LEAST(COALESCE(o.quantity, 0), r.required_qty)) > 0
