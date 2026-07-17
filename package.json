@@ -1,5 +1,14 @@
 {
   "name": "lego-matcher",
   "private": true,
-  "version": "0.0.0"
+  "version": "0.0.0",
+  "packageManager": "pnpm@11.5.1",
+  "scripts": {
+    "dev:web": "pnpm --filter @lego-matcher/web dev",
+    "dev:api": "pnpm --filter api start:dev",
+    "build": "pnpm --filter @lego-matcher/shared-types build && pnpm -r --filter=!@lego-matcher/shared-types build",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test"
+  }
 }
+
