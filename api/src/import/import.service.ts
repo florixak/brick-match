@@ -517,6 +517,7 @@ export class ImportService {
     this.logger.log('Building minifig inventory map from inventories.csv...');
     const rows: Array<{ set_num: string; id: string; version: string }> = [];
     for await (const r of readCsv('inventories.csv')) {
+      if (!referencedFigNums.has(r.set_num)) continue;
       rows.push({ set_num: r.set_num, id: r.id, version: r.version });
     }
     const result = buildMinifigInventoryMapFromRows(rows, referencedFigNums);
