@@ -171,7 +171,7 @@ For the displayed (top N) results, compute the difference `required_quantity - o
 - `themes.csv` → `themes`
 - `parts.csv` → `parts`
 - `sets.csv` → `sets`
-- `inventories.csv` → **not stored as its own table** — read twice during import: once to resolve set `inventory_id → set_num`, and once to resolve minifig `inventory_id → fig_num`
+- `inventories.csv` → **not stored as its own table** — read twice during import: once to resolve set `inventory_id → set_num` (latest version per set), and once to resolve minifig `fig_num → latest inventory_id`
 - `inventory_parts.csv` → `inventory_parts` (direct set parts on first pass; minifig component lookup on second pass)
 - `inventory_minifigs.csv` → **not stored as its own table** — used to expand minifig components into `inventory_parts` rows under the parent set
 
@@ -185,7 +185,7 @@ For the displayed (top N) results, compute the difference `required_quantity - o
 
 FK dependencies force a specific order — a table can't be imported before the tables it references exist:
 
-```
+```text
 part_categories → colors → themes → parts → sets
   → inventories (set pass, in-memory only) → inventory_parts (direct parts)
   → inventory_minifigs (fig_num collection) → inventories (minifig pass, in-memory only)
@@ -203,12 +203,15 @@ The import must therefore:
 
 ### Minifig component expansion
 
-After regular parts are imported, minifig components are expanded and merged into `inventory_parts` under the parent set's `set_num`. The process:
+Before regular parts are written, all minifig component quantities are accumulated in memory, then merged at write time into a single replace upsert. The process:
 
 1. Scan `inventory_minifigs.csv` to collect all `fig_num`s referenced by imported sets.
 2. Re-read `inventories.csv` to resolve each `fig_num` to its latest minifig `inventory_id` (same MAX(version)/MAX(id) rule).
 3. Re-read `inventory_parts.csv` to preload component parts for those minifig inventory IDs.
-4. Re-read `inventory_minifigs.csv`, expand each `(fig_num, qty)` row by multiplying minifig qty × component qty, and upsert into `inventory_parts` with `ON CONFLICT DO UPDATE SET quantity = quantity + excluded.quantity` — additive because a set may already have a direct part that also appears as a minifig component.
+4. Stream `inventory_minifigs.csv` again (`accumulateAllMinifigParts`): expand each `(fig_num, qty)` by multiplying minifig qty × component qty, and merge cross-batch results into a single in-memory `Map<key, ExpandedPart>` where `key = "${setNum}:${partNum}:${colorId}:${isSpare}"`.
+5. Stream `inventory_parts.csv` (`importInventoryParts`): for each direct row, look up the same key in the minifig map, add the minifig qty to the direct qty, delete the key from the map, and write a single replace upsert (`quantity = excluded.quantity`). After the stream, write remaining map entries (minifig-only parts) with the same replace upsert.
+
+Combining direct and minifig quantities in memory before a single replace upsert ensures idempotency: every re-import overwrites rows with the same absolute totals.
 
 The result: `inventory_parts` contains all required pieces for a set (direct parts + minifig components combined). Matching and `addSet` require no code changes.
 
