@@ -23,6 +23,7 @@ export class MatchingController {
   @ApiOperation({ summary: 'Find buildable sets ranked by match percentage' })
   @ApiQuery({ name: 'limit', required: false, type: Number })
   @ApiQuery({ name: 'minMatchPercentage', required: false, type: Number })
+  @ApiQuery({ name: 'themeId', required: false, type: Number })
   async findMatches(
     @CurrentUser('sub') userId: string,
     @Query(new ZodValidationPipe<GetMatchesQuery>(GetMatchesQuerySchema))
