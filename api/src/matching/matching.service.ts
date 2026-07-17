@@ -36,6 +36,7 @@ export class MatchingService {
       userId,
       limit,
       minMatchPercentage,
+      query.themeId,
     );
     if (rankedSets.length === 0) {
       return { data: { results: [] }, meta: { count: 0, limit } };
@@ -74,7 +75,10 @@ export class MatchingService {
     userId: string,
     limit: number,
     minMatchPercentage: number,
+    themeId?: number,
   ): Promise<RankedSetRow[]> {
+    const themeIdFilter = themeId ?? null;
+
     const result = await this.databaseService.db.execute<{
       set_num: string;
       set_name: string;
@@ -114,6 +118,7 @@ export class MatchingService {
       LEFT JOIN owned o
         ON o.part_num = r.part_num AND o.color_id = r.color_id
       INNER JOIN sets s ON s.set_num = r.set_num
+      WHERE (${themeIdFilter} IS NULL OR s.theme_id = ${themeIdFilter})
       GROUP BY r.set_num, s.name
       HAVING
         SUM(LEAST(COALESCE(o.quantity, 0), r.required_qty)) > 0
