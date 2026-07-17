@@ -11,7 +11,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest",
     "test:run": "vitest run",
-    "prepare": "husky"
+    "prepare": "cd .. && husky web/.husky"
   },
   "dependencies": {
     "@lego-matcher/shared-types": "workspace:*",

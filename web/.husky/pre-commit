@@ -1,1 +1,1 @@
-pnpm exec lint-staged
+pnpm --filter @lego-matcher/web exec lint-staged
