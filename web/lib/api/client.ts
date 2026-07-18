@@ -68,7 +68,7 @@ export async function apiFetch<T extends z.ZodType>(
   const response = await fetch(buildUrl(path, searchParams), {
     method,
     headers,
-    credentials: auth ? "include" : "same-origin",
+    credentials: "include",
     body: body === undefined ? undefined : JSON.stringify(body),
   })
 
