@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@lego-matcher/shared-types": "workspace:*",
+    "@tanstack/react-query": "^5.90.5",
     "@base-ui/react": "^1.6.0",
     "@t3-oss/env-nextjs": "^0.13.11",
     "class-variance-authority": "^0.7.1",
@@ -35,6 +36,7 @@
     "@commitlint/cli": "^21.2.1",
     "@commitlint/config-conventional": "^21.2.0",
     "@commitlint/types": "^21.2.0",
+    "@tanstack/react-query-devtools": "^5.90.2",
     "@tailwindcss/postcss": "^4",
     "@testing-library/react": "^16.3.2",
     "@types/jsdom": "^28.0.3",
