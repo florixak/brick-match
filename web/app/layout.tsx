@@ -1,28 +1,29 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import { Toaster } from "react-hot-toast";
-import "./globals.css";
-import Footer from "@/components/layout/footer";
-import Header from "@/components/layout/header";
-import { ThemeProvider } from "@/components/layout/theme-provider";
-import { createMetadata } from "@/lib/metadata";
+import type { Metadata } from "next"
+import { Geist, Geist_Mono } from "next/font/google"
+import { Toaster } from "react-hot-toast"
+import "./globals.css"
+import Footer from "@/components/layout/footer"
+import Header from "@/components/layout/header"
+import { ThemeProvider } from "@/components/layout/theme-provider"
+import { QueryProvider } from "@/components/providers/query-provider"
+import { createMetadata } from "@/lib/metadata"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
-});
+})
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
-});
+})
 
-export const metadata: Metadata = createMetadata();
+export const metadata: Metadata = createMetadata()
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
     <html
@@ -37,12 +38,14 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Header />
-          <main className="flex-1">{children}</main>
-          <Footer />
-          <Toaster position="bottom-right" />
+          <QueryProvider>
+            <Header />
+            <main className="flex-1">{children}</main>
+            <Footer />
+            <Toaster position="bottom-right" />
+          </QueryProvider>
         </ThemeProvider>
       </body>
     </html>
-  );
+  )
 }
