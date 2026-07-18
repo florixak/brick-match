@@ -16,6 +16,7 @@ export const envSchema = z.object({
     .int()
     .positive()
     .default(60 * 60 * 24),
+  JWT_COOKIE_NAME: z.string().min(1).default('access_token'),
 });
 
 export type EnvConfig = z.infer<typeof envSchema>;
