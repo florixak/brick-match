@@ -31,3 +31,6 @@ export type LoginApiResponse = z.infer<typeof LoginApiResponseSchema>;
 export const RegisterApiResponseSchema =
   ApiSuccessResponseSchema(AuthResponseSchema);
 export type RegisterApiResponse = z.infer<typeof RegisterApiResponseSchema>;
+
+export const MeApiResponseSchema = ApiSuccessResponseSchema(AuthResponseSchema);
+export type MeApiResponse = z.infer<typeof MeApiResponseSchema>;
