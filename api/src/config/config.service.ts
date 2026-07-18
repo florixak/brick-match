@@ -37,4 +37,8 @@ export class AppConfigService {
   get isProduction(): boolean {
     return this.nodeEnv === 'production';
   }
+
+  get jwtCookieName(): string {
+    return this.configService.get('JWT_COOKIE_NAME', { infer: true });
+  }
 }
