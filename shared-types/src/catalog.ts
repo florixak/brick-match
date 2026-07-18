@@ -79,3 +79,21 @@ export const ColorsApiResponseSchema = z.object({
   meta: CatalogListMetaSchema,
 });
 export type ColorsApiResponse = z.infer<typeof ColorsApiResponseSchema>;
+
+export const ThemeSchema = z.object({
+  id: z.number().int(),
+  name: z.string(),
+  parentId: z.number().int().nullable(),
+});
+export type Theme = z.infer<typeof ThemeSchema>;
+
+export const ThemesResponseSchema = z.object({
+  themes: z.array(ThemeSchema),
+});
+export type ThemesResponse = z.infer<typeof ThemesResponseSchema>;
+
+export const ThemesApiResponseSchema = z.object({
+  data: ThemesResponseSchema,
+  meta: CatalogListMetaSchema,
+});
+export type ThemesApiResponse = z.infer<typeof ThemesApiResponseSchema>;
