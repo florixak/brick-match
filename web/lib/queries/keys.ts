@@ -6,6 +6,10 @@ import type {
 } from "@lego-matcher/shared-types"
 
 export const queryKeys = {
+  auth: {
+    all: ["auth"] as const,
+    user: () => [...queryKeys.auth.all, "user"] as const,
+  },
   catalog: {
     all: ["catalog"] as const,
     sets: (query: SearchSetsQuery) =>

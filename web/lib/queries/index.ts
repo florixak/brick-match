@@ -1,3 +1,7 @@
+export * from "@/lib/queries/auth/login"
+export * from "@/lib/queries/auth/logout"
+export * from "@/lib/queries/auth/me"
+export * from "@/lib/queries/auth/register"
 export * from "@/lib/queries/catalog/colors"
 export * from "@/lib/queries/catalog/parts"
 export * from "@/lib/queries/catalog/sets"

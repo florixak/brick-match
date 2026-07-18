@@ -21,7 +21,6 @@ type ApiFetchOptions<T extends z.ZodType> = {
   method?: "GET" | "POST" | "DELETE"
   body?: unknown
   schema?: T
-  auth?: boolean
   searchParams?: Record<string, string | number | boolean | undefined>
 }
 
@@ -55,7 +54,7 @@ export async function apiFetch<T extends z.ZodType>(
   path: string,
   options: ApiFetchOptions<T> = {},
 ): Promise<z.infer<T>> {
-  const { method = "GET", body, schema, auth = false, searchParams } = options
+  const { method = "GET", body, schema, searchParams } = options
 
   const headers = new Headers({
     Accept: "application/json",
@@ -68,7 +67,7 @@ export async function apiFetch<T extends z.ZodType>(
   const response = await fetch(buildUrl(path, searchParams), {
     method,
     headers,
-    credentials: auth ? "include" : "same-origin",
+    credentials: "include",
     body: body === undefined ? undefined : JSON.stringify(body),
   })
 

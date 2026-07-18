@@ -1,4 +1,4 @@
-import { env } from "./env";
+import { env } from "./env"
 
 export const siteConfig = {
   name: "My App",
@@ -7,6 +7,12 @@ export const siteConfig = {
   links: {
     github: "https://github.com/florixak",
   },
-} as const;
+} as const
 
-export type SiteConfig = typeof siteConfig;
+export const authPaths = {
+  login: "/login",
+  register: "/register",
+  defaultAuthenticated: "/owned-parts",
+} as const
+
+export type SiteConfig = typeof siteConfig
