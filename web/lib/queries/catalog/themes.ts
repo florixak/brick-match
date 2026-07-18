@@ -22,6 +22,6 @@ export function catalogThemesQueryOptions() {
   })
 }
 
-export function useCatalogColors() {
+export function useCatalogThemes() {
   return useQuery(catalogThemesQueryOptions())
 }
