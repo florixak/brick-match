@@ -1,7 +1,6 @@
+import { AuthUser } from '@lego-matcher/shared-types';
+
 export interface AuthSession {
-  user: {
-    id: string;
-    email: string;
-  };
+  user: AuthUser;
   accessToken: string;
 }
