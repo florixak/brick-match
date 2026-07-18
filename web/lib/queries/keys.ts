@@ -13,6 +13,7 @@ export const queryKeys = {
     parts: (query: SearchPartsQuery) =>
       [...queryKeys.catalog.all, "parts", query] as const,
     colors: () => [...queryKeys.catalog.all, "colors"] as const,
+    themes: () => [...queryKeys.catalog.all, "themes"] as const,
   },
   ownedParts: {
     all: ["ownedParts"] as const,
