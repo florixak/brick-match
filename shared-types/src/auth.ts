@@ -13,8 +13,14 @@ export const LoginRequestSchema = z.object({
 });
 export type LoginRequest = z.infer<typeof LoginRequestSchema>;
 
+export const AuthUserSchema = z.object({
+  id: z.string().uuid(),
+  email: z.string().email(),
+});
+export type AuthUser = z.infer<typeof AuthUserSchema>;
+
 export const AuthResponseSchema = z.object({
-  accessToken: z.string(),
+  user: AuthUserSchema,
 });
 export type AuthResponse = z.infer<typeof AuthResponseSchema>;
 
