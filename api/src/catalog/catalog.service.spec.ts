@@ -204,4 +204,25 @@ describe('CatalogService', () => {
       expect(listChain.orderBy).toHaveBeenCalled();
     });
   });
+
+  describe('getThemes', () => {
+    it('should get themes', async () => {
+      const listChain = createListSelectChain([
+        {
+          id: 1,
+          name: 'Ninjago',
+        },
+      ]);
+      selectChain.select.mockImplementation(listChain.select);
+
+      const result = await service.getThemes();
+
+      expect(result.data.themes).toHaveLength(1);
+      expect(result.data.themes[0].id).toBe(1);
+      expect(result.data.themes[0].name).toBe('Ninjago');
+      expect(result.meta).toEqual({ count: 1 });
+      expect(listChain.select).toHaveBeenCalled();
+      expect(listChain.orderBy).toHaveBeenCalled();
+    });
+  });
 });
