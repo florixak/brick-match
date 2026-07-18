@@ -8,6 +8,10 @@ export default defineConfig({
     environment: "jsdom",
     globals: true,
     setupFiles: [],
+    env: {
+      NEXT_PUBLIC_SITE_URL: "http://localhost:3000",
+      NEXT_PUBLIC_API_URL: "http://localhost:3001",
+    },
     coverage: {
       provider: "v8",
       reporter: ["text", "lcov"],
