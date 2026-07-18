@@ -22,6 +22,6 @@ export function setAuthCookie(
 }
 
 export function clearAuthCookie(res: Response, config: AppConfigService): void {
-  const { ...options } = getAuthCookieOptions(config);
+  const { maxAge: _maxAge, ...options } = getAuthCookieOptions(config);
   res.clearCookie(config.jwtCookieName, options);
 }
