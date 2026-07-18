@@ -3,12 +3,22 @@ import {
   LoginApiResponseSchema,
   type LoginRequest,
   LoginRequestSchema,
+  MeApiResponse,
+  MeApiResponseSchema,
   RegisterApiResponse,
   RegisterApiResponseSchema,
   type RegisterRequest,
   RegisterRequestSchema,
 } from '@lego-matcher/shared-types';
-import { Body, Controller, HttpCode, Post, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Post,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ZodValidationPipe } from 'src/common/pipes/zod-validation.pipe';
 import { AuthService } from './auth.service';
@@ -16,6 +26,8 @@ import { AuthThrottle } from 'src/common/decorators/throttle.decorator';
 import type { Response } from 'express';
 import { AppConfigService } from 'src/config/config.service';
 import { clearAuthCookie, setAuthCookie } from './auth-cookie';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 
 @Controller({ path: 'auth', version: '1' })
 @ApiTags('Auth')
@@ -69,5 +81,16 @@ export class AuthController {
   @HttpCode(204)
   logout(@Res({ passthrough: true }) res: Response): void {
     clearAuthCookie(res, this.configService);
+  }
+
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Get the current user' })
+  async me(@CurrentUser('sub') userId: string): Promise<MeApiResponse> {
+    const user = await this.authService.getCurrentUser(userId);
+    return MeApiResponseSchema.parse({
+      data: { user },
+      meta: {},
+    });
   }
 }
