@@ -1,8 +1,4 @@
-import {
-  AuthResponse,
-  LoginRequest,
-  RegisterRequest,
-} from '@lego-matcher/shared-types';
+import { LoginRequest, RegisterRequest } from '@lego-matcher/shared-types';
 import {
   BadRequestException,
   Injectable,
@@ -15,6 +11,7 @@ import { eq } from 'drizzle-orm';
 import { DatabaseService } from 'src/database/database.service';
 import { isUniqueViolation } from 'src/database/pg-error';
 import { users } from 'src/database/schema';
+import { AuthSession } from './interfaces/auth-session.interface';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 
 // Precomputed argon2id hash used when no user exists, to equalize login timing.
@@ -28,7 +25,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async login({ email, password }: LoginRequest): Promise<AuthResponse> {
+  async login({ email, password }: LoginRequest): Promise<AuthSession> {
     const [user] = await this.databaseService.db
       .select()
       .from(users)
@@ -49,10 +46,13 @@ export class AuthService {
       email: user.email,
     };
     const accessToken = await this.jwtService.signAsync(payload);
-    return { accessToken };
+    return {
+      user: { id: user.id, email: user.email },
+      accessToken,
+    };
   }
 
-  async register(data: RegisterRequest): Promise<AuthResponse> {
+  async register(data: RegisterRequest): Promise<AuthSession> {
     const hashedPassword = await argon2.hash(data.password);
 
     let user;
@@ -80,6 +80,9 @@ export class AuthService {
       email: user.email,
     };
     const accessToken = await this.jwtService.signAsync(payload);
-    return { accessToken };
+    return {
+      user: { id: user.id, email: user.email },
+      accessToken,
+    };
   }
 }
