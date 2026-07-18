@@ -8,6 +8,7 @@ describe('CatalogController', () => {
     searchSets: jest.Mock;
     searchParts: jest.Mock;
     getColors: jest.Mock;
+    getThemes: jest.Mock;
   };
 
   beforeEach(async () => {
@@ -15,6 +16,7 @@ describe('CatalogController', () => {
       searchSets: jest.fn(),
       searchParts: jest.fn(),
       getColors: jest.fn(),
+      getThemes: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -107,6 +109,25 @@ describe('CatalogController', () => {
     const result = await controller.getColors();
 
     expect(catalogService.getColors).toHaveBeenCalledWith();
+    expect(result).toEqual(mockResponse);
+  });
+
+  it('should get themes', async () => {
+    const mockResponse = {
+      data: {
+        themes: [
+          {
+            id: 1,
+            name: 'Ninjago',
+            parentId: null,
+          },
+        ],
+      },
+      meta: { count: 1 },
+    };
+    catalogService.getThemes.mockResolvedValue(mockResponse);
+    const result = await controller.getThemes();
+    expect(catalogService.getThemes).toHaveBeenCalledWith();
     expect(result).toEqual(mockResponse);
   });
 });
