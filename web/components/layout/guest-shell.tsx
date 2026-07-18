@@ -19,7 +19,7 @@ const GuestShell = ({ children }: { children: React.ReactNode }) => {
   } = useCurrentUser()
 
   useEffect(() => {
-    if (!isPending && !isError && user !== null) {
+    if (!isPending && !isError && user != null) {
       router.replace(authPaths.defaultAuthenticated)
     }
   }, [isPending, isError, user, router])
@@ -35,7 +35,7 @@ const GuestShell = ({ children }: { children: React.ReactNode }) => {
       onRetry={() => void refetch()}
     >
       {(user) => {
-        if (user !== null) return null
+        if (user != null) return null
 
         return <>{children}</>
       }}
