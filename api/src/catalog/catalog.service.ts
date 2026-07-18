@@ -1,4 +1,5 @@
 import {
+  ThemesApiResponse,
   type ColorsApiResponse,
   type SearchPartsApiResponse,
   type SearchPartsQuery,
@@ -8,7 +9,7 @@ import {
 import { Injectable } from '@nestjs/common';
 import { asc, or, sql } from 'drizzle-orm';
 import { DatabaseService } from 'src/database/database.service';
-import { colors, parts, sets } from 'src/database/schema';
+import { colors, parts, sets, themes } from 'src/database/schema';
 
 @Injectable()
 export class CatalogService {
@@ -105,6 +106,24 @@ export class CatalogService {
 
     return {
       data: { colors: results },
+      meta: {
+        count: results.length,
+      },
+    };
+  }
+
+  async getThemes(): Promise<ThemesApiResponse> {
+    const results = await this.databaseService.db
+      .select({
+        id: themes.id,
+        name: themes.name,
+        parentId: themes.parentId,
+      })
+      .from(themes)
+      .orderBy(asc(themes.name));
+
+    return {
+      data: { themes: results },
       meta: {
         count: results.length,
       },

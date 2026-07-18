@@ -7,6 +7,8 @@ import {
   SearchSetsApiResponse,
   SearchSetsApiResponseSchema,
   SearchSetsQuerySchema,
+  ThemesApiResponse,
+  ThemesApiResponseSchema,
   type SearchPartsQuery,
   type SearchSetsQuery,
 } from '@lego-matcher/shared-types';
@@ -66,5 +68,12 @@ export class CatalogController {
   async getColors(): Promise<ColorsApiResponse> {
     const result = await this.catalogService.getColors();
     return ColorsApiResponseSchema.parse(result);
+  }
+
+  @Get('themes')
+  @ApiOperation({ summary: 'Get themes' })
+  async getThemes(): Promise<ThemesApiResponse> {
+    const result = await this.catalogService.getThemes();
+    return ThemesApiResponseSchema.parse(result);
   }
 }
