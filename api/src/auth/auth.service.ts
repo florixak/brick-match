@@ -1,4 +1,8 @@
-import { LoginRequest, RegisterRequest } from '@lego-matcher/shared-types';
+import {
+  AuthUser,
+  LoginRequest,
+  RegisterRequest,
+} from '@lego-matcher/shared-types';
 import {
   BadRequestException,
   Injectable,
@@ -84,5 +88,19 @@ export class AuthService {
       user: { id: user.id, email: user.email },
       accessToken,
     };
+  }
+
+  async getCurrentUser(userId: string): Promise<AuthUser> {
+    const [user] = await this.databaseService.db
+      .select({ id: users.id, email: users.email })
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
+
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+
+    return user;
   }
 }
