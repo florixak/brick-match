@@ -1,5 +1,3 @@
-"use client"
-
 import SearchField from "./search-field"
 import SearchModeToggle from "./search-mode-toggle"
 import SearchTips from "./search-tips"
