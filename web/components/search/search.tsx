@@ -6,37 +6,20 @@ import { ButtonGroup } from "@/components/ui/button-group"
 import { Input } from "@/components/ui/input"
 import { searchOptions } from "@/constants"
 import { cn } from "@/lib/utils"
+import SearchTips from "./search-tips"
 
-const searchSurfaceClassName =
+export const searchSurfaceClassName =
   "!border-border !bg-card dark:!border-input dark:!bg-input/30"
 
 const Search = () => {
   // later will be fetched from the database
   const tips = [
-    {
-      label: "Ninjago",
-      color: "bg-red-600",
-    },
-    {
-      label: "Star Wars",
-      color: "bg-black",
-    },
-    {
-      label: "City",
-      color: "bg-blue-600",
-    },
-    {
-      label: "Ideas",
-      color: "bg-indigo-600",
-    },
-    {
-      label: "Power Miners",
-      color: "bg-green-600",
-    },
-    {
-      label: "Bionicle",
-      color: "bg-yellow-600",
-    },
+    { id: 1, name: "Ninjago", parentId: null },
+    { id: 2, name: "Star Wars", parentId: null },
+    { id: 3, name: "City", parentId: null },
+    { id: 4, name: "Ideas", parentId: null },
+    { id: 5, name: "Power Miners", parentId: null },
+    { id: 6, name: "Bionicle", parentId: null },
   ]
 
   return (
@@ -68,21 +51,7 @@ const Search = () => {
         />
       </div>
 
-      <div className="flex gap-2 w-full max-w-lg flex-wrap justify-center">
-        {tips.map((tip) => (
-          <Button
-            key={tip.label}
-            variant="outline"
-            className={cn(
-              "justify-start shadow-sm shrink-0",
-              searchSurfaceClassName,
-            )}
-          >
-            <div className={`${tip.color} rounded-full size-3`} />
-            <span>{tip.label}</span>
-          </Button>
-        ))}
-      </div>
+      <SearchTips tips={tips} />
     </section>
   )
 }
