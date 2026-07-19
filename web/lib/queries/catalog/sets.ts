@@ -19,17 +19,23 @@ export async function fetchCatalogSets(
   })
 }
 
-export function catalogSetsQueryOptions(query: SearchSetsQuery) {
+export function catalogSetsQueryOptions(
+  query: SearchSetsQuery,
+  enabled: boolean = true,
+) {
   const search = query.search?.trim() ?? ""
 
   return queryOptions({
     queryKey: queryKeys.catalog.sets(query),
     queryFn: () => fetchCatalogSets(query),
     staleTime: SEARCH_STALE_TIME,
-    enabled: search.length >= MIN_SEARCH_LENGTH,
+    enabled: enabled && search.length >= MIN_SEARCH_LENGTH,
   })
 }
 
-export function useCatalogSets(query: SearchSetsQuery) {
-  return useQuery(catalogSetsQueryOptions(query))
+export function useCatalogSets(
+  query: SearchSetsQuery,
+  enabled: boolean = true,
+) {
+  return useQuery(catalogSetsQueryOptions(query, enabled))
 }

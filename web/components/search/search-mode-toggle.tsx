@@ -1,3 +1,5 @@
+"use client"
+
 import { searchOptions } from "@/constants"
 import { cn } from "@/lib/utils"
 import { Button } from "../ui/button"

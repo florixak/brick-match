@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { JetBrains_Mono, Nunito } from "next/font/google"
 import { Toaster } from "react-hot-toast"
 import "./globals.css"
+import { NuqsAdapter } from "nuqs/adapters/next"
 import Footer from "@/components/layout/footer"
 import Header from "@/components/layout/header"
 import MobileNavigation from "@/components/layout/mobile-navigation"
@@ -49,13 +50,15 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <QueryProvider>
-            <Header />
-            <main className="flex-1 py-16 md:pb-0 overflow-x-hidden">
-              {children}
-            </main>
-            <Footer />
-            <MobileNavigation />
-            <Toaster position="bottom-right" />
+            <NuqsAdapter>
+              <Header />
+              <main className="flex-1 py-16 md:pb-0 overflow-x-hidden">
+                {children}
+              </main>
+              <Footer />
+              <MobileNavigation />
+              <Toaster position="bottom-right" />
+            </NuqsAdapter>
           </QueryProvider>
         </ThemeProvider>
       </body>

@@ -50,6 +50,8 @@ export const MOBILE_NAV_LINKS: NavLink[] = [
   },
 ]
 
+export const SEARCH_DEBOUNCE_MS = 500
+
 export const searchOptions = [
   {
     label: "Sets",
