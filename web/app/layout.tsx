@@ -1,21 +1,27 @@
 import type { Metadata } from "next"
-import { Geist, Geist_Mono } from "next/font/google"
+import { Geist, JetBrains_Mono, Nunito } from "next/font/google"
 import { Toaster } from "react-hot-toast"
 import "./globals.css"
 import Footer from "@/components/layout/footer"
 import Header from "@/components/layout/header"
+import MobileNavigation from "@/components/layout/mobile-navigation"
 import { ThemeProvider } from "@/components/layout/theme-provider"
 import { QueryProvider } from "@/components/providers/query-provider"
 import { createMetadata } from "@/lib/metadata"
+import { cn } from "@/lib/utils"
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" })
+
+const nunito = Nunito({
+  variable: "--font-nunito",
   subsets: ["latin"],
+  weight: ["400", "600", "700", "800", "900"],
 })
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains-mono",
   subsets: ["latin"],
+  weight: ["400", "700"],
 })
 
 export const metadata: Metadata = createMetadata()
@@ -29,7 +35,14 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={cn(
+        "h-full",
+        "antialiased",
+        nunito.variable,
+        jetbrainsMono.variable,
+        "font-sans",
+        geist.variable,
+      )}
     >
       <body className="flex min-h-full flex-col">
         <ThemeProvider
@@ -40,8 +53,11 @@ export default function RootLayout({
         >
           <QueryProvider>
             <Header />
-            <main className="flex-1">{children}</main>
+            <main className="flex-1 pb-16 md:pb-0 overflow-x-hidden">
+              {children}
+            </main>
             <Footer />
+            <MobileNavigation />
             <Toaster position="bottom-right" />
           </QueryProvider>
         </ThemeProvider>
