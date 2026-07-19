@@ -2,6 +2,7 @@ import {
   BoxIcon,
   HomeIcon,
   type LucideIcon,
+  PackageIcon,
   PuzzleIcon,
   SearchIcon,
   UserIcon,
@@ -46,5 +47,18 @@ export const MOBILE_NAV_LINKS: NavLink[] = [
       pathname: "/me",
     },
     icon: UserIcon,
+  },
+]
+
+export const searchOptions = [
+  {
+    label: "Sets",
+    value: "sets",
+    icon: PackageIcon,
+  },
+  {
+    label: "Parts",
+    value: "parts",
+    icon: PuzzleIcon,
   },
 ]

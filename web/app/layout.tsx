@@ -50,7 +50,7 @@ export default function RootLayout({
         >
           <QueryProvider>
             <Header />
-            <main className="flex-1 pb-16 md:pb-0 overflow-x-hidden">
+            <main className="flex-1 py-16 md:pb-0 overflow-x-hidden">
               {children}
             </main>
             <Footer />
