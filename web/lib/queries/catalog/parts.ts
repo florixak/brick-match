@@ -19,17 +19,23 @@ export async function fetchCatalogParts(
   })
 }
 
-export function catalogPartsQueryOptions(query: SearchPartsQuery) {
+export function catalogPartsQueryOptions(
+  query: SearchPartsQuery,
+  enabled: boolean = true,
+) {
   const search = query.search?.trim() ?? ""
 
   return queryOptions({
     queryKey: queryKeys.catalog.parts(query),
     queryFn: () => fetchCatalogParts(query),
     staleTime: SEARCH_STALE_TIME,
-    enabled: search.length >= MIN_SEARCH_LENGTH,
+    enabled: enabled && search.length >= MIN_SEARCH_LENGTH,
   })
 }
 
-export function useCatalogParts(query: SearchPartsQuery) {
-  return useQuery(catalogPartsQueryOptions(query))
+export function useCatalogParts(
+  query: SearchPartsQuery,
+  enabled: boolean = true,
+) {
+  return useQuery(catalogPartsQueryOptions(query, enabled))
 }
