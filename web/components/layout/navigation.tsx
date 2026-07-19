@@ -18,7 +18,7 @@ export default function Navigation() {
         return (
           <Button
             key={link.href.pathname}
-            variant="ghost"
+            variant="header"
             nativeButton={false}
             render={
               <Link
@@ -26,10 +26,7 @@ export default function Navigation() {
                 aria-current={isActive ? "page" : undefined}
               />
             }
-            className={cn(
-              "text-primary-foreground hover:bg-primary-foreground/15 hover:text-primary-foreground",
-              isActive && "bg-primary-foreground/15",
-            )}
+            className={cn(isActive && "bg-primary-foreground/15")}
           >
             <Icon />
             {link.label}

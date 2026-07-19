@@ -6,7 +6,7 @@ export default function AuthCTA() {
   return (
     <div className="hidden items-center gap-2 md:flex">
       <Button
-        variant="ghost"
+        variant="header"
         nativeButton={false}
         render={<Link href="/login" />}
       >

@@ -14,7 +14,9 @@ const buttonVariants = cva(
         secondary:
           "bg-accent text-accent-foreground hover:bg-[color-mix(in_oklch,var(--accent),var(--foreground)_5%)] aria-expanded:bg-accent aria-expanded:text-accent-foreground",
         ghost:
-          "hover:bg-white/10 text-primary-foreground aria-expanded:bg-white/15 aria-expanded:text-primary-foreground dark:hover:bg-white/10",
+          "hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50",
+        header:
+          "text-primary-foreground hover:bg-primary-foreground/15 hover:text-primary-foreground aria-expanded:bg-primary-foreground/15 aria-expanded:text-primary-foreground",
         destructive:
           "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
         link: "text-primary underline-offset-4 hover:underline",
