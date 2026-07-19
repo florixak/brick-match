@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { Geist, JetBrains_Mono, Nunito } from "next/font/google"
+import { JetBrains_Mono, Nunito } from "next/font/google"
 import { Toaster } from "react-hot-toast"
 import "./globals.css"
 import Footer from "@/components/layout/footer"
@@ -10,16 +10,14 @@ import { QueryProvider } from "@/components/providers/query-provider"
 import { createMetadata } from "@/lib/metadata"
 import { cn } from "@/lib/utils"
 
-const geist = Geist({ subsets: ["latin"], variable: "--font-sans" })
-
 const nunito = Nunito({
-  variable: "--font-nunito",
+  variable: "--font-sans",
   subsets: ["latin"],
   weight: ["400", "600", "700", "800", "900"],
 })
 
 const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains-mono",
+  variable: "--font-mono",
   subsets: ["latin"],
   weight: ["400", "700"],
 })
@@ -41,7 +39,6 @@ export default function RootLayout({
         nunito.variable,
         jetbrainsMono.variable,
         "font-sans",
-        geist.variable,
       )}
     >
       <body className="flex min-h-full flex-col">
