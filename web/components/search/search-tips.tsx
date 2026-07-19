@@ -1,13 +1,21 @@
+"use client"
+
 import type { Theme } from "@lego-matcher/shared-types"
 import { cn, getThemeDotClassName } from "@/lib/utils"
 import { Button } from "../ui/button"
 import { searchSurfaceClassName } from "./search"
 
-type SearchTipsProps = {
-  tips: Theme[]
-}
+const SearchTips = () => {
+  // later will be fetched from the database
+  const tips: Theme[] = [
+    { id: 1, name: "Ninjago", parentId: null },
+    { id: 2, name: "Star Wars", parentId: null },
+    { id: 3, name: "City", parentId: null },
+    { id: 4, name: "Ideas", parentId: null },
+    { id: 5, name: "Power Miners", parentId: null },
+    { id: 6, name: "Bionicle", parentId: null },
+  ]
 
-const SearchTips = ({ tips }: SearchTipsProps) => {
   return (
     <div className="flex gap-2 w-full max-w-lg flex-wrap justify-center">
       {tips.map((tip) => {
