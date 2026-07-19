@@ -10,7 +10,6 @@ import SearchResults from "./search-results"
 const SearchField = () => {
   const [search, setSearch] = useQueryState("search", {
     defaultValue: "",
-    shallow: false,
     limitUrlUpdates: debounce(SEARCH_DEBOUNCE_MS),
   })
 
