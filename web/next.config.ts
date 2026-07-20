@@ -3,7 +3,13 @@ import type { NextConfig } from "next"
 const nextConfig: NextConfig = {
   typedRoutes: true,
   images: {
-    remotePatterns: [],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "www.lego.com",
+        pathname: "/cdn/product-assets/**",
+      },
+    ],
   },
 }
 
