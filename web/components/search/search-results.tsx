@@ -13,20 +13,9 @@ import { Button } from "@/components/ui/button"
 import { SEARCH_DEBOUNCE_MS } from "@/constants"
 import { useDebouncedValue } from "@/hooks/use-debounced-value"
 import { useCatalogParts, useCatalogSets } from "@/lib/queries"
-import {
-  formatSetNumber,
-  getFirstTwoLetters,
-  getThemeDotClassName,
-} from "@/lib/utils"
+import { formatSetNumber } from "@/lib/utils"
 import PartDialog from "../dialogs/part-dialog"
 import SetDialog from "../dialogs/set-dialog"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "../ui/dialog"
 import SetAvatar from "./set-avatar"
 
 const MIN_SEARCH_LENGTH = 2
@@ -163,7 +152,11 @@ const SearchResults = () => {
                   onClick={() => setSelectedSet(set)}
                   className="w-full flex flex-row items-center justify-start px-0 py-6 gap-4"
                 >
-                  <SetAvatar themeId={set.themeId} themeName={set.themeName} />
+                  <SetAvatar
+                    themeId={set.themeId}
+                    themeName={set.themeName}
+                    setNum={set.setNum}
+                  />
                   <div className="flex flex-col items-start justify-center">
                     <span className="block text-sm">{set.name}</span>
                     <span className="text-muted-foreground text-xs">
