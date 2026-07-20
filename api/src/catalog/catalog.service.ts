@@ -7,7 +7,7 @@ import {
   type SearchSetsQuery,
 } from '@lego-matcher/shared-types';
 import { Injectable } from '@nestjs/common';
-import { asc, or, sql } from 'drizzle-orm';
+import { asc, eq, or, sql } from 'drizzle-orm';
 import { DatabaseService } from 'src/database/database.service';
 import { colors, parts, sets, themes } from 'src/database/schema';
 
@@ -35,8 +35,11 @@ export class CatalogService {
         name: sets.name,
         year: sets.year,
         numParts: sets.numParts,
+        themeId: sets.themeId,
+        themeName: themes.name,
       })
       .from(sets)
+      .innerJoin(themes, eq(sets.themeId, themes.id))
       .where(
         or(
           sql`lower(${sets.name}) LIKE ${term + '%'}`,
