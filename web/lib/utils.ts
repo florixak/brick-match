@@ -34,6 +34,34 @@ export function getFirstTwoLetters(str: string) {
   return str.slice(0, 2).toUpperCase()
 }
 
-export function formatSetNumber(setNum: string) {
+export function formatSetNumber(
+  setNum: string,
+  includeHashtag: boolean = true,
+) {
+  return (includeHashtag ? "#" : "") + setNum.replace(/-1$/, "")
+}
+
+const SET_IMAGE_CDN_BASE =
+  "https://www.lego.com/cdn/product-assets/product.img.pri"
+const SET_IMAGE_QUERY =
+  "format=webply&fit=bounds&quality=60&width=500&height=500&dpr=2"
+
+// Strip Rebrickable variant suffix (e.g. 9441-1 → 9441) for LEGO.com asset paths.
+export function getSetImageBaseNumber(setNum: string) {
   return setNum.replace(/-1$/, "")
+}
+
+function buildSetImageUrl(baseNumber: string, suffix: "prod" | "Prod") {
+  return `${SET_IMAGE_CDN_BASE}/${baseNumber}_${suffix}.jpg?${SET_IMAGE_QUERY}`
+}
+
+// LEGO CDN filenames use inconsistent `_prod` vs `_Prod` casing per set.
+export function getSetImageUrlCandidates(setNum: string) {
+  const base = getSetImageBaseNumber(setNum)
+  return [buildSetImageUrl(base, "prod"), buildSetImageUrl(base, "Prod")]
+}
+
+// Primary URL (lowercase `_prod`); use with onError → candidates[1].
+export function getSetImageUrl(setNum: string) {
+  return getSetImageUrlCandidates(setNum)[0]
 }

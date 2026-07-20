@@ -53,6 +53,7 @@ const SetDialog = ({ selectedSet, setSelectedSet }: SetDialogProps) => {
               <SetAvatar
                 themeId={selectedSet.themeId}
                 themeName={selectedSet.themeName}
+                setNum={selectedSet.setNum}
                 size="lg"
               />
               <div className="flex min-w-0 flex-1 flex-col">
@@ -97,7 +98,7 @@ const SetDialog = ({ selectedSet, setSelectedSet }: SetDialogProps) => {
                 className="h-10 w-full sm:flex-1 sm:basis-0"
                 render={
                   <Link
-                    href={`https://www.lego.com/en-us/service/building-instructions/${encodeURIComponent(formatSetNumber(selectedSet.setNum))}`}
+                    href={`https://www.lego.com/en-us/service/building-instructions/${encodeURIComponent(formatSetNumber(selectedSet.setNum, false))}`}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
