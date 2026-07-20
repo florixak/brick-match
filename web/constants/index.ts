@@ -1,3 +1,4 @@
+import type { Theme } from "@lego-matcher/shared-types"
 import {
   BoxIcon,
   HomeIcon,
@@ -52,7 +53,9 @@ export const MOBILE_NAV_LINKS: NavLink[] = [
 
 export const SEARCH_DEBOUNCE_MS = 500
 
-export const searchOptions = [
+export const TIPS_COUNT = 6
+
+export const SEARCH_OPTIONS = [
   {
     label: "Sets",
     value: "sets",
@@ -62,5 +65,38 @@ export const searchOptions = [
     label: "Parts",
     value: "parts",
     icon: PuzzleIcon,
+  },
+]
+
+export const FALLBACK_TIPS: Theme[] = [
+  {
+    id: 1,
+    name: "Ninjago",
+    parentId: null,
+  },
+  {
+    id: 2,
+    name: "Star Wars",
+    parentId: null,
+  },
+  {
+    id: 3,
+    name: "City",
+    parentId: null,
+  },
+  {
+    id: 4,
+    name: "Ideas",
+    parentId: null,
+  },
+  {
+    id: 5,
+    name: "Power Miners",
+    parentId: null,
+  },
+  {
+    id: 6,
+    name: "Bionicle",
+    parentId: null,
   },
 ]
