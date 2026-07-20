@@ -45,6 +45,8 @@ describe('CatalogController', () => {
             name: "Kai's Blade Cycle",
             year: 2012,
             numParts: 188,
+            themeId: 435,
+            themeName: 'Ninjago',
           },
         ],
       },

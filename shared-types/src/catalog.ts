@@ -22,6 +22,8 @@ export const SetSummarySchema = z.object({
   name: z.string(),
   year: z.number().int(),
   numParts: z.number().int().nonnegative(),
+  themeId: z.number().int(),
+  themeName: z.string(),
 });
 export type SetSummary = z.infer<typeof SetSummarySchema>;
 
