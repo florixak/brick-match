@@ -52,7 +52,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
             backgroundColor: "#000",
             color: "#fff",
             border: "none",
-            borderRadius: "4px",
+            borderRadius: "0.75rem",
             padding: "8px 16px",
             fontSize: "0.875rem",
             fontWeight: 500,
