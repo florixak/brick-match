@@ -19,7 +19,7 @@ const themeColorClasses = [
 ] as const
 
 function getThemeColorIndex(themeId: number) {
-  return themeId % themeColorClasses.length
+  return Math.abs(themeId) % themeColorClasses.length
 }
 
 export function getThemeDotClassName(themeId: number) {
