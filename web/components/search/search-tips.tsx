@@ -1,40 +1,71 @@
 "use client"
 
-import type { Theme } from "@lego-matcher/shared-types"
+import type { Theme, ThemesApiResponse } from "@lego-matcher/shared-types"
+import { useMemo } from "react"
+import { AsyncQueryState } from "@/components/query/async-query-state"
+import { Button } from "@/components/ui/button"
+import { FALLBACK_TIPS, TIPS_COUNT } from "@/constants"
+import { useCatalogThemes } from "@/lib/queries"
 import { cn, getThemeDotClassName } from "@/lib/utils"
-import { Button } from "../ui/button"
+import SearchTipsSkeleton from "../skeletons/search-tips"
 import { searchSurfaceClassName } from "./search"
 
+const pickRandomTips = (themes: Theme[], count: number): Theme[] => {
+  return [...themes].sort(() => Math.random() - 0.5).slice(0, count)
+}
+
+const isEmptyThemes = (data: ThemesApiResponse) => {
+  return data.data.themes.length === 0
+}
+
+const SearchTipsList = ({ tips }: { tips: Theme[] }) => {
+  return (
+    <div className="flex w-full max-w-lg flex-wrap justify-center gap-2">
+      {tips.map((tip) => (
+        <Button
+          key={tip.id}
+          variant="outline"
+          className={cn(
+            "shrink-0 justify-start shadow-sm",
+            searchSurfaceClassName,
+          )}
+        >
+          <div
+            className={cn(getThemeDotClassName(tip.id), "size-3 rounded-full")}
+          />
+          <span>{tip.name}</span>
+        </Button>
+      ))}
+    </div>
+  )
+}
+
+const RandomThemeTips = ({ themes }: { themes: Theme[] }) => {
+  const tips = useMemo(() => pickRandomTips(themes, TIPS_COUNT), [themes])
+
+  return <SearchTipsList tips={tips} />
+}
+
 const SearchTips = () => {
-  // later will be fetched from the database
-  const tips: Theme[] = [
-    { id: 1, name: "Ninjago", parentId: null },
-    { id: 2, name: "Star Wars", parentId: null },
-    { id: 3, name: "City", parentId: null },
-    { id: 4, name: "Ideas", parentId: null },
-    { id: 5, name: "Power Miners", parentId: null },
-    { id: 6, name: "Bionicle", parentId: null },
-  ]
+  const query = useCatalogThemes()
 
   return (
-    <div className="flex gap-2 w-full max-w-lg flex-wrap justify-center">
-      {tips.map((tip) => {
-        const color = getThemeDotClassName(tip.id)
-        return (
-          <Button
-            key={tip.name}
-            variant="outline"
-            className={cn(
-              "justify-start shadow-sm shrink-0",
-              searchSurfaceClassName,
-            )}
-          >
-            <div className={`${color} rounded-full size-3`} />
-            <span>{tip.name}</span>
-          </Button>
-        )
-      })}
-    </div>
+    <AsyncQueryState
+      isLoading={query.isPending}
+      isFetching={query.isFetching}
+      isError={query.isError}
+      isSuccess={query.isSuccess}
+      isStale={query.isStale}
+      error={query.error}
+      data={query.data}
+      isEmpty={isEmptyThemes}
+      onRetry={() => void query.refetch()}
+      skeleton={<SearchTipsSkeleton />}
+      empty={<SearchTipsList tips={FALLBACK_TIPS} />}
+      errorFallback={() => <SearchTipsList tips={FALLBACK_TIPS} />}
+    >
+      {(data) => <RandomThemeTips themes={data.data.themes} />}
+    </AsyncQueryState>
   )
 }
 
