@@ -6,10 +6,11 @@ function createSelectChain<T>(result: T) {
   const limit = jest.fn().mockResolvedValue(result);
   const orderBy = jest.fn().mockReturnValue({ limit });
   const where = jest.fn().mockReturnValue({ orderBy });
-  const from = jest.fn().mockReturnValue({ where });
+  const innerJoin = jest.fn().mockReturnValue({ where });
+  const from = jest.fn().mockReturnValue({ where, innerJoin });
   const select = jest.fn().mockReturnValue({ from });
 
-  return { select, from, where, orderBy, limit };
+  return { select, from, innerJoin, where, orderBy, limit };
 }
 
 function createListSelectChain<T>(result: T) {
@@ -56,6 +57,8 @@ describe('CatalogService', () => {
           name: "Kai's Fire Mech",
           year: 2013,
           numParts: 102,
+          themeId: 435,
+          themeName: 'Ninjago',
         },
       ];
       selectChain.limit.mockResolvedValue(mockSets);
@@ -70,8 +73,11 @@ describe('CatalogService', () => {
       expect(result.data.sets[0].name).toBe("Kai's Fire Mech");
       expect(result.data.sets[0].year).toBe(2013);
       expect(result.data.sets[0].numParts).toBe(102);
+      expect(result.data.sets[0].themeId).toBe(435);
+      expect(result.data.sets[0].themeName).toBe('Ninjago');
       expect(result.meta).toEqual({ count: 1, limit: 10 });
       expect(selectChain.select).toHaveBeenCalled();
+      expect(selectChain.innerJoin).toHaveBeenCalled();
       expect(selectChain.limit).toHaveBeenCalledWith(10);
     });
 
@@ -90,6 +96,8 @@ describe('CatalogService', () => {
           name: "Kai's Blade Cycle",
           year: 2012,
           numParts: 188,
+          themeId: 435,
+          themeName: 'Ninjago',
         },
       ];
       selectChain.limit.mockResolvedValue(mockSets);
@@ -104,7 +112,10 @@ describe('CatalogService', () => {
       expect(result.data.sets[0].name).toBe("Kai's Blade Cycle");
       expect(result.data.sets[0].year).toBe(2012);
       expect(result.data.sets[0].numParts).toBe(188);
+      expect(result.data.sets[0].themeId).toBe(435);
+      expect(result.data.sets[0].themeName).toBe('Ninjago');
       expect(selectChain.select).toHaveBeenCalled();
+      expect(selectChain.innerJoin).toHaveBeenCalled();
       expect(selectChain.limit).toHaveBeenCalledWith(10);
     });
   });
