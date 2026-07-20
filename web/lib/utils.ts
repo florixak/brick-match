@@ -10,14 +10,30 @@ export function absoluteUrl(path: string) {
   return `${base}${path}`
 }
 
-const themeDotColors = [
-  "bg-chart-1",
-  "bg-chart-2",
-  "bg-chart-3",
-  "bg-chart-4",
-  "bg-chart-5",
+const themeColorClasses = [
+  { bg: "bg-chart-1", text: "text-chart-1" },
+  { bg: "bg-chart-2", text: "text-chart-2" },
+  { bg: "bg-chart-3", text: "text-chart-3" },
+  { bg: "bg-chart-4", text: "text-chart-4" },
+  { bg: "bg-chart-5", text: "text-chart-5" },
 ] as const
 
+function getThemeColorIndex(themeId: number) {
+  return themeId % themeColorClasses.length
+}
+
 export function getThemeDotClassName(themeId: number) {
-  return themeDotColors[themeId % themeDotColors.length]
+  return themeColorClasses[getThemeColorIndex(themeId)].bg
+}
+
+export function getThemeTextClassName(themeId: number) {
+  return themeColorClasses[getThemeColorIndex(themeId)].text
+}
+
+export function getFirstTwoLetters(str: string) {
+  return str.slice(0, 2).toUpperCase()
+}
+
+export function formatSetNumber(setNum: string) {
+  return setNum.replace(/-1$/, "")
 }
