@@ -36,7 +36,6 @@ const SetDialog = ({ selectedSet, setSelectedSet }: SetDialogProps) => {
           },
         },
       )
-      setSelectedSet(null)
     }
   }
 
