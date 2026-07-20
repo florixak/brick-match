@@ -27,7 +27,6 @@ export function useAddOwnedPartMutation() {
         method: "POST",
         body: AddOwnedPartRequestSchema.parse(input),
         schema: AddOwnedPartApiResponseSchema,
-        auth: true,
       }),
     onSuccess: async () => {
       await invalidateCollectionQueries(queryClient)
@@ -44,7 +43,6 @@ export function useAddSetMutation() {
         method: "POST",
         body: AddSetRequestSchema.parse(input),
         schema: AddSetApiResponseSchema,
-        auth: true,
       }),
     onSuccess: async () => {
       await invalidateCollectionQueries(queryClient)
@@ -59,7 +57,6 @@ export function useRemoveOwnedPartMutation() {
     mutationFn: ({ partNum, colorId }: RemoveOwnedPartVariables) =>
       apiFetch("/api/v1/owned-parts", {
         method: "DELETE",
-        auth: true,
         searchParams: { partNum, colorId },
       }),
     onMutate: async ({ partNum, colorId, listQuery }) => {
