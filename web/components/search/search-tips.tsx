@@ -1,6 +1,7 @@
 "use client"
 
 import type { Theme, ThemesApiResponse } from "@lego-matcher/shared-types"
+import { useQueryState } from "nuqs"
 import { useMemo } from "react"
 import { AsyncQueryState } from "@/components/query/async-query-state"
 import { Button } from "@/components/ui/button"
@@ -19,6 +20,12 @@ const isEmptyThemes = (data: ThemesApiResponse) => {
 }
 
 const SearchTipsList = ({ tips }: { tips: Theme[] }) => {
+  const [_, setSearch] = useQueryState("search")
+
+  const handleClick = (theme: Theme) => {
+    setSearch(theme.name)
+  }
+
   return (
     <div className="flex w-full max-w-lg flex-wrap justify-center gap-2">
       {tips.map((tip) => (
@@ -29,6 +36,7 @@ const SearchTipsList = ({ tips }: { tips: Theme[] }) => {
             "shrink-0 justify-start shadow-sm",
             searchSurfaceClassName,
           )}
+          onClick={() => handleClick(tip)}
         >
           <div
             className={cn(getThemeDotClassName(tip.id), "size-3 rounded-full")}
