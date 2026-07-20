@@ -1,7 +1,7 @@
 "use client"
 
 import { useQueryState } from "nuqs"
-import { searchOptions } from "@/constants"
+import { SEARCH_OPTIONS } from "@/constants"
 import { cn } from "@/lib/utils"
 import { Button } from "../ui/button"
 import { ButtonGroup } from "../ui/button-group"
@@ -11,7 +11,7 @@ const SearchModeToggle = () => {
   const [mode, setMode] = useQueryState("mode", { defaultValue: "sets" })
   return (
     <ButtonGroup>
-      {searchOptions.map((option) => {
+      {SEARCH_OPTIONS.map((option) => {
         const isActive = mode === option.value
         return (
           <Button

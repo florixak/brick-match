@@ -23,7 +23,7 @@ export default function ErrorBoundary({ error, reset }: ErrorProps) {
       <button
         type="button"
         onClick={reset}
-        className="bg-primary text-primary-foreground rounded px-4 py-2 text-sm font-medium"
+        className="bg-primary text-primary-foreground rounded-lg px-4 py-2 text-sm font-medium"
       >
         Try again
       </button>

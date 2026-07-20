@@ -53,7 +53,7 @@ export function AsyncQueryState<TData>({
     }
 
     return (
-      <div className="space-y-3 rounded-none border border-destructive/30 bg-destructive/5 p-4">
+      <div className="space-y-3 rounded-lg border border-destructive/30 bg-destructive/5 p-4">
         <p className="text-destructive text-sm">{error.message}</p>
         {onRetry ? (
           <Button type="button" variant="outline" size="sm" onClick={onRetry}>
