@@ -6,7 +6,7 @@ export const ownedPartsSearchParams = {
   page: parseAsInteger.withDefault(1),
   pageSize: parseAsInteger.withDefault(50),
   colorId: parseAsInteger,
-  themeId: parseAsInteger,
+  partCategoryId: parseAsInteger,
 }
 
 export type OwnedPartsSearchParams = {
@@ -14,7 +14,7 @@ export type OwnedPartsSearchParams = {
   page: number
   pageSize: number
   colorId: number | null
-  themeId: number | null
+  partCategoryId: number | null
 }
 
 export function toOwnedPartsQuery(
@@ -25,5 +25,8 @@ export function toOwnedPartsQuery(
     pageSize: params.pageSize,
     ...(params.search.trim() && { search: params.search.trim() }),
     ...(params.colorId != null && { colorId: params.colorId }),
+    ...(params.partCategoryId != null && {
+      partCategoryId: params.partCategoryId,
+    }),
   }
 }
