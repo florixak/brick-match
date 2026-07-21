@@ -1,6 +1,7 @@
 "use client"
 
 import { useQueryStates } from "nuqs"
+import { useEffect, useState } from "react"
 import { AsyncQueryState } from "@/components/query/async-query-state"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -23,6 +24,71 @@ function filterSelectErrorFallback(error: Error, retry: () => void) {
           Try again
         </Button>
       </div>
+    </div>
+  )
+}
+
+type BoundedNumberInputProps = {
+  id: string
+  label: string
+  value: number
+  min: number
+  max?: number
+  onCommit: (value: number) => void
+  className?: string
+}
+
+function BoundedNumberInput({
+  id,
+  label,
+  value,
+  min,
+  max,
+  onCommit,
+  className,
+}: BoundedNumberInputProps) {
+  const [inputValue, setInputValue] = useState(String(value))
+
+  useEffect(() => {
+    setInputValue(String(value))
+  }, [value])
+
+  const isValid = (parsed: number) =>
+    !Number.isNaN(parsed) &&
+    parsed >= min &&
+    (max === undefined || parsed <= max)
+
+  const commit = (raw: string) => {
+    const parsed = Number.parseInt(raw, 10)
+    if (!isValid(parsed)) {
+      setInputValue(String(value))
+      return
+    }
+    onCommit(parsed)
+  }
+
+  return (
+    <div className="flex flex-col gap-1.5">
+      <label htmlFor={id} className={labelClassName}>
+        {label}
+      </label>
+      <Input
+        id={id}
+        type="number"
+        min={min}
+        max={max}
+        value={inputValue}
+        onChange={(event) => {
+          const raw = event.target.value
+          setInputValue(raw)
+          const parsed = Number.parseInt(raw, 10)
+          if (isValid(parsed)) {
+            onCommit(parsed)
+          }
+        }}
+        onBlur={() => commit(inputValue)}
+        className={className}
+      />
     </div>
   )
 }
@@ -110,44 +176,28 @@ const Filters = () => {
       </div>
 
       <div className="flex flex-wrap items-end gap-3">
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor="owned-parts-page" className={labelClassName}>
-            Page
-          </label>
-          <Input
-            id="owned-parts-page"
-            type="number"
-            min={1}
-            value={queryParams.page}
-            onChange={(event) => {
-              const page = Number.parseInt(event.target.value, 10)
-              if (!Number.isNaN(page) && page >= 1) {
-                void setQueryParams({ page })
-              }
-            }}
-            className="w-24 font-semibold"
-          />
-        </div>
+        <BoundedNumberInput
+          id="owned-parts-page"
+          label="Page"
+          value={queryParams.page}
+          min={1}
+          onCommit={(page) => {
+            void setQueryParams({ page })
+          }}
+          className="w-24 font-semibold"
+        />
 
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor="owned-parts-page-size" className={labelClassName}>
-            Page size
-          </label>
-          <Input
-            id="owned-parts-page-size"
-            type="number"
-            min={1}
-            max={200}
-            value={queryParams.pageSize}
-            onChange={(event) => {
-              const pageSize = Number.parseInt(event.target.value, 10)
-              if (!Number.isNaN(pageSize) && pageSize >= 1 && pageSize <= 200) {
-                void setQueryParams({ pageSize, page: 1 })
-              }
-            }}
-            className="w-24 font-semibold"
-          />
-        </div>
+        <BoundedNumberInput
+          id="owned-parts-page-size"
+          label="Page size"
+          value={queryParams.pageSize}
+          min={1}
+          max={200}
+          onCommit={(pageSize) => {
+            void setQueryParams({ pageSize, page: 1 })
+          }}
+          className="w-24 font-semibold"
+        />
 
         <Button
           variant="outline"
