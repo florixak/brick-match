@@ -1,6 +1,7 @@
 import type { SetSummary } from "@lego-matcher/shared-types"
 import { Loader2 } from "lucide-react"
 import Link from "next/link"
+import useIsAuthenticated from "@/hooks/use-is-authenticated"
 import { useAddSetMutation } from "@/lib/queries"
 import { cn, formatSetNumber, getThemeTextClassName } from "@/lib/utils"
 import SetAvatar from "../search/set-avatar"
@@ -19,9 +20,8 @@ type SetDialogProps = {
 }
 
 const SetDialog = ({ selectedSet, setSelectedSet }: SetDialogProps) => {
-  const { mutate: addSet, isPending, error } = useAddSetMutation()
-
-  const loggedIn = false
+  const { mutate: addSet, isPending } = useAddSetMutation()
+  const isAuthenticated = useIsAuthenticated()
 
   const handleAddSet = () => {
     if (selectedSet) {
@@ -108,7 +108,7 @@ const SetDialog = ({ selectedSet, setSelectedSet }: SetDialogProps) => {
               />
               <Button
                 onClick={handleAddSet}
-                disabled={!loggedIn || isPending}
+                disabled={!isAuthenticated || isPending}
                 className="h-10 w-full sm:flex-1 sm:basis-0"
               >
                 {isPending ? (
