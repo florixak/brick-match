@@ -1,7 +1,7 @@
 "use client"
 
 import { LoginRequestSchema } from "@lego-matcher/shared-types"
-import { Check, LogIn } from "lucide-react"
+import { LogInIcon } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
 import toast from "react-hot-toast"
@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { parseApiError } from "@/lib/api/client"
 import { useLoginMutation } from "@/lib/queries"
 import PasswordField from "./password-field"
+import TermsPolicyAgree from "./terms-policy-agree"
 
 const LoginForm = () => {
   const [email, setEmail] = useState("")
@@ -94,39 +95,18 @@ const LoginForm = () => {
         )}
       </div>
 
-      <label className="flex items-start gap-2.5 cursor-pointer select-none">
-        <button
-          type="button"
-          onClick={() => setAgreed((a) => !a)}
-          disabled={isPending}
-          className={`w-5 h-5 rounded-md border-2 shrink-0 mt-0.5 flex items-center justify-center transition-all ${
-            agreed
-              ? "bg-primary border-primary"
-              : "border-border hover:border-primary/50"
-          } disabled:opacity-50`}
-          aria-pressed={agreed}
-          aria-label="I agree to the Privacy Policy and Terms of Service"
-        >
-          {agreed && <Check className="w-3 h-3 text-white" />}
-        </button>
-        <span className="text-sm text-muted-foreground font-semibold leading-snug">
-          I agree to the{" "}
-          <span className="text-primary font-black cursor-pointer hover:underline">
-            Privacy Policy
-          </span>{" "}
-          and{" "}
-          <span className="text-primary font-black cursor-pointer hover:underline">
-            Terms of Service
-          </span>
-        </span>
-      </label>
+      <TermsPolicyAgree
+        agreed={agreed}
+        setAgreed={setAgreed}
+        isPending={isPending}
+      />
 
       <Button
         type="submit"
         disabled={!email || !password || !agreed || isPending}
         className="w-full"
       >
-        <LogIn className="w-4 h-4" />
+        <LogInIcon className="w-4 h-4" />
         {isPending ? "Logging in…" : "Log In"}
       </Button>
 
