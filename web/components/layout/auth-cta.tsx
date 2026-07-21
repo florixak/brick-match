@@ -6,14 +6,18 @@ import { Button } from "@/components/ui/button"
 import { useCurrentUser, useLogoutMutation } from "@/lib/queries"
 
 export default function AuthCTA() {
-  const { data: user } = useCurrentUser()
-  const { mutateAsync: logout, isPending: isLoggingOut } = useLogoutMutation()
+  const { data: user, isPending: isUserPending } = useCurrentUser()
+  const { mutate: logout, isPending: isLoggingOut } = useLogoutMutation()
 
-  const isLoggedIn = user !== null
+  const isLoggedIn = !!user
   const name = user?.email.split("@")[0]
 
-  const handleLogout = async () => {
-    await logout()
+  const handleLogout = () => {
+    logout()
+  }
+
+  if (isUserPending) {
+    return null
   }
 
   if (isLoggedIn) {
