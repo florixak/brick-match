@@ -86,7 +86,7 @@ export const ColorsApiResponseSchema = z.object({
 export type ColorsApiResponse = z.infer<typeof ColorsApiResponseSchema>;
 
 export const PartCategorySchema = z.object({
-  id: z.number().int(),
+  id: z.number().int().min(1),
   name: z.string(),
 });
 export type PartCategory = z.infer<typeof PartCategorySchema>;

@@ -9,6 +9,7 @@ describe('CatalogController', () => {
     searchParts: jest.Mock;
     getColors: jest.Mock;
     getThemes: jest.Mock;
+    getPartCategories: jest.Mock;
   };
 
   beforeEach(async () => {
@@ -17,6 +18,7 @@ describe('CatalogController', () => {
       searchParts: jest.fn(),
       getColors: jest.fn(),
       getThemes: jest.fn(),
+      getPartCategories: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -70,6 +72,8 @@ describe('CatalogController', () => {
           {
             partNum: '21459',
             name: 'Weapon Sword / Katana / Shamshir with Capped Pommel [Square Guard]',
+            partCategoryId: 27,
+            partCategoryName: 'Weapons',
           },
         ],
       },
@@ -130,6 +134,30 @@ describe('CatalogController', () => {
     catalogService.getThemes.mockResolvedValue(mockResponse);
     const result = await controller.getThemes();
     expect(catalogService.getThemes).toHaveBeenCalledWith();
+    expect(result).toEqual(mockResponse);
+  });
+
+  it('should get part categories', async () => {
+    const mockResponse = {
+      data: {
+        partCategories: [
+          {
+            id: 11,
+            name: 'Bricks',
+          },
+          {
+            id: 19,
+            name: 'Plates',
+          },
+        ],
+      },
+      meta: { count: 2 },
+    };
+    catalogService.getPartCategories.mockResolvedValue(mockResponse);
+
+    const result = await controller.getPartCategories();
+
+    expect(catalogService.getPartCategories).toHaveBeenCalledWith();
     expect(result).toEqual(mockResponse);
   });
 });
