@@ -31,6 +31,7 @@ export default function AuthCTA() {
           className="md:h-8 md:w-auto md:px-2.5 md:gap-1.5"
           onClick={handleLogout}
           disabled={isLoggingOut}
+          aria-label="Logout"
         >
           <LogOutIcon />
         </Button>
