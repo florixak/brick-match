@@ -1,48 +1,64 @@
 "use client"
 
-import { LoginRequestSchema } from "@lego-matcher/shared-types"
-import { LogInIcon } from "lucide-react"
+import { RegisterRequestSchema } from "@lego-matcher/shared-types"
+import { UserPlusIcon } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
 import toast from "react-hot-toast"
 import { Button } from "@/components/ui/button"
 import { parseApiError } from "@/lib/api/client"
-import { useLoginMutation } from "@/lib/queries"
+import { useRegisterMutation } from "@/lib/queries"
 import PasswordField from "./password-field"
 import TermsPolicyAgree from "./terms-policy-agree"
 
-const LoginForm = () => {
+const RegisterForm = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
   const [agreed, setAgreed] = useState(false)
   const [fieldErrors, setFieldErrors] = useState<{
     email?: string
     password?: string
+    confirmPassword?: string
   }>({})
 
-  const { mutate: login, isPending } = useLoginMutation()
+  const { mutate: register, isPending } = useRegisterMutation()
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
-    const parsed = LoginRequestSchema.safeParse({ email, password })
+    const parsed = RegisterRequestSchema.safeParse({ email, password })
 
     if (!parsed.success) {
-      const errors: { email?: string; password?: string } = {}
+      const errors: {
+        email?: string
+        password?: string
+        confirmPassword?: string
+      } = {}
       for (const issue of parsed.error.issues) {
         const field = issue.path[0] as "email" | "password"
         errors[field] = issue.message
+      }
+      if (confirmPassword !== password) {
+        errors.confirmPassword = "Passwords do not match"
       }
       setFieldErrors(errors)
       return
     }
 
+    if (confirmPassword !== password) {
+      setFieldErrors({ confirmPassword: "Passwords do not match" })
+      return
+    }
+
     setFieldErrors({})
 
-    login(parsed.data, {
+    register(parsed.data, {
       onError: (error) => {
         const apiError = parseApiError(error)
-        toast.error(apiError?.body.message ?? "Login failed. Please try again.")
+        toast.error(
+          apiError?.body.message ?? "Registration failed. Please try again.",
+        )
       },
     })
   }
@@ -87,10 +103,41 @@ const LoginForm = () => {
               setFieldErrors((prev) => ({ ...prev, password: undefined }))
           }}
           disabled={isPending}
+          placeholder="At least 8 characters"
+          autoComplete="new-password"
         />
         {fieldErrors.password && (
           <p className="text-destructive text-xs font-semibold mt-1">
             {fieldErrors.password}
+          </p>
+        )}
+      </div>
+
+      <div>
+        <label
+          htmlFor="confirmPassword"
+          className="text-sm font-black block mb-1.5"
+        >
+          Confirm Password
+        </label>
+        <PasswordField
+          id="confirmPassword"
+          value={confirmPassword}
+          onChange={(val) => {
+            setConfirmPassword(val)
+            if (fieldErrors.confirmPassword)
+              setFieldErrors((prev) => ({
+                ...prev,
+                confirmPassword: undefined,
+              }))
+          }}
+          disabled={isPending}
+          placeholder="Repeat your password"
+          autoComplete="new-password"
+        />
+        {fieldErrors.confirmPassword && (
+          <p className="text-destructive text-xs font-semibold mt-1">
+            {fieldErrors.confirmPassword}
           </p>
         )}
       </div>
@@ -103,24 +150,23 @@ const LoginForm = () => {
 
       <Button
         type="submit"
-        disabled={!email || !password || !agreed || isPending}
+        disabled={
+          !email || !password || !confirmPassword || !agreed || isPending
+        }
         className="w-full"
       >
-        <LogInIcon className="w-4 h-4" />
-        {isPending ? "Logging in…" : "Log In"}
+        <UserPlusIcon className="w-4 h-4" />
+        {isPending ? "Creating account…" : "Create Account"}
       </Button>
 
       <p className="text-center text-sm text-muted-foreground font-semibold">
-        No account?{" "}
-        <Link
-          href="/register"
-          className="text-primary font-black hover:underline"
-        >
-          Register here
+        Already have an account?{" "}
+        <Link href="/login" className="text-primary font-black hover:underline">
+          Log in here
         </Link>
       </p>
     </form>
   )
 }
 
-export default LoginForm
+export default RegisterForm
