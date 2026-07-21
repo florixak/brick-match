@@ -14,7 +14,6 @@ export async function fetchOwnedParts(
 ): Promise<GetOwnedPartsApiResponse> {
   return apiFetch("/api/v1/owned-parts", {
     schema: GetOwnedPartsApiResponseSchema,
-    auth: true,
     searchParams: query,
   })
 }

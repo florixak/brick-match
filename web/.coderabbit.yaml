@@ -4,3 +4,4 @@ reviews:
     - "!**/skills/**"
     - "!**/skills-lock.json"
     - "!**/SKILL.md"
+    - "!**/components/ui/**"
