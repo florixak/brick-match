@@ -15,7 +15,12 @@ import {
 import { and, asc, count, eq, or, sql } from 'drizzle-orm';
 import { DatabaseService } from 'src/database/database.service';
 import { isFkViolation } from 'src/database/pg-error';
-import { colors, parts, userOwnedParts } from 'src/database/schema';
+import {
+  colors,
+  partCategories,
+  parts,
+  userOwnedParts,
+} from 'src/database/schema';
 
 @Injectable()
 export class OwnedPartsService {
@@ -102,7 +107,7 @@ export class OwnedPartsService {
 
   async findAll(
     userId: string,
-    { page, pageSize, search }: GetOwnedPartsQuery,
+    { page, pageSize, search, partCategoryId, colorId }: GetOwnedPartsQuery,
   ): Promise<GetOwnedPartsApiResponse> {
     const offset = (page - 1) * pageSize;
     const term = ((search as string) ?? '')
@@ -110,16 +115,26 @@ export class OwnedPartsService {
       .toLowerCase()
       .replace(/[\\%_]/g, '\\$&');
 
-    const userFilter = eq(userOwnedParts.userId, userId);
-    const whereClause = term
-      ? and(
-          userFilter,
-          or(
-            sql`lower(${parts.name}) LIKE ${term + '%'}`,
-            sql`lower(${userOwnedParts.partNum}) LIKE ${term + '%'}`,
-          ),
-        )
-      : userFilter;
+    const conditions = [eq(userOwnedParts.userId, userId)];
+
+    if (term) {
+      conditions.push(
+        or(
+          sql`lower(${parts.name}) LIKE ${term + '%'}`,
+          sql`lower(${userOwnedParts.partNum}) LIKE ${term + '%'}`,
+        )!,
+      );
+    }
+
+    if (partCategoryId !== undefined) {
+      conditions.push(eq(parts.partCatId, partCategoryId));
+    }
+
+    if (colorId !== undefined) {
+      conditions.push(eq(userOwnedParts.colorId, colorId));
+    }
+
+    const whereClause = and(...conditions);
 
     const [total, ownedParts] = await Promise.all([
       this.databaseService.db
@@ -135,10 +150,13 @@ export class OwnedPartsService {
           partName: parts.name,
           colorName: colors.name,
           colorRgb: colors.rgb,
+          partCategoryId: parts.partCatId,
+          partCategoryName: partCategories.name,
         })
         .from(userOwnedParts)
         .innerJoin(parts, eq(userOwnedParts.partNum, parts.partNum))
         .innerJoin(colors, eq(userOwnedParts.colorId, colors.colorId))
+        .innerJoin(partCategories, eq(parts.partCatId, partCategories.id))
         .where(whereClause)
         .orderBy(asc(parts.name))
         .limit(pageSize)

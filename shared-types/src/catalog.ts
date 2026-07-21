@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ColorIdSchema } from "./domain";
 
 export const CatalogSearchMetaSchema = z.object({
   count: z.number().int().nonnegative(),
@@ -47,6 +48,8 @@ export type SearchPartsQuery = z.infer<typeof SearchPartsQuerySchema>;
 export const PartSummarySchema = z.object({
   partNum: z.string(),
   name: z.string(),
+  partCategoryId: z.number().int(),
+  partCategoryName: z.string(),
 });
 export type PartSummary = z.infer<typeof PartSummarySchema>;
 
@@ -64,7 +67,7 @@ export type SearchPartsApiResponse = z.infer<
 >;
 
 export const ColorSchema = z.object({
-  colorId: z.number().int(),
+  colorId: ColorIdSchema,
   name: z.string(),
   rgb: z.string().length(6),
   isTrans: z.boolean(),

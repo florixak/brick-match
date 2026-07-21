@@ -3,12 +3,12 @@ import {
   ApiSuccessResponseSchema,
   ApiSuccessResponseWithPaginationSchema,
 } from "./api-response";
-import { OwnedPartSchema } from "./domain";
+import { ColorIdSchema, CoercedColorIdSchema, OwnedPartSchema } from "./domain";
 import { PaginationQuerySchema } from "./pagination";
 
 export const AddOwnedPartRequestSchema = z.object({
   partNum: z.string().min(1),
-  colorId: z.number().int().min(0),
+  colorId: ColorIdSchema,
   quantity: z.number().int().positive(),
 });
 export type AddOwnedPartRequest = z.infer<typeof AddOwnedPartRequestSchema>;
@@ -49,11 +49,15 @@ export const OwnedPartDetailSchema = OwnedPartSchema.extend({
   partName: z.string(),
   colorName: z.string(),
   colorRgb: z.string(),
+  partCategoryId: z.number().int(),
+  partCategoryName: z.string(),
 });
 export type OwnedPartDetail = z.infer<typeof OwnedPartDetailSchema>;
 
 export const GetOwnedPartsQuerySchema = PaginationQuerySchema.extend({
   search: z.string().optional(),
+  partCategoryId: z.coerce.number().int().min(1).optional(),
+  colorId: CoercedColorIdSchema.optional(),
 });
 export type GetOwnedPartsQuery = z.infer<typeof GetOwnedPartsQuerySchema>;
 
@@ -70,6 +74,6 @@ export type GetOwnedPartsApiResponse = z.infer<
 
 export const RemoveOwnedPartQuerySchema = z.object({
   partNum: z.string().min(1),
-  colorId: z.coerce.number().int().min(0),
+  colorId: CoercedColorIdSchema,
 });
 export type RemoveOwnedPartQuery = z.infer<typeof RemoveOwnedPartQuerySchema>;

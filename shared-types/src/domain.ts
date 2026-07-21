@@ -1,8 +1,13 @@
 import { z } from "zod";
 
+/** Rebrickable color IDs; -1 is "Unknown". */
+export const ColorIdSchema = z.number().int().min(-1);
+export const CoercedColorIdSchema = z.coerce.number().int().min(-1);
+export type ColorId = z.infer<typeof ColorIdSchema>;
+
 export const PartRefSchema = z.object({
   partNum: z.string(),
-  colorId: z.number().int().nonnegative(),
+  colorId: ColorIdSchema,
 });
 export type PartRef = z.infer<typeof PartRefSchema>;
 

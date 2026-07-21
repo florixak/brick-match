@@ -63,6 +63,8 @@ export class OwnedPartsController {
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'pageSize', required: false, type: Number })
   @ApiQuery({ name: 'search', required: false })
+  @ApiQuery({ name: 'partCategoryId', required: false, type: Number })
+  @ApiQuery({ name: 'colorId', required: false, type: Number })
   async findAll(
     @CurrentUser('sub') userId: string,
     @Query(new ZodValidationPipe<GetOwnedPartsQuery>(GetOwnedPartsQuerySchema))
