@@ -92,6 +92,8 @@ describe('OwnedPartsController', () => {
             partName: 'Brick 2 x 4',
             colorName: 'Black',
             colorRgb: '05131D',
+            partCategoryId: 11,
+            partCategoryName: 'Bricks',
           },
         ],
       },

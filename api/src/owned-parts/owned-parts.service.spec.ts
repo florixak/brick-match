@@ -35,7 +35,10 @@ function createFindAllSelectChain<T>(result: T) {
   const limit = jest.fn().mockReturnValue({ offset });
   const orderBy = jest.fn().mockReturnValue({ limit });
   const where = jest.fn().mockReturnValue({ orderBy });
-  const innerJoinColors = jest.fn().mockReturnValue({ where });
+  const innerJoinPartCategories = jest.fn().mockReturnValue({ where });
+  const innerJoinColors = jest
+    .fn()
+    .mockReturnValue({ innerJoin: innerJoinPartCategories });
   const innerJoinParts = jest
     .fn()
     .mockReturnValue({ innerJoin: innerJoinColors });
@@ -47,6 +50,7 @@ function createFindAllSelectChain<T>(result: T) {
     from,
     innerJoinParts,
     innerJoinColors,
+    innerJoinPartCategories,
     where,
     orderBy,
     limit,
@@ -208,6 +212,8 @@ describe('OwnedPartsService', () => {
         partName: 'Brick 2 x 4',
         colorName: 'Blue',
         colorRgb: '0055BF',
+        partCategoryId: 11,
+        partCategoryName: 'Bricks',
       },
       {
         partNum: '3003',
@@ -216,6 +222,8 @@ describe('OwnedPartsService', () => {
         partName: 'Brick 2 x 2',
         colorName: 'Trans-Light Blue',
         colorRgb: 'AEEFEC',
+        partCategoryId: 11,
+        partCategoryName: 'Bricks',
       },
     ];
 
