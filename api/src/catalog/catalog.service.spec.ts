@@ -236,4 +236,31 @@ describe('CatalogService', () => {
       expect(listChain.orderBy).toHaveBeenCalled();
     });
   });
+
+  describe('getPartCategories', () => {
+    it('should get part categories', async () => {
+      const listChain = createListSelectChain([
+        {
+          id: 11,
+          name: 'Bricks',
+        },
+        {
+          id: 19,
+          name: 'Plates',
+        },
+      ]);
+      selectChain.select.mockImplementation(listChain.select);
+
+      const result = await service.getPartCategories();
+
+      expect(result.data.partCategories).toHaveLength(2);
+      expect(result.data.partCategories[0].id).toBe(11);
+      expect(result.data.partCategories[0].name).toBe('Bricks');
+      expect(result.data.partCategories[1].id).toBe(19);
+      expect(result.data.partCategories[1].name).toBe('Plates');
+      expect(result.meta).toEqual({ count: 2 });
+      expect(listChain.select).toHaveBeenCalled();
+      expect(listChain.orderBy).toHaveBeenCalled();
+    });
+  });
 });
