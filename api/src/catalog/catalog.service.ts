@@ -9,7 +9,13 @@ import {
 import { Injectable } from '@nestjs/common';
 import { asc, eq, or, sql } from 'drizzle-orm';
 import { DatabaseService } from 'src/database/database.service';
-import { colors, parts, sets, themes } from 'src/database/schema';
+import {
+  colors,
+  partCategories,
+  parts,
+  sets,
+  themes,
+} from 'src/database/schema';
 
 @Injectable()
 export class CatalogService {
@@ -76,8 +82,11 @@ export class CatalogService {
       .select({
         partNum: parts.partNum,
         name: parts.name,
+        partCategoryId: parts.partCatId,
+        partCategoryName: partCategories.name,
       })
       .from(parts)
+      .innerJoin(partCategories, eq(parts.partCatId, partCategories.id))
       .where(
         or(
           sql`lower(${parts.name}) LIKE ${term + '%'}`,
