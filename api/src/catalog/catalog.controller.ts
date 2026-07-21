@@ -1,6 +1,8 @@
 import {
   ColorsApiResponse,
   ColorsApiResponseSchema,
+  PartCategoriesApiResponse,
+  PartCategoriesApiResponseSchema,
   SearchPartsApiResponse,
   SearchPartsApiResponseSchema,
   SearchPartsQuerySchema,
@@ -75,5 +77,12 @@ export class CatalogController {
   async getThemes(): Promise<ThemesApiResponse> {
     const result = await this.catalogService.getThemes();
     return ThemesApiResponseSchema.parse(result);
+  }
+
+  @Get('part-categories')
+  @ApiOperation({ summary: 'Get part categories' })
+  async getPartCategories(): Promise<PartCategoriesApiResponse> {
+    const result = await this.catalogService.getPartCategories();
+    return PartCategoriesApiResponseSchema.parse(result);
   }
 }
