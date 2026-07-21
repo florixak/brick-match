@@ -1,4 +1,5 @@
 import {
+  PartCategoriesApiResponse,
   ThemesApiResponse,
   type ColorsApiResponse,
   type SearchPartsApiResponse,
@@ -136,6 +137,23 @@ export class CatalogService {
 
     return {
       data: { themes: results },
+      meta: {
+        count: results.length,
+      },
+    };
+  }
+
+  async getPartCategories(): Promise<PartCategoriesApiResponse> {
+    const results = await this.databaseService.db
+      .select({
+        id: partCategories.id,
+        name: partCategories.name,
+      })
+      .from(partCategories)
+      .orderBy(asc(partCategories.name));
+
+    return {
+      data: { partCategories: results },
       meta: {
         count: results.length,
       },
