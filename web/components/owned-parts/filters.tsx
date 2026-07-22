@@ -116,7 +116,7 @@ const Filters = () => {
                 page: 1,
               })
             }}
-            className="font-semibold"
+            className="h-9 font-semibold"
           />
         </div>
 

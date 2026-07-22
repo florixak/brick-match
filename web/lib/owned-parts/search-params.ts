@@ -1,8 +1,11 @@
 import type { GetOwnedPartsQuery } from "@lego-matcher/shared-types"
-import { parseAsInteger, parseAsString } from "nuqs"
+import { debounce, parseAsInteger, parseAsString } from "nuqs"
+import { SEARCH_DEBOUNCE_MS } from "@/constants"
 
 export const ownedPartsSearchParams = {
-  search: parseAsString.withDefault(""),
+  search: parseAsString
+    .withDefault("")
+    .withOptions({ limitUrlUpdates: debounce(SEARCH_DEBOUNCE_MS) }),
   page: parseAsInteger.withDefault(1),
   pageSize: parseAsInteger.withDefault(50),
   colorId: parseAsInteger,
