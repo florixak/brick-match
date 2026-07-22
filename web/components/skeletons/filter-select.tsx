@@ -1,4 +1,4 @@
-import { FieldLabel } from "../ui/field-label"
+import { FieldCaption } from "../ui/field-label"
 import { Skeleton } from "../ui/skeleton"
 
 type FilterSelectProps = {
@@ -8,7 +8,7 @@ type FilterSelectProps = {
 const FilterSelect = ({ label }: FilterSelectProps) => {
   return (
     <div className="flex flex-col gap-1.5">
-      <FieldLabel>{label}</FieldLabel>
+      <FieldCaption>{label}</FieldCaption>
       <Skeleton className="h-9 w-full" />
     </div>
   )

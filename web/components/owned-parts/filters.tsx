@@ -5,7 +5,7 @@ import { useEffect, useState } from "react"
 import { AsyncQueryState } from "@/components/query/async-query-state"
 import { searchSurfaceClassName } from "@/components/search/search"
 import { Button } from "@/components/ui/button"
-import { FieldLabel } from "@/components/ui/field-label"
+import { FieldCaption, FieldLabel } from "@/components/ui/field-label"
 import { Input } from "@/components/ui/input"
 import SearchableSelect from "@/components/ui/searchable-select"
 import { ownedPartsSearchParams } from "@/lib/owned-parts/search-params"
@@ -19,7 +19,7 @@ export { fieldLabelClassName as labelClassName } from "@/components/ui/field-lab
 function filterSelectErrorFallback(error: Error, retry: () => void) {
   return (
     <div className="flex flex-col gap-1.5">
-      <FieldLabel>Filter unavailable</FieldLabel>
+      <FieldCaption>Filter unavailable</FieldCaption>
       <div className="flex flex-col gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-2">
         <p className="text-destructive text-xs">{error.message}</p>
         <Button type="button" variant="outline" size="sm" onClick={retry}>
