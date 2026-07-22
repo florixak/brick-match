@@ -31,6 +31,7 @@ const Pagination = ({
       className="mt-8 flex items-center justify-center gap-2"
     >
       <Button
+        aria-label="Go to previous page"
         type="button"
         variant="outline"
         size="sm"
@@ -42,12 +43,10 @@ const Pagination = ({
       >
         ←
       </Button>
-
       {visiblePages.map((value, index) => {
         if (value === "ellipsis") {
           const previousPage = visiblePages[index - 1]
           const nextPage = visiblePages[index + 1]
-
           return (
             <span
               key={`ellipsis-${previousPage}-${nextPage}`}
@@ -57,10 +56,10 @@ const Pagination = ({
             </span>
           )
         }
-
         return (
           <Button
             key={value}
+            aria-current={page === value ? "page" : undefined}
             type="button"
             variant={page === value ? "default" : "outline"}
             size="icon-sm"
@@ -76,8 +75,8 @@ const Pagination = ({
           </Button>
         )
       })}
-
       <Button
+        aria-label="Go to next page"
         type="button"
         variant="outline"
         size="sm"
