@@ -11,6 +11,8 @@ import OwnedPart from "@/components/owned-parts/owned-part"
 import { AsyncQueryState } from "@/components/query/async-query-state"
 import OwnedPartsListSkeleton from "@/components/skeletons/owned-parts-list"
 import { Button } from "@/components/ui/button"
+import { SEARCH_DEBOUNCE_MS } from "@/constants"
+import { useDebouncedValue } from "@/hooks/use-debounced-value"
 import {
   ownedPartsSearchParams,
   toOwnedPartsQuery,
@@ -27,10 +29,18 @@ function isEmptyOwnedParts(data: GetOwnedPartsApiResponse) {
 
 const List = () => {
   const [queryParams, setQueryParams] = useQueryStates(ownedPartsSearchParams)
-  const query = toOwnedPartsQuery(queryParams)
-  const ownedParts = useOwnedParts(query)
   const colors = useCatalogColors()
   const partCategories = useCatalogPartCategories()
+
+  const debouncedSearch = useDebouncedValue(
+    queryParams.search,
+    SEARCH_DEBOUNCE_MS,
+  )
+  const query = toOwnedPartsQuery({
+    ...queryParams,
+    search: debouncedSearch,
+  })
+  const ownedParts = useOwnedParts(query)
 
   const activeFilters = useMemo(() => {
     const filters: { label: string; onClear: () => void }[] = []
