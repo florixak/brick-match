@@ -4,16 +4,25 @@ import { cn } from "@/lib/utils"
 export const fieldLabelClassName =
   "text-xs font-black uppercase tracking-wide text-muted-foreground"
 
-type FieldLabelProps = React.ComponentProps<"label">
+type FieldLabelProps = {
+  htmlFor: string
+  className?: string
+  children: React.ReactNode
+}
 
-export function FieldLabel({ className, children, ...props }: FieldLabelProps) {
+export function FieldLabel({ htmlFor, className, children }: FieldLabelProps) {
   return (
-    <label
-      htmlFor={props.htmlFor}
-      className={cn(fieldLabelClassName, className)}
-      {...props}
-    >
+    <label htmlFor={htmlFor} className={cn(fieldLabelClassName, className)}>
       {children}
     </label>
   )
+}
+
+type FieldCaptionProps = {
+  className?: string
+  children: React.ReactNode
+}
+
+export function FieldCaption({ className, children }: FieldCaptionProps) {
+  return <span className={cn(fieldLabelClassName, className)}>{children}</span>
 }
