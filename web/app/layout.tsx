@@ -50,7 +50,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <QueryProvider>
-            <NuqsAdapter>
+            <NuqsAdapter defaultOptions={{ scroll: true }}>
               <Header />
               <main className="flex-1 py-16 md:pb-0 overflow-x-hidden">
                 {children}
