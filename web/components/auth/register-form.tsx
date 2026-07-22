@@ -6,6 +6,7 @@ import Link from "next/link"
 import { useState } from "react"
 import toast from "react-hot-toast"
 import { Button } from "@/components/ui/button"
+import { FieldLabel } from "@/components/ui/field-label"
 import { Input } from "@/components/ui/input"
 import { parseApiError } from "@/lib/api/client"
 import { useRegisterMutation } from "@/lib/queries"
@@ -67,9 +68,9 @@ const RegisterForm = () => {
   return (
     <form onSubmit={handleSubmit} noValidate className="space-y-4">
       <div>
-        <label htmlFor="email" className="text-sm font-black block mb-1.5">
+        <FieldLabel htmlFor="email" className="mb-1.5">
           Email
-        </label>
+        </FieldLabel>
         <Input
           type="email"
           id="email"
@@ -92,9 +93,9 @@ const RegisterForm = () => {
       </div>
 
       <div>
-        <label htmlFor="password" className="text-sm font-black block mb-1.5">
+        <FieldLabel htmlFor="password" className="mb-1.5">
           Password
-        </label>
+        </FieldLabel>
         <PasswordField
           id="password"
           value={password}
@@ -115,12 +116,9 @@ const RegisterForm = () => {
       </div>
 
       <div>
-        <label
-          htmlFor="confirmPassword"
-          className="text-sm font-black block mb-1.5"
-        >
+        <FieldLabel htmlFor="confirmPassword" className="mb-1.5">
           Confirm Password
-        </label>
+        </FieldLabel>
         <PasswordField
           id="confirmPassword"
           value={confirmPassword}

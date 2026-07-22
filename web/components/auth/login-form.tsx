@@ -6,6 +6,7 @@ import Link from "next/link"
 import { useState } from "react"
 import toast from "react-hot-toast"
 import { Button } from "@/components/ui/button"
+import { FieldLabel } from "@/components/ui/field-label"
 import { Input } from "@/components/ui/input"
 import { parseApiError } from "@/lib/api/client"
 import { useLoginMutation } from "@/lib/queries"
@@ -51,9 +52,9 @@ const LoginForm = () => {
   return (
     <form onSubmit={handleSubmit} noValidate className="space-y-4">
       <div>
-        <label htmlFor="email" className="text-sm font-black block mb-1.5">
+        <FieldLabel htmlFor="email" className="mb-1.5">
           Email
-        </label>
+        </FieldLabel>
         <Input
           type="email"
           id="email"
@@ -76,9 +77,9 @@ const LoginForm = () => {
       </div>
 
       <div>
-        <label htmlFor="password" className="text-sm font-black block mb-1.5">
+        <FieldLabel htmlFor="password" className="mb-1.5">
           Password
-        </label>
+        </FieldLabel>
         <PasswordField
           id="password"
           value={password}

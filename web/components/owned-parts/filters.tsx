@@ -5,6 +5,7 @@ import { useEffect, useState } from "react"
 import { AsyncQueryState } from "@/components/query/async-query-state"
 import { searchSurfaceClassName } from "@/components/search/search"
 import { Button } from "@/components/ui/button"
+import { FieldLabel } from "@/components/ui/field-label"
 import { Input } from "@/components/ui/input"
 import SearchableSelect from "@/components/ui/searchable-select"
 import { ownedPartsSearchParams } from "@/lib/owned-parts/search-params"
@@ -13,13 +14,12 @@ import { useCatalogColors, useCatalogPartCategories } from "@/lib/queries"
 import { cn } from "@/lib/utils"
 import FilterSelect from "../skeletons/filter-select"
 
-export const labelClassName =
-  "text-xs font-black uppercase tracking-wide text-muted-foreground"
+export { fieldLabelClassName as labelClassName } from "@/components/ui/field-label"
 
 function filterSelectErrorFallback(error: Error, retry: () => void) {
   return (
     <div className="flex flex-col gap-1.5">
-      <span className={labelClassName}>Filter unavailable</span>
+      <FieldLabel>Filter unavailable</FieldLabel>
       <div className="flex flex-col gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-2">
         <p className="text-destructive text-xs">{error.message}</p>
         <Button type="button" variant="outline" size="sm" onClick={retry}>
@@ -71,9 +71,7 @@ function BoundedNumberInput({
 
   return (
     <div className="flex flex-col gap-1.5">
-      <label htmlFor={id} className={labelClassName}>
-        {label}
-      </label>
+      <FieldLabel htmlFor={id}>{label}</FieldLabel>
       <Input
         id={id}
         type="number"
@@ -104,9 +102,7 @@ const Filters = () => {
     <div className="mb-6 flex flex-col gap-4">
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <div className="flex flex-col gap-1.5 sm:col-span-2 lg:col-span-1">
-          <label htmlFor="owned-parts-search" className={labelClassName}>
-            Search
-          </label>
+          <FieldLabel htmlFor="owned-parts-search">Search</FieldLabel>
           <Input
             id="owned-parts-search"
             type="search"
