@@ -27,6 +27,7 @@ type SearchableSelectProps<T extends string | number> = {
   disabled?: boolean
   isLoading?: boolean
   className?: string
+  triggerClassName?: string
 }
 
 const labelClassName =
@@ -43,6 +44,7 @@ function SearchableSelect<T extends string | number>({
   disabled = false,
   isLoading = false,
   className,
+  triggerClassName,
 }: SearchableSelectProps<T>) {
   const selectedOption = useMemo(
     () => options.find((option) => option.value === value) ?? null,
@@ -68,7 +70,7 @@ function SearchableSelect<T extends string | number>({
           placeholder={isLoading ? "Loading…" : placeholder}
           showClear
           disabled={isDisabled}
-          className="h-9 w-full font-semibold"
+          className={cn("h-9 w-full font-semibold", triggerClassName)}
         />
         <ComboboxContent>
           <ComboboxEmpty>{emptyMessage}</ComboboxEmpty>

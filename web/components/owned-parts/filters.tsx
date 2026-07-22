@@ -3,12 +3,14 @@
 import { useQueryStates } from "nuqs"
 import { useEffect, useState } from "react"
 import { AsyncQueryState } from "@/components/query/async-query-state"
+import { searchSurfaceClassName } from "@/components/search/search"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import SearchableSelect from "@/components/ui/searchable-select"
 import { ownedPartsSearchParams } from "@/lib/owned-parts/search-params"
 import { toColorOptions, toPartCategoryOptions } from "@/lib/owned-parts/utils"
 import { useCatalogColors, useCatalogPartCategories } from "@/lib/queries"
+import { cn } from "@/lib/utils"
 import FilterSelect from "../skeletons/filter-select"
 
 export const labelClassName =
@@ -116,7 +118,7 @@ const Filters = () => {
                 page: 1,
               })
             }}
-            className="h-9 font-semibold"
+            className={cn("h-9 font-semibold", searchSurfaceClassName)}
           />
         </div>
 
@@ -143,6 +145,7 @@ const Filters = () => {
                 void setQueryParams({ colorId, page: 1 })
               }}
               options={toColorOptions(data)}
+              triggerClassName={searchSurfaceClassName}
             />
           )}
         </AsyncQueryState>
@@ -170,6 +173,7 @@ const Filters = () => {
                 void setQueryParams({ partCategoryId, page: 1 })
               }}
               options={toPartCategoryOptions(data)}
+              triggerClassName={searchSurfaceClassName}
             />
           )}
         </AsyncQueryState>
@@ -185,7 +189,7 @@ const Filters = () => {
           onCommit={(pageSize) => {
             void setQueryParams({ pageSize, page: 1 })
           }}
-          className="w-24 font-semibold"
+          className={cn("w-24 font-semibold", searchSurfaceClassName)}
         />
 
         <Button
