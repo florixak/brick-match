@@ -6,6 +6,7 @@ import Link from "next/link"
 import { useState } from "react"
 import toast from "react-hot-toast"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { parseApiError } from "@/lib/api/client"
 import { useRegisterMutation } from "@/lib/queries"
 import PasswordField from "./password-field"
@@ -69,7 +70,7 @@ const RegisterForm = () => {
         <label htmlFor="email" className="text-sm font-black block mb-1.5">
           Email
         </label>
-        <input
+        <Input
           type="email"
           id="email"
           value={email}
@@ -80,7 +81,7 @@ const RegisterForm = () => {
           }}
           placeholder="you@example.com"
           disabled={isPending}
-          className="w-full border-2 border-border rounded-xl px-4 py-3 bg-card focus:outline-none focus:border-primary text-sm font-semibold disabled:opacity-50"
+          className="border-border bg-card font-semibold"
           autoComplete="email"
         />
         {fieldErrors.email && (
