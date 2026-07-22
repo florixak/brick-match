@@ -177,17 +177,6 @@ const Filters = () => {
 
       <div className="flex flex-wrap items-end gap-3">
         <BoundedNumberInput
-          id="owned-parts-page"
-          label="Page"
-          value={queryParams.page}
-          min={1}
-          onCommit={(page) => {
-            void setQueryParams({ page })
-          }}
-          className="w-24 font-semibold"
-        />
-
-        <BoundedNumberInput
           id="owned-parts-page-size"
           label="Page size"
           value={queryParams.pageSize}
