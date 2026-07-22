@@ -22,8 +22,7 @@ export default function AuthCTA() {
 
   if (isLoggedIn) {
     return (
-      <div className="flex items-center gap-1 md:gap-2">
-        <UserIcon />
+      <div className="flex items-center gap-1 md:gap-2 text-primary-foreground">
         <span className="md:inline text-sm font-semibold">{name}</span>
         <Button
           variant="header"

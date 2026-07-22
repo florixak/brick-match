@@ -2,6 +2,7 @@
 
 import { Eye, EyeOff } from "lucide-react"
 import { useState } from "react"
+import { Input } from "@/components/ui/input"
 
 type PasswordFieldProps = {
   id: string
@@ -26,7 +27,7 @@ const PasswordField = ({
 
   return (
     <div className={`relative ${className ?? ""}`}>
-      <input
+      <Input
         id={id}
         type={showPwd ? "text" : "password"}
         value={value}
@@ -34,7 +35,7 @@ const PasswordField = ({
         placeholder={placeholder}
         disabled={disabled}
         autoComplete={autoComplete}
-        className="w-full border-2 border-border rounded-xl px-4 py-3 bg-card focus:outline-none focus:border-primary text-sm font-semibold pr-11 disabled:opacity-50"
+        className="border-border bg-card pr-11 font-semibold"
       />
       <button
         type="button"

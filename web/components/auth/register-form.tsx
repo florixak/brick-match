@@ -6,6 +6,8 @@ import Link from "next/link"
 import { useState } from "react"
 import toast from "react-hot-toast"
 import { Button } from "@/components/ui/button"
+import { FieldLabel } from "@/components/ui/field-label"
+import { Input } from "@/components/ui/input"
 import { parseApiError } from "@/lib/api/client"
 import { useRegisterMutation } from "@/lib/queries"
 import PasswordField from "./password-field"
@@ -66,10 +68,10 @@ const RegisterForm = () => {
   return (
     <form onSubmit={handleSubmit} noValidate className="space-y-4">
       <div>
-        <label htmlFor="email" className="text-sm font-black block mb-1.5">
+        <FieldLabel htmlFor="email" className="mb-1.5">
           Email
-        </label>
-        <input
+        </FieldLabel>
+        <Input
           type="email"
           id="email"
           value={email}
@@ -80,7 +82,7 @@ const RegisterForm = () => {
           }}
           placeholder="you@example.com"
           disabled={isPending}
-          className="w-full border-2 border-border rounded-xl px-4 py-3 bg-card focus:outline-none focus:border-primary text-sm font-semibold disabled:opacity-50"
+          className="border-border bg-card font-semibold"
           autoComplete="email"
         />
         {fieldErrors.email && (
@@ -91,9 +93,9 @@ const RegisterForm = () => {
       </div>
 
       <div>
-        <label htmlFor="password" className="text-sm font-black block mb-1.5">
+        <FieldLabel htmlFor="password" className="mb-1.5">
           Password
-        </label>
+        </FieldLabel>
         <PasswordField
           id="password"
           value={password}
@@ -114,12 +116,9 @@ const RegisterForm = () => {
       </div>
 
       <div>
-        <label
-          htmlFor="confirmPassword"
-          className="text-sm font-black block mb-1.5"
-        >
+        <FieldLabel htmlFor="confirmPassword" className="mb-1.5">
           Confirm Password
-        </label>
+        </FieldLabel>
         <PasswordField
           id="confirmPassword"
           value={confirmPassword}
