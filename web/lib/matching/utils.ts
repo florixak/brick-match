@@ -3,10 +3,13 @@ import type { Theme, ThemesApiResponse } from "@lego-matcher/shared-types"
 function buildThemeLabel(theme: Theme, index: Map<number, Theme>): string {
   const parts: string[] = [theme.name]
   let current = theme
+  const visited = new Set<number>([theme.id])
 
   while (current.parentId !== null) {
+    if (visited.has(current.parentId)) break
     const parent = index.get(current.parentId)
     if (!parent) break
+    visited.add(parent.id)
     parts.unshift(parent.name)
     current = parent
   }
