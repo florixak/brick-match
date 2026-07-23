@@ -14,19 +14,19 @@ export async function fetchMatches(
 ): Promise<GetMatchesApiResponse> {
   return apiFetch("/api/v1/matching", {
     schema: GetMatchesApiResponseSchema,
-    auth: true,
     searchParams: query,
   })
 }
 
-export function matchesQueryOptions(query: GetMatchesQuery) {
+export function matchesQueryOptions(query: GetMatchesQuery, enabled = true) {
   return queryOptions({
     queryKey: queryKeys.matches.list(query),
     queryFn: () => fetchMatches(query),
     staleTime: MATCHES_STALE_TIME,
+    enabled,
   })
 }
 
-export function useMatches(query: GetMatchesQuery) {
-  return useQuery(matchesQueryOptions(query))
+export function useMatches(query: GetMatchesQuery, enabled = true) {
+  return useQuery(matchesQueryOptions(query, enabled))
 }

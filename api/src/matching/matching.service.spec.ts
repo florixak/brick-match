@@ -84,6 +84,10 @@ describe('MatchingService', () => {
             {
               set_num: '60000-1',
               set_name: 'Set A',
+              year: 2020,
+              theme_name: 'City',
+              total_parts: 15,
+              owned_parts: 15,
               match_percentage: 1,
             },
           ],
@@ -98,6 +102,10 @@ describe('MatchingService', () => {
             {
               setNum: '60000-1',
               setName: 'Set A',
+              year: 2020,
+              themeName: 'City',
+              totalParts: 15,
+              ownedParts: 15,
               matchPercentage: 1,
               missingParts: [],
             },
@@ -119,6 +127,10 @@ describe('MatchingService', () => {
             {
               set_num: '60001-1',
               set_name: 'Set B',
+              year: 2021,
+              theme_name: 'Technic',
+              total_parts: 21,
+              owned_parts: 10,
               match_percentage: 0.47619047619047616,
             },
           ],
@@ -148,6 +160,10 @@ describe('MatchingService', () => {
             {
               setNum: '60001-1',
               setName: 'Set B',
+              year: 2021,
+              themeName: 'Technic',
+              totalParts: 21,
+              ownedParts: 10,
               matchPercentage: 0.47619047619047616,
               missingParts: [
                 { partNum: '3001', colorId: 4, quantity: 10 },

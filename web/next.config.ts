@@ -9,6 +9,11 @@ const nextConfig: NextConfig = {
         hostname: "www.lego.com",
         pathname: "/cdn/product-assets/**",
       },
+      {
+        protocol: "https",
+        hostname: "cdn.rebrickable.com",
+        pathname: "/media/sets/**",
+      },
     ],
   },
 }

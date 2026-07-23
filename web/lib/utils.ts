@@ -41,9 +41,9 @@ export function formatSetNumber(
   return (includeHashtag ? "#" : "") + setNum.replace(/-1$/, "")
 }
 
-const SET_IMAGE_CDN_BASE =
+const LEGO_IMAGE_CDN_BASE =
   "https://www.lego.com/cdn/product-assets/product.img.pri"
-const SET_IMAGE_QUERY =
+const LEGO_IMAGE_QUERY =
   "format=webply&fit=bounds&quality=60&width=500&height=500&dpr=2"
 
 // Strip Rebrickable variant suffix (e.g. 9441-1 → 9441) for LEGO.com asset paths.
@@ -51,17 +51,25 @@ export function getSetImageBaseNumber(setNum: string) {
   return setNum.replace(/-1$/, "")
 }
 
-function buildSetImageUrl(baseNumber: string, suffix: "prod" | "Prod") {
-  return `${SET_IMAGE_CDN_BASE}/${baseNumber}_${suffix}.jpg?${SET_IMAGE_QUERY}`
+function buildLegoImageUrl(baseNumber: string, suffix: "prod" | "Prod") {
+  return `${LEGO_IMAGE_CDN_BASE}/${baseNumber}_${suffix}.jpg?${LEGO_IMAGE_QUERY}`
 }
 
-// LEGO CDN filenames use inconsistent `_prod` vs `_Prod` casing per set.
+/**
+ * Ordered list of image URL candidates for a set.
+ * Rebrickable is tried first (reliable for all sets in the catalog),
+ * then LEGO.com CDN as a fallback (two casing variants).
+ */
 export function getSetImageUrlCandidates(setNum: string) {
   const base = getSetImageBaseNumber(setNum)
-  return [buildSetImageUrl(base, "prod"), buildSetImageUrl(base, "Prod")]
+  return [
+    `https://cdn.rebrickable.com/media/sets/${setNum}.jpg`,
+    buildLegoImageUrl(base, "prod"),
+    buildLegoImageUrl(base, "Prod"),
+  ]
 }
 
-// Primary URL (lowercase `_prod`); use with onError → candidates[1].
+// Primary URL; use getSetImageUrlCandidates() for a full fallback chain.
 export function getSetImageUrl(setNum: string) {
   return getSetImageUrlCandidates(setNum)[0]
 }
