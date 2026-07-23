@@ -23,7 +23,7 @@ const Filters = () => {
         <MinPercentageSlider
           value={queryParams.minMatchPercentage}
           onValueChange={(minMatchPercentage) => {
-            void setQueryParams({ minMatchPercentage })
+            void setQueryParams({ minMatchPercentage, triggered: false })
           }}
         />
 
@@ -47,7 +47,7 @@ const Filters = () => {
               emptyMessage="No themes found."
               value={queryParams.themeId}
               onValueChange={(themeId) => {
-                void setQueryParams({ themeId })
+                void setQueryParams({ themeId, triggered: false })
               }}
               options={toThemeOptions(data)}
               triggerClassName={searchSurfaceClassName}
