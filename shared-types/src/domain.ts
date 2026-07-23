@@ -24,6 +24,12 @@ export type MissingPart = z.infer<typeof MissingPartSchema>;
 export const MatchResultSchema = z.object({
   setNum: z.string(),
   setName: z.string(),
+  year: z.number().int(),
+  themeName: z.string(),
+  /** Total non-spare parts required to build the set. */
+  totalParts: z.number().int(),
+  /** How many of the required parts the user owns (capped at required qty per part). */
+  ownedParts: z.number().int(),
   /** Fraction between 0 and 1, not a 0–100 percentage — multiply by 100 only at display time. */
   matchPercentage: z.number().min(0).max(1),
   missingParts: z.array(MissingPartSchema),

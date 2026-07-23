@@ -8,12 +8,12 @@ import {
 import { Injectable } from '@nestjs/common';
 import { eq, sql } from 'drizzle-orm';
 import { DatabaseService } from 'src/database/database.service';
-import { userOwnedParts } from 'src/database/schema';
+import { themes, userOwnedParts } from 'src/database/schema';
 
 const DEFAULT_LIMIT = 50;
 const DEFAULT_MIN_MATCH_PERCENTAGE = 0;
 
-type RankedSetRow = Omit<MatchResult, 'missingParts'>;
+type RankedSetRow = Omit<MatchResult, 'missingParts'>; // year, themeName, totalParts, ownedParts, matchPercentage
 
 @Injectable()
 export class MatchingService {
@@ -50,6 +50,10 @@ export class MatchingService {
     const results = rankedSets.map((set) => ({
       setNum: set.setNum,
       setName: set.setName,
+      year: set.year,
+      themeName: set.themeName,
+      totalParts: set.totalParts,
+      ownedParts: set.ownedParts,
       matchPercentage: set.matchPercentage,
       missingParts: missingBySet.get(set.setNum) ?? [],
     }));
@@ -82,6 +86,10 @@ export class MatchingService {
     const result = await this.databaseService.db.execute<{
       set_num: string;
       set_name: string;
+      year: number;
+      theme_name: string;
+      total_parts: number;
+      owned_parts: number;
       match_percentage: number;
     }>(sql`
       WITH owned AS (
@@ -110,6 +118,10 @@ export class MatchingService {
       SELECT
         r.set_num,
         s.name AS set_name,
+        s.year,
+        t.name AS theme_name,
+        SUM(r.required_qty)::int AS total_parts,
+        SUM(LEAST(COALESCE(o.quantity, 0), r.required_qty))::int AS owned_parts,
         (
           SUM(LEAST(COALESCE(o.quantity, 0), r.required_qty))::float
           / NULLIF(SUM(r.required_qty), 0)
@@ -118,8 +130,9 @@ export class MatchingService {
       LEFT JOIN owned o
         ON o.part_num = r.part_num AND o.color_id = r.color_id
       INNER JOIN sets s ON s.set_num = r.set_num
+      INNER JOIN themes t ON t.id = s.theme_id
       ${themeIdFilter ? sql`WHERE s.theme_id = ${themeIdFilter}` : sql``}
-      GROUP BY r.set_num, s.name
+      GROUP BY r.set_num, s.name, s.year, t.name
       HAVING
         SUM(LEAST(COALESCE(o.quantity, 0), r.required_qty)) > 0
         AND (
@@ -133,6 +146,10 @@ export class MatchingService {
     return result.rows.map((row) => ({
       setNum: row.set_num,
       setName: row.set_name,
+      year: Number(row.year),
+      themeName: row.theme_name,
+      totalParts: Number(row.total_parts),
+      ownedParts: Number(row.owned_parts),
       matchPercentage: Number(row.match_percentage),
     }));
   }
