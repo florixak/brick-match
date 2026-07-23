@@ -19,6 +19,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../ui/dialog"
+import QuantityInput from "../ui/quantity-input"
 import SearchableSelect from "../ui/searchable-select"
 
 type PartDialogProps = {
@@ -51,15 +52,15 @@ const PartDialog = ({ selectedPart, setSelectedPart }: PartDialogProps) => {
     }
   }
 
-  const handleQuantityChange = (quantity: number) => {
-    setQuantity(quantity)
-  }
-
   return (
     <Dialog
       open={selectedPart !== null}
       onOpenChange={(open) => {
-        if (!open) setSelectedPart(null)
+        if (!open) {
+          setSelectedPart(null)
+          setColorId(null)
+          setQuantity(1)
+        }
       }}
     >
       <DialogContent>
@@ -96,6 +97,12 @@ const PartDialog = ({ selectedPart, setSelectedPart }: PartDialogProps) => {
                 />
               )}
             </AsyncQueryState>
+            <QuantityInput
+              id="part-dialog-quantity"
+              value={quantity}
+              onValueChange={setQuantity}
+              disabled={isPending}
+            />
             <DialogFooter className="flex-col gap-3 sm:flex-row sm:justify-stretch">
               <Button
                 onClick={handleAddPart}
