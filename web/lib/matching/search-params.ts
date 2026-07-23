@@ -1,9 +1,12 @@
 import type { GetMatchesQuery } from "@lego-matcher/shared-types"
-import { parseAsBoolean, parseAsFloat, parseAsInteger } from "nuqs"
+import { debounce, parseAsBoolean, parseAsFloat, parseAsInteger } from "nuqs"
+import { SEARCH_DEBOUNCE_MS } from "@/constants"
 
 export const matchingSearchParams = {
   /** Fraction 0–1, matches the backend field directly */
-  minMatchPercentage: parseAsFloat.withDefault(0),
+  minMatchPercentage: parseAsFloat.withDefault(0).withOptions({
+    limitUrlUpdates: debounce(SEARCH_DEBOUNCE_MS),
+  }),
   limit: parseAsInteger.withDefault(50),
   themeId: parseAsInteger,
   /** Whether the user has clicked "Find Matching Sets" — gates query execution */
