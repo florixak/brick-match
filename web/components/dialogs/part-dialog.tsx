@@ -4,7 +4,7 @@ import { useState } from "react"
 import toast from "react-hot-toast"
 import useIsAuthenticated from "@/hooks/use-is-authenticated"
 import { parseApiError } from "@/lib/api/client"
-import { toColorOptions, toCssHex } from "@/lib/owned-parts/color"
+import { toColorOptions } from "@/lib/owned-parts/color"
 import { useAddOwnedPartMutation, useCatalogColors } from "@/lib/queries"
 import SelectErrorFallback from "../fallbacks/select-error"
 import { AsyncQueryState } from "../query/async-query-state"
@@ -99,7 +99,7 @@ const PartDialog = ({ selectedPart, setSelectedPart }: PartDialogProps) => {
             <DialogFooter className="flex-col gap-3 sm:flex-row sm:justify-stretch">
               <Button
                 onClick={handleAddPart}
-                disabled={!isAuthenticated || isPending}
+                disabled={!isAuthenticated || isPending || colorId === null}
                 className="h-10 w-full sm:flex-1 sm:basis-0"
               >
                 {isPending ? (
