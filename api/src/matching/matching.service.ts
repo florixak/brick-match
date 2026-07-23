@@ -8,7 +8,7 @@ import {
 import { Injectable } from '@nestjs/common';
 import { eq, sql } from 'drizzle-orm';
 import { DatabaseService } from 'src/database/database.service';
-import { themes, userOwnedParts } from 'src/database/schema';
+import { userOwnedParts } from 'src/database/schema';
 
 const DEFAULT_LIMIT = 50;
 const DEFAULT_MIN_MATCH_PERCENTAGE = 0;
