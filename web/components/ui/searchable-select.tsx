@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils"
 export type SearchableSelectOption<T extends string | number> = {
   value: T
   label: string
+  prefix?: React.ReactNode
 }
 
 type SearchableSelectProps<T extends string | number> = {
@@ -77,6 +78,7 @@ function SearchableSelect<T extends string | number>({
           <ComboboxList>
             {(option) => (
               <ComboboxItem key={String(option.value)} value={option}>
+                {option.prefix}
                 {option.label}
               </ComboboxItem>
             )}
