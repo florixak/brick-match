@@ -1,6 +1,7 @@
 import type { MatchResult } from "@lego-matcher/shared-types"
 import Image from "next/image"
-import { cn } from "@/lib/utils"
+import { useState } from "react"
+import { cn, getSetImageUrlCandidates } from "@/lib/utils"
 
 type Props = {
   result: MatchResult
@@ -20,7 +21,9 @@ function progressColor(fraction: number): string {
 
 const MatchingResult = ({ result }: Props) => {
   const percent = Math.round(result.matchPercentage * 100)
-  const imgUrl = `https://cdn.rebrickable.com/media/sets/${result.setNum}.jpg`
+  const imageCandidates = getSetImageUrlCandidates(result.setNum)
+  const [imageIndex, setImageIndex] = useState(0)
+  const imgUrl = imageCandidates[imageIndex]!
 
   return (
     <article className="flex gap-3 overflow-hidden rounded-2xl border-2 border-border bg-card p-4 shadow-md">
@@ -32,6 +35,11 @@ const MatchingResult = ({ result }: Props) => {
           sizes="64px"
           className="object-contain p-1"
           unoptimized
+          onError={() =>
+            setImageIndex((index) =>
+              index < imageCandidates.length - 1 ? index + 1 : index,
+            )
+          }
         />
       </div>
 
