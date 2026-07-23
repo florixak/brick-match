@@ -5,30 +5,18 @@ import { useEffect, useState } from "react"
 import { AsyncQueryState } from "@/components/query/async-query-state"
 import { searchSurfaceClassName } from "@/components/search/search"
 import { Button } from "@/components/ui/button"
-import { FieldCaption, FieldLabel } from "@/components/ui/field-label"
+import { FieldLabel } from "@/components/ui/field-label"
 import { Input } from "@/components/ui/input"
 import SearchableSelect from "@/components/ui/searchable-select"
+import { toPartCategoryOptions } from "@/lib/owned-parts/category"
+import { toColorOptions } from "@/lib/owned-parts/color"
 import { ownedPartsSearchParams } from "@/lib/owned-parts/search-params"
-import { toColorOptions, toPartCategoryOptions } from "@/lib/owned-parts/utils"
 import { useCatalogColors, useCatalogPartCategories } from "@/lib/queries"
 import { cn } from "@/lib/utils"
+import SelectErrorFallback from "../fallbacks/select-error"
 import FilterSelect from "../skeletons/filter-select"
 
 export { fieldLabelClassName as labelClassName } from "@/components/ui/field-label"
-
-function filterSelectErrorFallback(error: Error, retry: () => void) {
-  return (
-    <div className="flex flex-col gap-1.5">
-      <FieldCaption>Filter unavailable</FieldCaption>
-      <div className="flex flex-col gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-2">
-        <p className="text-destructive text-xs">{error.message}</p>
-        <Button type="button" variant="outline" size="sm" onClick={retry}>
-          Try again
-        </Button>
-      </div>
-    </div>
-  )
-}
 
 type BoundedNumberInputProps = {
   id: string
@@ -128,7 +116,7 @@ const Filters = () => {
           data={colors.data}
           onRetry={() => void colors.refetch()}
           skeleton={<FilterSelect label="Color" />}
-          errorFallback={filterSelectErrorFallback}
+          errorFallback={SelectErrorFallback}
         >
           {(data) => (
             <SearchableSelect
@@ -156,7 +144,7 @@ const Filters = () => {
           data={partCategories.data}
           onRetry={() => void partCategories.refetch()}
           skeleton={<FilterSelect label="Category" />}
-          errorFallback={filterSelectErrorFallback}
+          errorFallback={SelectErrorFallback}
         >
           {(data) => (
             <SearchableSelect

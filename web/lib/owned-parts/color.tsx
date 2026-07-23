@@ -1,3 +1,5 @@
+import type { ColorsApiResponse } from "@lego-matcher/shared-types"
+
 export function toCssHex(rgb: string) {
   return rgb.startsWith("#") ? rgb : `#${rgb}`
 }
@@ -10,4 +12,17 @@ export function isLightColor(hex: string) {
   const luminance = (0.299 * red + 0.587 * green + 0.114 * blue) / 255
 
   return luminance > 0.6
+}
+
+export function toColorOptions(data: ColorsApiResponse) {
+  return data.data.colors.map((color) => ({
+    value: color.colorId,
+    label: color.name,
+    prefix: (
+      <span
+        className="inline-block size-3 shrink-0 rounded-sm border border-black/10"
+        style={{ backgroundColor: toCssHex(color.rgb) }}
+      />
+    ),
+  }))
 }
