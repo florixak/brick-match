@@ -1,7 +1,9 @@
 import type { SetSummary } from "@lego-matcher/shared-types"
 import { Loader2 } from "lucide-react"
 import Link from "next/link"
+import toast from "react-hot-toast"
 import useIsAuthenticated from "@/hooks/use-is-authenticated"
+import { parseApiError } from "@/lib/api/client"
 import { useAddSetMutation } from "@/lib/queries"
 import { cn, formatSetNumber, getThemeTextClassName } from "@/lib/utils"
 import SetAvatar from "../search/set-avatar"
@@ -29,10 +31,14 @@ const SetDialog = ({ selectedSet, setSelectedSet }: SetDialogProps) => {
         { setNum: selectedSet.setNum },
         {
           onSuccess: () => {
+            toast.success(`Added all parts from set ${selectedSet.name}`)
             setSelectedSet(null)
           },
           onError: (error) => {
-            console.error(error)
+            const apiError = parseApiError(error)
+            toast.error(
+              apiError?.body.message ?? "Failed to add all parts from set.",
+            )
           },
         },
       )
