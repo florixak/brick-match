@@ -1,9 +1,7 @@
 "use client"
 
-import { ZapIcon } from "lucide-react"
 import { useQueryStates } from "nuqs"
 import { AsyncQueryState } from "@/components/query/async-query-state"
-import { Button } from "@/components/ui/button"
 import SearchableSelect from "@/components/ui/searchable-select"
 import { matchingSearchParams } from "@/lib/matching/search-params"
 import { toThemeOptions } from "@/lib/matching/utils"
@@ -54,31 +52,6 @@ const Filters = () => {
             />
           )}
         </AsyncQueryState>
-      </div>
-
-      <div className="flex flex-wrap items-center gap-3">
-        <Button
-          className="flex-1"
-          onClick={() => {
-            void setQueryParams({ triggered: true })
-          }}
-        >
-          <ZapIcon />
-          Find Matching Sets
-        </Button>
-
-        <Button
-          variant="outline"
-          onClick={() => {
-            void setQueryParams({
-              minMatchPercentage: 0,
-              themeId: null,
-              triggered: false,
-            })
-          }}
-        >
-          Reset filters
-        </Button>
       </div>
     </div>
   )
