@@ -6,13 +6,14 @@ import type {
   SearchSetsApiResponse,
   SetSummary,
 } from "@lego-matcher/shared-types"
-import { useQueryState } from "nuqs"
+import { useQueryStates } from "nuqs"
 import { useState } from "react"
 import { AsyncQueryState } from "@/components/query/async-query-state"
 import { Button } from "@/components/ui/button"
 import { SEARCH_DEBOUNCE_MS } from "@/constants"
 import { useDebouncedValue } from "@/hooks/use-debounced-value"
 import { useCatalogParts, useCatalogSets } from "@/lib/queries"
+import { catalogSearchParams } from "@/lib/search/search-params"
 import { formatSetNumber } from "@/lib/utils"
 import PartDialog from "../dialogs/part-dialog"
 import SetDialog from "../dialogs/set-dialog"
@@ -34,17 +35,16 @@ function isEmptyParts(data: SearchPartsApiResponse) {
 }
 
 const SearchResults = () => {
-  const [search] = useQueryState("search", { defaultValue: "" })
-  const [mode] = useQueryState("mode", { defaultValue: "sets" })
-  const debouncedSearch = useDebouncedValue(search, SEARCH_DEBOUNCE_MS)
+  const [queryParams] = useQueryStates(catalogSearchParams)
+  const debouncedSearch = useDebouncedValue(queryParams.q, SEARCH_DEBOUNCE_MS)
   const [selectedSet, setSelectedSet] = useState<SetSummary | null>(null)
   const [selectedPart, setSelectedPart] = useState<PartSummary | null>(null)
 
   const trimmedSearch = debouncedSearch.trim()
-  const immediateTrimmedSearch = search.trim()
+  const immediateTrimmedSearch = queryParams.q.trim()
   const query = { search: trimmedSearch, limit: RESULTS_LIMIT }
   const canQuery = trimmedSearch.length >= MIN_SEARCH_LENGTH
-  const isPartsMode = mode === "parts"
+  const isPartsMode = queryParams.mode === "parts"
 
   const setsQuery = useCatalogSets(query, !isPartsMode && canQuery)
   const partsQuery = useCatalogParts(query, isPartsMode && canQuery)
