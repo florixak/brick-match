@@ -66,7 +66,7 @@ export const SEARCH_OPTIONS = [
     value: "parts",
     icon: PuzzleIcon,
   },
-]
+] as const
 
 export const FALLBACK_TIPS: Theme[] = [
   {
