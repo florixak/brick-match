@@ -18,7 +18,7 @@ export class ApiRequestError extends Error {
 }
 
 type ApiFetchOptions<T extends z.ZodType> = {
-  method?: "GET" | "POST" | "DELETE"
+  method?: "GET" | "POST" | "DELETE" | "PATCH"
   body?: unknown
   schema?: T
   searchParams?: Record<string, string | number | boolean | undefined>

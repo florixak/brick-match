@@ -9,9 +9,9 @@ import useIsAuthenticated from "@/hooks/use-is-authenticated"
 import { parseApiError } from "@/lib/api/client"
 import { toColorOptions } from "@/lib/owned-parts/color"
 import {
-  useAddOwnedPartMutation,
   useCatalogColors,
   useRemoveOwnedPartMutation,
+  useUpdateOwnedPartMutation,
 } from "@/lib/queries"
 import SelectErrorFallback from "../fallbacks/select-error"
 import { AsyncQueryState } from "../query/async-query-state"
@@ -46,31 +46,62 @@ const OwnedPartDialog = ({
   const [quantity, setQuantity] = useState(selectedPart?.quantity ?? 1)
   const colors = useCatalogColors()
   const isAuthenticated = useIsAuthenticated()
-  const { mutate: addPart, isPending } = useAddOwnedPartMutation()
   const { mutate: removePart, isPending: isRemovingPart } =
     useRemoveOwnedPartMutation()
+  const { mutate: updatePart, isPending: isUpdating } =
+    useUpdateOwnedPartMutation()
+
+  const isMutating = isUpdating || isRemovingPart
 
   useEffect(() => {
     setColorId(selectedPart?.colorId ?? null)
     setQuantity(selectedPart?.quantity ?? 1)
   }, [selectedPart])
 
-  const handleAddPart = () => {
-    if (selectedPart && colorId !== null) {
-      addPart(
-        { partNum: selectedPart.partNum, colorId, quantity },
-        {
-          onSuccess: () => {
-            toast.success(`Added ×${quantity} ${selectedPart.partName}`)
-            setSelectedPart()
-          },
-          onError: (error) => {
-            const apiError = parseApiError(error)
-            toast.error(apiError?.body.message ?? "Failed to add part.")
-          },
+  const isDirty =
+    selectedPart !== null &&
+    colorId !== null &&
+    (colorId !== selectedPart.colorId || quantity !== selectedPart.quantity)
+
+  const handleUpdatePart = () => {
+    if (!selectedPart || colorId === null) return
+    updatePart(
+      {
+        from: {
+          partNum: selectedPart.partNum,
+          colorId: selectedPart.colorId,
         },
-      )
-    }
+        to: {
+          partNum: selectedPart.partNum,
+          colorId,
+          quantity,
+        },
+      },
+      {
+        onSuccess: (response) => {
+          const { part, merged } = response.data
+          if (merged) {
+            toast.success(
+              `Merged into existing part, now ×${part.quantity} total.`,
+            )
+          } else if (colorId !== selectedPart.colorId) {
+            const color = colors.data?.data.colors.find(
+              (color) => color.colorId === colorId,
+            )
+            if (color) {
+              toast.success(`Color updated to ${color.name}.`)
+            }
+          } else {
+            toast.success(`Updated to ×${quantity} ${selectedPart.partName}.`)
+          }
+          setSelectedPart()
+        },
+        onError: (error) => {
+          const apiError = parseApiError(error)
+          toast.error(apiError?.body.message ?? "Failed to update part.")
+        },
+      },
+    )
   }
 
   const handleRemovePart = () => {
@@ -144,13 +175,13 @@ const OwnedPartDialog = ({
               id="part-dialog-quantity"
               value={quantity}
               onValueChange={setQuantity}
-              disabled={isPending}
+              disabled={isMutating}
             />
             <DialogFooter className="flex-col gap-3 sm:flex-row sm:justify-stretch">
               <Button
                 variant="destructive"
                 onClick={handleRemovePart}
-                disabled={!isAuthenticated || isRemovingPart || isPending}
+                disabled={!isAuthenticated || isMutating}
                 className="h-10 w-full sm:flex-1 sm:basis-0"
               >
                 {isRemovingPart ? (
@@ -160,16 +191,17 @@ const OwnedPartDialog = ({
                 )}
               </Button>
               <Button
-                onClick={handleAddPart}
+                onClick={handleUpdatePart}
                 disabled={
                   !isAuthenticated ||
-                  isPending ||
+                  isUpdating ||
                   isRemovingPart ||
-                  colorId === null
+                  colorId === null ||
+                  !isDirty
                 }
                 className="h-10 w-full sm:flex-1 sm:basis-0"
               >
-                {isPending ? (
+                {isUpdating ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
                   "Update Part"
