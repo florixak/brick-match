@@ -9,10 +9,14 @@ import {
   GetOwnedPartsApiResponseSchema,
   GetOwnedPartsQuerySchema,
   RemoveOwnedPartQuerySchema,
+  UpdateOwnedPartApiResponse,
+  UpdateOwnedPartApiResponseSchema,
+  UpdateOwnedPartRequestSchema,
   type AddOwnedPartRequest,
   type AddSetRequest,
   type GetOwnedPartsQuery,
   type RemoveOwnedPartQuery,
+  type UpdateOwnedPartRequest,
 } from '@lego-matcher/shared-types';
 import {
   Body,
@@ -20,6 +24,7 @@ import {
   Delete,
   Get,
   HttpCode,
+  Patch,
   Post,
   Query,
   UseGuards,
@@ -87,5 +92,16 @@ export class OwnedPartsController {
     query: RemoveOwnedPartQuery,
   ): Promise<void> {
     await this.ownedPartsService.remove(userId, query.partNum, query.colorId);
+  }
+
+  @Patch()
+  @ApiOperation({ summary: 'Update an owned part' })
+  async update(
+    @CurrentUser('sub') userId: string,
+    @Body(new ZodValidationPipe(UpdateOwnedPartRequestSchema))
+    request: UpdateOwnedPartRequest,
+  ): Promise<UpdateOwnedPartApiResponse> {
+    const data = await this.ownedPartsService.update(userId, request);
+    return UpdateOwnedPartApiResponseSchema.parse({ data, meta: {} });
   }
 }

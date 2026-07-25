@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { UpdateOwnedPartRequestSchema } from '@lego-matcher/shared-types';
 import { OwnedPartsController } from './owned-parts.controller';
 import { OwnedPartsService } from './owned-parts.service';
 
@@ -9,6 +10,7 @@ describe('OwnedPartsController', () => {
     addSet: jest.Mock;
     findAll: jest.Mock;
     remove: jest.Mock;
+    update: jest.Mock;
   };
 
   const userId = '11111111-1111-1111-1111-111111111111';
@@ -19,6 +21,7 @@ describe('OwnedPartsController', () => {
       addSet: jest.fn(),
       findAll: jest.fn(),
       remove: jest.fn(),
+      update: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -126,5 +129,34 @@ describe('OwnedPartsController', () => {
       '03231pr0001',
       0,
     );
+  });
+
+  it('should update an owned part', async () => {
+    const request = {
+      from: { partNum: '3001', colorId: 0 },
+      to: { partNum: '3001', colorId: 14, quantity: 1 },
+    };
+    const mockResponse = {
+      part: { partNum: '3001', colorId: 14, quantity: 5 },
+      merged: true,
+    };
+    ownedPartsService.update.mockResolvedValue(mockResponse);
+
+    const result = await controller.update(userId, request);
+
+    expect(ownedPartsService.update).toHaveBeenCalledWith(userId, request);
+    expect(result).toEqual({
+      data: mockResponse,
+      meta: {},
+    });
+  });
+
+  it('should reject partNum change in update request schema', () => {
+    const result = UpdateOwnedPartRequestSchema.safeParse({
+      from: { partNum: '3001', colorId: 0 },
+      to: { partNum: '3003', colorId: 1, quantity: 1 },
+    });
+
+    expect(result.success).toBe(false);
   });
 });

@@ -66,12 +66,22 @@ function createDeleteChain<T>(result: T[]) {
   return { delete: deleteFn, where, returning };
 }
 
+function createUpdateChain<T>(result: T[]) {
+  const returning = jest.fn().mockResolvedValue(result);
+  const where = jest.fn().mockReturnValue({ returning });
+  const set = jest.fn().mockReturnValue({ where });
+  const update = jest.fn().mockReturnValue({ set });
+
+  return { update, set, where, returning };
+}
+
 describe('OwnedPartsService', () => {
   let service: OwnedPartsService;
   let insertChain: ReturnType<typeof createInsertChain>;
   let countChain: ReturnType<typeof createCountSelectChain>;
   let listChain: ReturnType<typeof createFindAllSelectChain>;
   let deleteChain: ReturnType<typeof createDeleteChain>;
+  let updateChain: ReturnType<typeof createUpdateChain>;
   let select: jest.Mock;
   let execute: jest.Mock;
 
@@ -82,6 +92,7 @@ describe('OwnedPartsService', () => {
     countChain = createCountSelectChain([{ count: 0 }]);
     listChain = createFindAllSelectChain([]);
     deleteChain = createDeleteChain([]);
+    updateChain = createUpdateChain([]);
     execute = jest.fn().mockResolvedValue({ rows: [] });
 
     select = jest
@@ -99,6 +110,7 @@ describe('OwnedPartsService', () => {
               insert: insertChain.insert,
               select,
               delete: deleteChain.delete,
+              update: updateChain.update,
               execute,
             },
           },
@@ -336,6 +348,110 @@ describe('OwnedPartsService', () => {
       await expect(service.remove(userId, '3001', 1)).rejects.toThrow(
         NotFoundException,
       );
+    });
+  });
+
+  describe('update', () => {
+    const updateRequest = {
+      from: { partNum: '3001', colorId: 0 },
+      to: { partNum: '3001', colorId: 0, quantity: 1 },
+    };
+
+    it('should update quantity for the same owned part identity', async () => {
+      updateChain.returning.mockResolvedValue([
+        { partNum: '3001', colorId: 0, quantity: 1 },
+      ]);
+
+      await expect(service.update(userId, updateRequest)).resolves.toEqual({
+        part: { partNum: '3001', colorId: 0, quantity: 1 },
+        merged: false,
+      });
+
+      expect(updateChain.update).toHaveBeenCalled();
+      expect(updateChain.set).toHaveBeenCalledWith({ quantity: 1 });
+      expect(updateChain.returning).toHaveBeenCalled();
+      expect(execute).not.toHaveBeenCalled();
+    });
+
+    it('should throw NotFoundException when same-identity source is missing', async () => {
+      updateChain.returning.mockResolvedValue([]);
+
+      await expect(service.update(userId, updateRequest)).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+
+    it('should change color without merging when target row does not exist', async () => {
+      execute.mockResolvedValue({
+        rows: [
+          {
+            part_num: '3001',
+            color_id: 14,
+            quantity: 2,
+            merged: false,
+          },
+        ],
+      });
+
+      await expect(
+        service.update(userId, {
+          from: { partNum: '3001', colorId: 0 },
+          to: { partNum: '3001', colorId: 14, quantity: 2 },
+        }),
+      ).resolves.toEqual({
+        part: { partNum: '3001', colorId: 14, quantity: 2 },
+        merged: false,
+      });
+
+      expect(execute).toHaveBeenCalled();
+      expect(updateChain.update).not.toHaveBeenCalled();
+    });
+
+    it('should merge quantities when color change targets an existing row', async () => {
+      execute.mockResolvedValue({
+        rows: [
+          {
+            part_num: '3001',
+            color_id: 14,
+            quantity: 5,
+            merged: true,
+          },
+        ],
+      });
+
+      await expect(
+        service.update(userId, {
+          from: { partNum: '3001', colorId: 0 },
+          to: { partNum: '3001', colorId: 14, quantity: 1 },
+        }),
+      ).resolves.toEqual({
+        part: { partNum: '3001', colorId: 14, quantity: 5 },
+        merged: true,
+      });
+
+      expect(execute).toHaveBeenCalled();
+    });
+
+    it('should throw NotFoundException when color-change source is missing', async () => {
+      execute.mockResolvedValue({ rows: [] });
+
+      await expect(
+        service.update(userId, {
+          from: { partNum: '3001', colorId: 0 },
+          to: { partNum: '3001', colorId: 14, quantity: 1 },
+        }),
+      ).rejects.toThrow(NotFoundException);
+    });
+
+    it('should throw BadRequestException when target color is not in catalog', async () => {
+      execute.mockRejectedValue({ code: '23503' });
+
+      await expect(
+        service.update(userId, {
+          from: { partNum: '3001', colorId: 0 },
+          to: { partNum: '3001', colorId: 999, quantity: 1 },
+        }),
+      ).rejects.toThrow(BadRequestException);
     });
   });
 });

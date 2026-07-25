@@ -3,7 +3,12 @@ import {
   ApiSuccessResponseSchema,
   ApiSuccessResponseWithPaginationSchema,
 } from "./api-response";
-import { ColorIdSchema, CoercedColorIdSchema, OwnedPartSchema } from "./domain";
+import {
+  ColorIdSchema,
+  CoercedColorIdSchema,
+  OwnedPartSchema,
+  PartRefSchema,
+} from "./domain";
 import { PaginationQuerySchema } from "./pagination";
 
 export const AddOwnedPartRequestSchema = z.object({
@@ -70,6 +75,34 @@ export const GetOwnedPartsApiResponseSchema =
   ApiSuccessResponseWithPaginationSchema(GetOwnedPartsDataSchema);
 export type GetOwnedPartsApiResponse = z.infer<
   typeof GetOwnedPartsApiResponseSchema
+>;
+
+export const UpdateOwnedPartRequestSchema = z
+  .object({
+    from: PartRefSchema,
+    to: OwnedPartSchema,
+  })
+  .refine((value) => value.from.partNum === value.to.partNum, {
+    message: "partNum cannot change via update",
+    path: ["to", "partNum"],
+  });
+export type UpdateOwnedPartRequest = z.infer<
+  typeof UpdateOwnedPartRequestSchema
+>;
+
+export const UpdateOwnedPartResponseSchema = z.object({
+  part: OwnedPartSchema,
+  merged: z.boolean(),
+});
+export type UpdateOwnedPartResponse = z.infer<
+  typeof UpdateOwnedPartResponseSchema
+>;
+
+export const UpdateOwnedPartApiResponseSchema = ApiSuccessResponseSchema(
+  UpdateOwnedPartResponseSchema,
+);
+export type UpdateOwnedPartApiResponse = z.infer<
+  typeof UpdateOwnedPartApiResponseSchema
 >;
 
 export const RemoveOwnedPartQuerySchema = z.object({
