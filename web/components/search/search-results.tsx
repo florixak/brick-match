@@ -156,6 +156,7 @@ const SearchResults = () => {
                     themeId={set.themeId}
                     themeName={set.themeName}
                     setNum={set.setNum}
+                    size="lg"
                   />
                   <div className="flex flex-col items-start justify-center">
                     <span className="block text-sm">{set.name}</span>

@@ -6,7 +6,7 @@ import useIsAuthenticated from "@/hooks/use-is-authenticated"
 import { parseApiError } from "@/lib/api/client"
 import { useAddSetMutation } from "@/lib/queries"
 import { cn, formatSetNumber, getThemeTextClassName } from "@/lib/utils"
-import SetAvatar from "../search/set-avatar"
+import SetImage from "../search/set-image"
 import { Button } from "../ui/button"
 import {
   Dialog,
@@ -55,29 +55,29 @@ const SetDialog = ({ selectedSet, setSelectedSet }: SetDialogProps) => {
       <DialogContent>
         {selectedSet ? (
           <>
-            <DialogHeader className="flex flex-row items-center gap-4">
-              <SetAvatar
-                themeId={selectedSet.themeId}
-                themeName={selectedSet.themeName}
-                setNum={selectedSet.setNum}
-                size="lg"
-              />
-              <div className="flex min-w-0 flex-1 flex-col">
-                <DialogTitle className="text-2xl leading-tight">
-                  {selectedSet.name}
-                </DialogTitle>
-                <p className="text-muted-foreground text-base">
-                  Set {formatSetNumber(selectedSet.setNum)}
-                </p>
-                <p
-                  className={cn(
-                    "font-semibold text-base uppercase tracking-wide",
-                    getThemeTextClassName(selectedSet.themeId),
-                  )}
-                >
-                  {selectedSet.themeName}
-                </p>
-              </div>
+            <SetImage
+              setNum={selectedSet.setNum}
+              alt={selectedSet.name}
+              themeId={selectedSet.themeId}
+              themeName={selectedSet.themeName}
+              variant="hero"
+            />
+
+            <DialogHeader className="gap-1 text-left">
+              <DialogTitle className="text-2xl leading-tight">
+                {selectedSet.name}
+              </DialogTitle>
+              <p className="text-muted-foreground text-base">
+                Set {formatSetNumber(selectedSet.setNum)}
+              </p>
+              <p
+                className={cn(
+                  "font-semibold text-base uppercase tracking-wide",
+                  getThemeTextClassName(selectedSet.themeId),
+                )}
+              >
+                {selectedSet.themeName}
+              </p>
             </DialogHeader>
 
             <dl className="grid grid-cols-2 gap-4 rounded-lg border bg-muted/40 p-4">
