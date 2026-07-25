@@ -8,6 +8,9 @@ import {
   type GetOwnedPartsApiResponse,
   type GetOwnedPartsQuery,
   type RemoveOwnedPartQuery,
+  UpdateOwnedPartApiResponseSchema,
+  type UpdateOwnedPartRequest,
+  UpdateOwnedPartRequestSchema,
 } from "@lego-matcher/shared-types"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { apiFetch } from "@/lib/api/client"
@@ -43,6 +46,22 @@ export function useAddSetMutation() {
         method: "POST",
         body: AddSetRequestSchema.parse(input),
         schema: AddSetApiResponseSchema,
+      }),
+    onSuccess: async () => {
+      await invalidateCollectionQueries(queryClient)
+    },
+  })
+}
+
+export function useUpdateOwnedPartMutation() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (input: UpdateOwnedPartRequest) =>
+      apiFetch("/api/v1/owned-parts", {
+        method: "PATCH",
+        body: UpdateOwnedPartRequestSchema.parse(input),
+        schema: UpdateOwnedPartApiResponseSchema,
       }),
     onSuccess: async () => {
       await invalidateCollectionQueries(queryClient)
