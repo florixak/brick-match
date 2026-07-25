@@ -2,7 +2,7 @@
 
 import type { GetOwnedPartsApiResponse } from "@lego-matcher/shared-types"
 import { useQueryStates } from "nuqs"
-import { Fragment, useMemo } from "react"
+import { Fragment, useEffect, useMemo, useRef, useState } from "react"
 import Pagination from "@/components/layout/pagination"
 import CategoryHeader from "@/components/owned-parts/category-header"
 import ListEmpty from "@/components/owned-parts/list-empty"
@@ -22,12 +22,18 @@ import {
   useCatalogPartCategories,
   useOwnedParts,
 } from "@/lib/queries"
+import OwnedPartDialog from "../dialogs/owned-part-dialog"
 
 function isEmptyOwnedParts(data: GetOwnedPartsApiResponse) {
   return data.data.items.length === 0
 }
 
+function ownedPartKey(part: { partNum: string; colorId: number }) {
+  return `${part.partNum}:${part.colorId}`
+}
+
 const List = () => {
+  const [selectedPartKey, setSelectedPartKey] = useState<string | null>(null)
   const [queryParams, setQueryParams] = useQueryStates(ownedPartsSearchParams)
   const colors = useCatalogColors()
   const partCategories = useCatalogPartCategories()
@@ -41,6 +47,36 @@ const List = () => {
     search: debouncedSearch,
   })
   const ownedParts = useOwnedParts(query)
+
+  const listQueryKey = useMemo(
+    () =>
+      `${debouncedSearch}|${queryParams.page}|${queryParams.colorId ?? ""}|${queryParams.partCategoryId ?? ""}`,
+    [
+      debouncedSearch,
+      queryParams.page,
+      queryParams.colorId,
+      queryParams.partCategoryId,
+    ],
+  )
+  const prevListQueryKey = useRef<string | null>(null)
+
+  const selectedPart =
+    ownedParts.data?.data.items.find(
+      (p) => ownedPartKey(p) === selectedPartKey,
+    ) ?? null
+
+  useEffect(() => {
+    if (prevListQueryKey.current !== listQueryKey) {
+      prevListQueryKey.current = listQueryKey
+      setSelectedPartKey(null)
+    }
+  }, [listQueryKey])
+
+  useEffect(() => {
+    if (selectedPartKey && ownedParts.data && !selectedPart) {
+      setSelectedPartKey(null)
+    }
+  }, [selectedPartKey, selectedPart, ownedParts.data])
 
   const activeFilters = useMemo(() => {
     const filters: { label: string; onClear: () => void }[] = []
@@ -98,65 +134,76 @@ const List = () => {
     queryParams.partCategoryId != null
 
   return (
-    <AsyncQueryState
-      isLoading={ownedParts.isPending}
-      isFetching={ownedParts.isFetching}
-      isError={ownedParts.isError}
-      isSuccess={ownedParts.isSuccess}
-      isStale={ownedParts.isStale}
-      error={ownedParts.error}
-      data={ownedParts.data}
-      isEmpty={isEmptyOwnedParts}
-      onRetry={() => void ownedParts.refetch()}
-      skeleton={<OwnedPartsListSkeleton />}
-      empty={<ListEmpty hasFilters={hasFilters} />}
-      errorFallback={(error, retry) => (
-        <div className="space-y-3 rounded-2xl border-2 border-destructive/30 bg-destructive/5 p-4">
-          <p className="text-destructive text-sm">{error.message}</p>
-          <Button type="button" variant="outline" size="sm" onClick={retry}>
-            Try again
-          </Button>
-        </div>
-      )}
-    >
-      {(data) => (
-        <>
-          <ListHeader
-            totalItems={data.meta.totalItems}
-            activeFilters={activeFilters}
-          />
-
-          <div
-            className="grid gap-3"
-            style={{
-              gridTemplateColumns: "repeat(auto-fill, minmax(130px, 1fr))",
-            }}
-          >
-            {data.data.items.map((part, index) => {
-              const previousPart = index > 0 ? data.data.items[index - 1] : null
-              const showCategoryHeader =
-                queryParams.partCategoryId == null &&
-                part.partCategoryName !== previousPart?.partCategoryName
-
-              return (
-                <Fragment key={`${part.partNum}-${part.colorId}`}>
-                  {showCategoryHeader ? (
-                    <CategoryHeader name={part.partCategoryName} />
-                  ) : null}
-                  <OwnedPart part={part} />
-                </Fragment>
-              )
-            })}
+    <>
+      <AsyncQueryState
+        isLoading={ownedParts.isPending}
+        isFetching={ownedParts.isFetching}
+        isError={ownedParts.isError}
+        isSuccess={ownedParts.isSuccess}
+        isStale={ownedParts.isStale}
+        error={ownedParts.error}
+        data={ownedParts.data}
+        isEmpty={isEmptyOwnedParts}
+        onRetry={() => void ownedParts.refetch()}
+        skeleton={<OwnedPartsListSkeleton />}
+        empty={<ListEmpty hasFilters={hasFilters} />}
+        errorFallback={(error, retry) => (
+          <div className="space-y-3 rounded-2xl border-2 border-destructive/30 bg-destructive/5 p-4">
+            <p className="text-destructive text-sm">{error.message}</p>
+            <Button type="button" variant="outline" size="sm" onClick={retry}>
+              Try again
+            </Button>
           </div>
+        )}
+      >
+        {(data) => (
+          <>
+            <ListHeader
+              totalItems={data.meta.totalItems}
+              activeFilters={activeFilters}
+            />
 
-          <Pagination
-            page={data.meta.page}
-            totalPages={data.meta.totalPages}
-            ariaLabel="Owned parts pagination"
-          />
-        </>
-      )}
-    </AsyncQueryState>
+            <div
+              className="grid gap-3"
+              style={{
+                gridTemplateColumns: "repeat(auto-fill, minmax(130px, 1fr))",
+              }}
+            >
+              {data.data.items.map((part, index) => {
+                const previousPart =
+                  index > 0 ? data.data.items[index - 1] : null
+                const showCategoryHeader =
+                  queryParams.partCategoryId == null &&
+                  part.partCategoryName !== previousPart?.partCategoryName
+
+                return (
+                  <Fragment key={`${part.partNum}-${part.colorId}`}>
+                    {showCategoryHeader ? (
+                      <CategoryHeader name={part.partCategoryName} />
+                    ) : null}
+                    <OwnedPart
+                      part={part}
+                      onClick={() => setSelectedPartKey(ownedPartKey(part))}
+                    />
+                  </Fragment>
+                )
+              })}
+            </div>
+
+            <Pagination
+              page={data.meta.page}
+              totalPages={data.meta.totalPages}
+              ariaLabel="Owned parts pagination"
+            />
+          </>
+        )}
+      </AsyncQueryState>
+      <OwnedPartDialog
+        selectedPart={selectedPart}
+        setSelectedPart={() => setSelectedPartKey(null)}
+        listQuery={query}
+      />
+    </>
   )
 }
 

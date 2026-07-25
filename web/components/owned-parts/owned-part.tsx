@@ -5,18 +5,21 @@ import { cn } from "@/lib/utils"
 type OwnedPartProps = {
   part: OwnedPartDetail
   className?: string
+  onClick: () => void
 }
 
-const OwnedPart = ({ part, className }: OwnedPartProps) => {
+const OwnedPart = ({ part, className, onClick }: OwnedPartProps) => {
   const colorHex = toCssHex(part.colorRgb)
   const lightBackground = isLightColor(colorHex)
 
   return (
-    <article
+    <button
+      type="button"
       className={cn(
-        "group overflow-hidden rounded-2xl border-2 border-border bg-card text-left transition-all shadow-md",
+        "group w-full overflow-hidden rounded-2xl border-2 border-border bg-card text-left shadow-md transition-colors hover:bg-accent/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         className,
       )}
+      onClick={onClick}
     >
       <div
         className="relative flex h-16 items-end justify-end px-2 pb-1.5"
@@ -70,7 +73,7 @@ const OwnedPart = ({ part, className }: OwnedPartProps) => {
           ×{part.quantity}
         </span>
       </div>
-    </article>
+    </button>
   )
 }
 
