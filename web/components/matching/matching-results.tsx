@@ -19,7 +19,8 @@ import MatchingResult from "./matching-result"
 const MatchingResults = () => {
   const [queryParams, setQueryParams] = useQueryStates(matchingSearchParams)
   const [appliedQuery, setAppliedQuery] = useState<GetMatchesQuery | null>(null)
-  const [selectedMatch, setSelectedMatch] = useState<MatchResult | null>(null)
+  const [selectedSetNum, setSelectedSetNum] = useState<string | null>(null)
+
   const currentQuery = toMatchesQuery(queryParams)
   const filtersDirty =
     appliedQuery !== null && !matchesQueryEqual(currentQuery, appliedQuery)
@@ -27,14 +28,17 @@ const MatchingResults = () => {
     appliedQuery ?? { limit: 50 },
     appliedQuery !== null,
   )
+  const selectedMatch =
+    matches.data?.data.results.find((r) => r.setNum === selectedSetNum) ?? null
 
   const handleFindMatchingSets = () => {
+    setSelectedSetNum(null)
     setAppliedQuery(currentQuery)
   }
-
   const handleResetFilters = () => {
     void setQueryParams({ minMatchPercentage: 0, themeId: null })
     setAppliedQuery(null)
+    setSelectedSetNum(null)
   }
 
   return (
@@ -85,7 +89,7 @@ const MatchingResults = () => {
                   <MatchingResult
                     key={result.setNum}
                     result={result}
-                    onClick={() => setSelectedMatch(result)}
+                    onClick={() => setSelectedSetNum(result.setNum)}
                   />
                 ))}
               </div>
@@ -93,7 +97,7 @@ const MatchingResults = () => {
           </AsyncQueryState>
           <MatchDialog
             selectedMatch={selectedMatch}
-            setSelectedMatch={setSelectedMatch}
+            setSelectedMatch={() => setSelectedSetNum(null)}
           />
         </>
       )}
