@@ -5,6 +5,8 @@ import {
   AddSetResponse,
   GetOwnedPartsApiResponse,
   GetOwnedPartsQuery,
+  UpdateOwnedPartRequest,
+  UpdateOwnedPartResponse,
 } from '@lego-matcher/shared-types';
 import {
   BadRequestException,
@@ -196,5 +198,112 @@ export class OwnedPartsService {
     if (!deleted) {
       throw new NotFoundException('Owned part not found');
     }
+  }
+
+  async update(
+    userId: string,
+    request: UpdateOwnedPartRequest,
+  ): Promise<UpdateOwnedPartResponse> {
+    const { from, to } = request;
+    const sameIdentity =
+      from.partNum === to.partNum && from.colorId === to.colorId;
+
+    try {
+      if (sameIdentity) {
+        return await this.updateSameIdentity(userId, from, to.quantity);
+      }
+
+      return await this.updateWithColorChange(userId, from, to);
+    } catch (error) {
+      if (isFkViolation(error)) {
+        throw new BadRequestException('Part or color not found in catalog');
+      }
+      throw error;
+    }
+  }
+
+  private async updateSameIdentity(
+    userId: string,
+    from: UpdateOwnedPartRequest['from'],
+    quantity: number,
+  ): Promise<UpdateOwnedPartResponse> {
+    const [updated] = await this.databaseService.db
+      .update(userOwnedParts)
+      .set({ quantity })
+      .where(
+        and(
+          eq(userOwnedParts.userId, userId),
+          eq(userOwnedParts.partNum, from.partNum),
+          eq(userOwnedParts.colorId, from.colorId),
+        ),
+      )
+      .returning({
+        partNum: userOwnedParts.partNum,
+        colorId: userOwnedParts.colorId,
+        quantity: userOwnedParts.quantity,
+      });
+
+    if (!updated) {
+      throw new NotFoundException('Owned part not found');
+    }
+
+    return { part: updated, merged: false };
+  }
+
+  private async updateWithColorChange(
+    userId: string,
+    from: UpdateOwnedPartRequest['from'],
+    to: UpdateOwnedPartRequest['to'],
+  ): Promise<UpdateOwnedPartResponse> {
+    const result = await this.databaseService.db.execute<{
+      part_num: string;
+      color_id: number;
+      quantity: number;
+      merged: boolean;
+    }>(sql`
+      WITH target_exists AS (
+        SELECT 1 AS found
+        FROM user_owned_parts
+        WHERE user_id = ${userId}
+          AND part_num = ${to.partNum}
+          AND color_id = ${to.colorId}
+      ),
+      deleted AS (
+        DELETE FROM user_owned_parts
+        WHERE user_id = ${userId}
+          AND part_num = ${from.partNum}
+          AND color_id = ${from.colorId}
+        RETURNING 1
+      ),
+      upserted AS (
+        INSERT INTO user_owned_parts (user_id, part_num, color_id, quantity)
+        SELECT ${userId}, ${to.partNum}, ${to.colorId}, ${to.quantity}
+        FROM deleted
+        ON CONFLICT (user_id, part_num, color_id)
+        DO UPDATE SET quantity = user_owned_parts.quantity + EXCLUDED.quantity
+        RETURNING part_num, color_id, quantity
+      )
+      SELECT
+        u.part_num,
+        u.color_id,
+        u.quantity,
+        EXISTS (SELECT 1 FROM target_exists) AS merged
+      FROM upserted u
+    `);
+
+    const row = result.rows[0];
+
+    if (!row) {
+      throw new NotFoundException('Owned part not found');
+    }
+
+    return {
+      part: {
+        partNum: row.part_num,
+        colorId: Number(row.color_id),
+        quantity: Number(row.quantity),
+      },
+      merged: row.merged,
+    };
   }
 }
