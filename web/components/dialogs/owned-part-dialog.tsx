@@ -9,7 +9,6 @@ import useIsAuthenticated from "@/hooks/use-is-authenticated"
 import { parseApiError } from "@/lib/api/client"
 import { toColorOptions } from "@/lib/owned-parts/color"
 import {
-  useAddOwnedPartMutation,
   useCatalogColors,
   useRemoveOwnedPartMutation,
   useUpdateOwnedPartMutation,
@@ -47,11 +46,12 @@ const OwnedPartDialog = ({
   const [quantity, setQuantity] = useState(selectedPart?.quantity ?? 1)
   const colors = useCatalogColors()
   const isAuthenticated = useIsAuthenticated()
-  const { mutate: addPart, isPending } = useAddOwnedPartMutation()
   const { mutate: removePart, isPending: isRemovingPart } =
     useRemoveOwnedPartMutation()
   const { mutate: updatePart, isPending: isUpdating } =
     useUpdateOwnedPartMutation()
+
+  const isMutating = isUpdating || isRemovingPart
 
   useEffect(() => {
     setColorId(selectedPart?.colorId ?? null)
@@ -175,13 +175,13 @@ const OwnedPartDialog = ({
               id="part-dialog-quantity"
               value={quantity}
               onValueChange={setQuantity}
-              disabled={isPending}
+              disabled={isMutating}
             />
             <DialogFooter className="flex-col gap-3 sm:flex-row sm:justify-stretch">
               <Button
                 variant="destructive"
                 onClick={handleRemovePart}
-                disabled={!isAuthenticated || isRemovingPart || isPending}
+                disabled={!isAuthenticated || isMutating}
                 className="h-10 w-full sm:flex-1 sm:basis-0"
               >
                 {isRemovingPart ? (
