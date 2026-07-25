@@ -13,12 +13,13 @@ type SetAvatarProps = {
   themeId: number
   themeName: string
   setNum: string
-  size?: "default" | "lg"
+  size?: "default" | "lg" | "xl"
 }
 
 const sizeClasses = {
   default: "size-10",
   lg: "size-16",
+  xl: "size-24",
 } as const
 
 function SetAvatarContent({
@@ -39,7 +40,7 @@ function SetAvatarContent({
       <AvatarImage
         src={candidates[candidateIndex]}
         alt=""
-        className="rounded-lg"
+        className="rounded-lg object-contain"
         onLoadingStatusChange={(status) => {
           if (status === "error") {
             setCandidateIndex((index) =>
