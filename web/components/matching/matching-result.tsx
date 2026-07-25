@@ -25,7 +25,7 @@ const MatchingResult = ({ result, onClick }: MatchingResultProps) => {
   return (
     <button
       type="button"
-      className="flex w-full gap-3 overflow-hidden rounded-2xl border-2 border-border bg-card p-4 text-left shadow-md transition-colors hover:bg-accent/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      className="flex items-center w-full gap-3 overflow-hidden rounded-2xl border-2 border-border bg-card p-4 text-left shadow-md transition-colors hover:bg-accent/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       onClick={onClick}
     >
       <SetImage
