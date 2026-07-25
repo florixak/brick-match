@@ -26,3 +26,15 @@ export function toMatchesQuery(params: MatchingSearchParams): GetMatchesQuery {
     ...(params.themeId != null && { themeId: params.themeId }),
   }
 }
+
+export function matchesQueryEqual(
+  a: GetMatchesQuery,
+  b: GetMatchesQuery,
+): boolean {
+  return (
+    a.limit === b.limit &&
+    (a.minMatchPercentage ?? undefined) ===
+      (b.minMatchPercentage ?? undefined) &&
+    (a.themeId ?? undefined) === (b.themeId ?? undefined)
+  )
+}

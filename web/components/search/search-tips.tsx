@@ -1,12 +1,13 @@
 "use client"
 
 import type { Theme, ThemesApiResponse } from "@lego-matcher/shared-types"
-import { useQueryState } from "nuqs"
+import { useQueryStates } from "nuqs"
 import { useMemo } from "react"
 import { AsyncQueryState } from "@/components/query/async-query-state"
 import { Button } from "@/components/ui/button"
 import { FALLBACK_TIPS, TIPS_COUNT } from "@/constants"
 import { useCatalogThemes } from "@/lib/queries"
+import { catalogSearchParams } from "@/lib/search/search-params"
 import { cn, getThemeDotClassName } from "@/lib/utils"
 import SearchTipsSkeleton from "../skeletons/search-tips"
 import { searchSurfaceClassName } from "./search"
@@ -20,10 +21,10 @@ const isEmptyThemes = (data: ThemesApiResponse) => {
 }
 
 const SearchTipsList = ({ tips }: { tips: Theme[] }) => {
-  const [_, setSearch] = useQueryState("search")
+  const [, setQueryParams] = useQueryStates(catalogSearchParams)
 
   const handleClick = (theme: Theme) => {
-    setSearch(theme.name)
+    void setQueryParams({ q: theme.name })
   }
 
   return (

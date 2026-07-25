@@ -1,18 +1,20 @@
 "use client"
 
-import { useQueryState } from "nuqs"
+import { useQueryStates } from "nuqs"
 import { SEARCH_OPTIONS } from "@/constants"
+import { catalogSearchParams } from "@/lib/search/search-params"
 import { cn } from "@/lib/utils"
 import { Button } from "../ui/button"
 import { ButtonGroup } from "../ui/button-group"
 import { searchSurfaceClassName } from "./search"
 
 const SearchModeToggle = () => {
-  const [mode, setMode] = useQueryState("mode", { defaultValue: "sets" })
+  const [queryParams, setQueryParams] = useQueryStates(catalogSearchParams)
+
   return (
     <ButtonGroup>
       {SEARCH_OPTIONS.map((option) => {
-        const isActive = mode === option.value
+        const isActive = queryParams.mode === option.value
         return (
           <Button
             key={option.value}
@@ -22,7 +24,9 @@ const SearchModeToggle = () => {
               "h-10 px-4 shadow-md disabled:opacity-100",
               !isActive && searchSurfaceClassName,
             )}
-            onClick={() => setMode(option.value)}
+            onClick={() => {
+              void setQueryParams({ mode: option.value })
+            }}
             disabled={isActive}
           >
             <option.icon />
