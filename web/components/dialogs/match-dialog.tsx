@@ -90,7 +90,7 @@ const MatchDialog = ({ selectedMatch, setSelectedMatch }: MatchDialogProps) => {
                 disabled={!isAuthenticated || true}
                 className="h-10 w-full sm:flex-1 sm:basis-0"
               >
-                Coming soon...
+                Export Missing Parts
               </Button>
             </DialogFooter>
           </>
