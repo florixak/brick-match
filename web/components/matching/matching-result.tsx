@@ -1,10 +1,10 @@
 import type { MatchResult } from "@lego-matcher/shared-types"
-import Image from "next/image"
-import { useState } from "react"
-import { cn, getSetImageUrlCandidates } from "@/lib/utils"
+import SetImage from "@/components/search/set-image"
+import { cn } from "@/lib/utils"
 
-type Props = {
+type MatchingResultProps = {
   result: MatchResult
+  onClick: () => void
 }
 
 function matchColor(fraction: number): string {
@@ -19,29 +19,21 @@ function progressColor(fraction: number): string {
   return "bg-red-500"
 }
 
-const MatchingResult = ({ result }: Props) => {
+const MatchingResult = ({ result, onClick }: MatchingResultProps) => {
   const percent = Math.round(result.matchPercentage * 100)
-  const imageCandidates = getSetImageUrlCandidates(result.setNum)
-  const [imageIndex, setImageIndex] = useState(0)
-  const imgUrl = imageCandidates[imageIndex]!
 
   return (
-    <article className="flex gap-3 overflow-hidden rounded-2xl border-2 border-border bg-card p-4 shadow-md">
-      <div className="relative size-16 shrink-0 overflow-hidden rounded-lg bg-muted">
-        <Image
-          src={imgUrl}
-          alt={result.setName}
-          fill
-          sizes="64px"
-          className="object-contain p-1"
-          unoptimized
-          onError={() =>
-            setImageIndex((index) =>
-              index < imageCandidates.length - 1 ? index + 1 : index,
-            )
-          }
-        />
-      </div>
+    <button
+      type="button"
+      className="flex w-full gap-3 overflow-hidden rounded-2xl border-2 border-border bg-card p-4 text-left shadow-md transition-colors hover:bg-accent/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      onClick={onClick}
+    >
+      <SetImage
+        setNum={result.setNum}
+        alt={result.setName}
+        themeName={result.themeName}
+        variant="md"
+      />
 
       <div className="min-w-0 flex-1 flex flex-col gap-1.5">
         <p className="truncate font-black leading-tight">{result.setName}</p>
@@ -78,7 +70,7 @@ const MatchingResult = ({ result }: Props) => {
           {result.ownedParts} / {result.totalParts} parts
         </p>
       </div>
-    </article>
+    </button>
   )
 }
 
