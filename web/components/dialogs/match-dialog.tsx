@@ -1,6 +1,7 @@
 import type { MatchResult } from "@lego-matcher/shared-types"
 import Link from "next/link"
 import useIsAuthenticated from "@/hooks/use-is-authenticated"
+import { useExportMissingPartsMutation } from "@/lib/queries/matches/missing-parts-set"
 import { cn, formatSetNumber, getThemeTextClassName } from "@/lib/utils"
 import SetImage from "../search/set-image"
 import { Button } from "../ui/button"
@@ -19,6 +20,13 @@ type MatchDialogProps = {
 
 const MatchDialog = ({ selectedMatch, setSelectedMatch }: MatchDialogProps) => {
   const isAuthenticated = useIsAuthenticated()
+  const { mutate: exportMissingParts, isPending: isExportingMissingParts } =
+    useExportMissingPartsMutation()
+
+  const handleExportMissingParts = () => {
+    if (!selectedMatch) return
+    exportMissingParts(selectedMatch.setNum)
+  }
 
   return (
     <Dialog
@@ -87,10 +95,13 @@ const MatchDialog = ({ selectedMatch, setSelectedMatch }: MatchDialogProps) => {
                 }
               />
               <Button
-                disabled={!isAuthenticated || true}
+                disabled={!isAuthenticated || isExportingMissingParts}
                 className="h-10 w-full sm:flex-1 sm:basis-0"
+                onClick={handleExportMissingParts}
               >
-                Export Missing Parts
+                {isExportingMissingParts
+                  ? "Exporting..."
+                  : "Export Missing Parts"}
               </Button>
             </DialogFooter>
           </>
