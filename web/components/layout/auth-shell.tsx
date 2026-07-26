@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
+import AuthLoadingSkeleton from "@/components/layout/auth-loading-skeleton"
 import { AsyncQueryState } from "@/components/query/async-query-state"
 import { authPaths } from "@/lib/config"
 import { useCurrentUser } from "@/lib/queries"
@@ -33,6 +34,7 @@ const AuthShell = ({ children }: { children: React.ReactNode }) => {
       error={error}
       data={user}
       onRetry={() => void refetch()}
+      skeleton={<AuthLoadingSkeleton />}
     >
       {(user) => {
         if (user == null) return null
