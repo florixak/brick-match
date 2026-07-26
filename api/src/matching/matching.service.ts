@@ -1,4 +1,5 @@
 import {
+  DEFAULT_MIN_MATCH_PERCENTAGE,
   GetMatchesApiResponse,
   GetMatchesQuery,
   MatchResult,
@@ -11,7 +12,6 @@ import { DatabaseService } from 'src/database/database.service';
 import { userOwnedParts } from 'src/database/schema';
 
 const DEFAULT_LIMIT = 50;
-const DEFAULT_MIN_MATCH_PERCENTAGE = 0;
 
 type RankedSetRow = Omit<MatchResult, 'missingParts'>; // year, themeName, totalParts, ownedParts, matchPercentage
 
