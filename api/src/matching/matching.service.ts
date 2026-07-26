@@ -5,7 +5,7 @@ import {
   MissingPart,
   OwnedPart as OwnedPartRow,
 } from '@lego-matcher/shared-types';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { eq, sql } from 'drizzle-orm';
 import { DatabaseService } from 'src/database/database.service';
 import { userOwnedParts } from 'src/database/schema';
@@ -216,5 +216,33 @@ export class MatchingService {
     }
 
     return missingBySet;
+  }
+
+  private async getMissingPartsForSet(
+    userId: string,
+    setNum: string,
+  ): Promise<MissingPart[]> {
+    await this.assertSetExists(setNum);
+    const bySet = await this.getMissingParts(userId, [setNum]);
+    return bySet.get(setNum) ?? [];
+  }
+
+  private async assertSetExists(setNum: string): Promise<void> {
+    const result = await this.databaseService.db.execute(sql`
+      SELECT 1 FROM inventory_parts
+      WHERE set_num = ${setNum} AND is_spare = false
+      LIMIT 1
+    `);
+    if (result.rows.length === 0) {
+      throw new NotFoundException('Set not found');
+    }
+  }
+
+  async buildMissingPartsCsv(userId: string, setNum: string): Promise<string> {
+    const missingParts = await this.getMissingPartsForSet(userId, setNum);
+    return [
+      'Part,Color,Quantity',
+      ...missingParts.map((p) => `${p.partNum},${p.colorId},${p.quantity}`),
+    ].join('\n');
   }
 }

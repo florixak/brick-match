@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DatabaseService } from 'src/database/database.service';
 import { MatchingService } from './matching.service';
+import { NotFoundException } from '@nestjs/common';
 
 function createOwnedPartsSelectChain<T>(result: T) {
   const where = jest.fn().mockResolvedValue(result);
@@ -197,6 +198,42 @@ describe('MatchingService', () => {
       await service.findMatches(userId);
 
       expect(execute).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('buildMissingPartsCsv', () => {
+    it('should throw NotFoundException if set does not exist', async () => {
+      execute.mockResolvedValueOnce({ rows: [] });
+      await expect(
+        service.buildMissingPartsCsv(userId, 'invalid-1'),
+      ).rejects.toThrow(NotFoundException);
+      expect(execute).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return an empty CSV if set has no missing parts', async () => {
+      execute
+        .mockResolvedValueOnce({ rows: [{ '?column?': 1 }] })
+        .mockResolvedValueOnce({ rows: [] });
+      const csv = await service.buildMissingPartsCsv(userId, '60000-1');
+      expect(csv).toBe('Part,Color,Quantity');
+    });
+
+    it('should return a CSV with the missing parts', async () => {
+      execute
+        .mockResolvedValueOnce({ rows: [{ '?column?': 1 }] })
+        .mockResolvedValueOnce({
+          rows: [
+            {
+              set_num: '60001-1',
+              part_num: '3003',
+              color_id: 1,
+              missing_qty: 2,
+            },
+          ],
+        });
+      const csv = await service.buildMissingPartsCsv(userId, '60001-1');
+      expect(csv).toBe('Part,Color,Quantity\n3003,1,2');
+      expect(execute).toHaveBeenCalledTimes(2);
     });
   });
 });
