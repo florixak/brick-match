@@ -2,6 +2,8 @@ import { z } from "zod";
 import { ApiSuccessResponseSchema } from "./api-response";
 import { MatchResultSchema } from "./domain";
 
+export const DEFAULT_MIN_MATCH_PERCENTAGE = 0.1;
+
 export const GetMatchesQuerySchema = z.object({
   limit: z.coerce.number().int().positive().max(200).optional(),
   /** Fraction between 0 and 1 */
