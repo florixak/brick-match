@@ -41,7 +41,7 @@ export function buildQueryString(
   return query ? `?${query}` : ""
 }
 
-function buildUrl(
+export function buildUrl(
   path: string,
   searchParams?: Record<string, string | number | boolean | undefined>,
 ): string {
