@@ -1,7 +1,10 @@
 import {
   AuthUser,
+  ChangePasswordRequest,
+  DeleteAccountRequest,
   LoginRequest,
   RegisterRequest,
+  UpdateEmailRequest,
 } from '@lego-matcher/shared-types';
 import {
   BadRequestException,
@@ -45,15 +48,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password');
     }
 
-    const payload: JwtPayload = {
-      sub: user.id,
-      email: user.email,
-    };
-    const accessToken = await this.jwtService.signAsync(payload);
-    return {
-      user: { id: user.id, email: user.email },
-      accessToken,
-    };
+    return this.createSession({ id: user.id, email: user.email });
   }
 
   async register(data: RegisterRequest): Promise<AuthSession> {
@@ -79,15 +74,7 @@ export class AuthService {
       throw new InternalServerErrorException('Failed to register user');
     }
 
-    const payload: JwtPayload = {
-      sub: user.id,
-      email: user.email,
-    };
-    const accessToken = await this.jwtService.signAsync(payload);
-    return {
-      user: { id: user.id, email: user.email },
-      accessToken,
-    };
+    return this.createSession({ id: user.id, email: user.email });
   }
 
   async getCurrentUser(userId: string): Promise<AuthUser> {
@@ -101,6 +88,108 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
+    return user;
+  }
+
+  async updateEmail(
+    userId: string,
+    updateEmailRequest: UpdateEmailRequest,
+  ): Promise<AuthSession> {
+    const user = await this.verifyCurrentPassword(
+      userId,
+      updateEmailRequest.currentPassword,
+    );
+
+    const currentUser: AuthUser = { id: user.id, email: user.email };
+
+    if (user.email === updateEmailRequest.email) {
+      return this.createSession(currentUser);
+    }
+
+    let updatedUser: AuthUser | undefined;
+    try {
+      [updatedUser] = await this.databaseService.db
+        .update(users)
+        .set({ email: updateEmailRequest.email })
+        .where(eq(users.id, userId))
+        .returning({ id: users.id, email: users.email });
+    } catch (error) {
+      if (isUniqueViolation(error)) {
+        throw new BadRequestException('User with this email already exists');
+      }
+      throw error;
+    }
+
+    if (!updatedUser) {
+      throw new InternalServerErrorException('Failed to update email');
+    }
+
+    return this.createSession(updatedUser);
+  }
+
+  async changePassword(
+    userId: string,
+    changePasswordRequest: ChangePasswordRequest,
+  ): Promise<void> {
+    await this.verifyCurrentPassword(
+      userId,
+      changePasswordRequest.currentPassword,
+    );
+
+    const hashedPassword = await argon2.hash(changePasswordRequest.newPassword);
+
+    const [updatedUser] = await this.databaseService.db
+      .update(users)
+      .set({ passwordHash: hashedPassword })
+      .where(eq(users.id, userId))
+      .returning({ id: users.id });
+
+    if (!updatedUser) {
+      throw new InternalServerErrorException('Failed to change password');
+    }
+  }
+
+  async deleteAccount(
+    userId: string,
+    deleteAccountRequest: DeleteAccountRequest,
+  ): Promise<void> {
+    await this.verifyCurrentPassword(
+      userId,
+      deleteAccountRequest.currentPassword,
+    );
+
+    const [deletedUser] = await this.databaseService.db
+      .delete(users)
+      .where(eq(users.id, userId))
+      .returning({ id: users.id });
+
+    if (!deletedUser) {
+      throw new InternalServerErrorException('Failed to delete account');
+    }
+  }
+
+  private async createSession(user: AuthUser): Promise<AuthSession> {
+    const payload: JwtPayload = {
+      sub: user.id,
+      email: user.email,
+    };
+    const accessToken = await this.jwtService.signAsync(payload);
+    return { user, accessToken };
+  }
+
+  private async verifyCurrentPassword(userId: string, currentPassword: string) {
+    const [user] = await this.databaseService.db
+      .select({
+        id: users.id,
+        passwordHash: users.passwordHash,
+        email: users.email,
+      })
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
+    if (!user) throw new UnauthorizedException();
+    const valid = await argon2.verify(user.passwordHash, currentPassword);
+    if (!valid) throw new UnauthorizedException('Invalid password');
     return user;
   }
 }
