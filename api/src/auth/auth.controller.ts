@@ -1,5 +1,9 @@
 import {
-  LoginApiResponse,
+  type ChangePasswordRequest,
+  ChangePasswordRequestSchema,
+  type DeleteAccountRequest,
+  DeleteAccountRequestSchema,
+  type LoginApiResponse,
   LoginApiResponseSchema,
   type LoginRequest,
   LoginRequestSchema,
@@ -9,12 +13,18 @@ import {
   RegisterApiResponseSchema,
   type RegisterRequest,
   RegisterRequestSchema,
+  type UpdateEmailApiResponse,
+  UpdateEmailApiResponseSchema,
+  type UpdateEmailRequest,
+  UpdateEmailRequestSchema,
 } from '@lego-matcher/shared-types';
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
+  Patch,
   Post,
   Res,
   UseGuards,
@@ -92,5 +102,53 @@ export class AuthController {
       data: { user },
       meta: {},
     });
+  }
+
+  @Patch('update-email')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: "Update the current user's email" })
+  async updateEmail(
+    @CurrentUser('sub') userId: string,
+    @Body(new ZodValidationPipe(UpdateEmailRequestSchema))
+    updateEmailRequest: UpdateEmailRequest,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<UpdateEmailApiResponse> {
+    const { user, accessToken } = await this.authService.updateEmail(
+      userId,
+      updateEmailRequest,
+    );
+
+    setAuthCookie(res, this.configService, accessToken);
+
+    return UpdateEmailApiResponseSchema.parse({
+      data: { user },
+      meta: {},
+    });
+  }
+
+  @Patch('change-password')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: "Change the current user's password" })
+  @HttpCode(204)
+  async changePassword(
+    @CurrentUser('sub') userId: string,
+    @Body(new ZodValidationPipe(ChangePasswordRequestSchema))
+    changePasswordRequest: ChangePasswordRequest,
+  ): Promise<void> {
+    await this.authService.changePassword(userId, changePasswordRequest);
+  }
+
+  @Delete('account')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Delete the current user account' })
+  @HttpCode(204)
+  async deleteAccount(
+    @CurrentUser('sub') userId: string,
+    @Body(new ZodValidationPipe(DeleteAccountRequestSchema))
+    deleteAccountRequest: DeleteAccountRequest,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<void> {
+    await this.authService.deleteAccount(userId, deleteAccountRequest);
+    clearAuthCookie(res, this.configService);
   }
 }
