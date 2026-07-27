@@ -1,6 +1,12 @@
 import AuthCard from "@/components/auth/auth-card"
 import RegisterForm from "@/components/auth/register-form"
 import Studs from "@/components/layout/studs"
+import { createPageMetadata } from "@/lib/metadata"
+
+export const metadata = createPageMetadata({
+  title: "Register",
+  description: "Create an account to start using BrickMatch.",
+})
 
 const RegisterPage = () => {
   return (

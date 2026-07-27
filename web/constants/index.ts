@@ -7,6 +7,7 @@ import {
   PuzzleIcon,
   SearchIcon,
   UserIcon,
+  ZapIcon,
 } from "lucide-react"
 import type { UrlObject } from "url"
 
@@ -29,14 +30,14 @@ export const NAV_LINKS: NavLink[] = [
     href: {
       pathname: "/owned-parts",
     },
-    icon: BoxIcon,
+    icon: PuzzleIcon,
   },
   {
     label: "Matching",
     href: {
       pathname: "/matching",
     },
-    icon: PuzzleIcon,
+    icon: ZapIcon,
   },
 ]
 

@@ -5,8 +5,15 @@ import { useEffect } from "react"
 import { AsyncQueryState } from "@/components/query/async-query-state"
 import { authPaths } from "@/lib/config"
 import { useCurrentUser } from "@/lib/queries"
+import { cn } from "@/lib/utils"
 
-const GuestShell = ({ children }: { children: React.ReactNode }) => {
+const GuestShell = ({
+  children,
+  className,
+}: {
+  children: React.ReactNode
+  className?: string
+}) => {
   const router = useRouter()
   const {
     data: user,
@@ -37,7 +44,7 @@ const GuestShell = ({ children }: { children: React.ReactNode }) => {
       {(user) => {
         if (user != null) return null
 
-        return <>{children}</>
+        return <div className={cn(className)}>{children}</div>
       }}
     </AsyncQueryState>
   )

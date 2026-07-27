@@ -52,9 +52,7 @@ export default function RootLayout({
           <QueryProvider>
             <NuqsAdapter defaultOptions={{ scroll: true }}>
               <Header />
-              <main className="flex-1 py-16 md:pb-0 overflow-x-hidden">
-                {children}
-              </main>
+              <main className="flex-1 overflow-x-hidden">{children}</main>
               <Footer />
               <MobileNavigation />
               <Toaster position="bottom-right" />
