@@ -1,6 +1,12 @@
 import AuthCard from "@/components/auth/auth-card"
 import LoginForm from "@/components/auth/login-form"
 import Studs from "@/components/layout/studs"
+import { createPageMetadata } from "@/lib/metadata"
+
+export const metadata = createPageMetadata({
+  title: "Login",
+  description: "Log in to your BrickMatch account.",
+})
 
 const LoginPage = () => {
   return (
