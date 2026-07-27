@@ -5,5 +5,5 @@ export default function AuthLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  return <GuestShell>{children}</GuestShell>
+  return <GuestShell className="py-16">{children}</GuestShell>
 }
