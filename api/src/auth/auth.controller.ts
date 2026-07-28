@@ -105,6 +105,7 @@ export class AuthController {
   }
 
   @Patch('update-email')
+  @AuthThrottle()
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: "Update the current user's email" })
   async updateEmail(
@@ -127,6 +128,7 @@ export class AuthController {
   }
 
   @Patch('change-password')
+  @AuthThrottle()
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: "Change the current user's password" })
   @HttpCode(204)
@@ -139,6 +141,7 @@ export class AuthController {
   }
 
   @Delete('account')
+  @AuthThrottle()
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Delete the current user account' })
   @HttpCode(204)
