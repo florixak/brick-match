@@ -3,6 +3,8 @@ import {
   ColorsApiResponseSchema,
   PartCategoriesApiResponse,
   PartCategoriesApiResponseSchema,
+  PartColorsApiResponse,
+  PartColorsApiResponseSchema,
   SearchPartsApiResponse,
   SearchPartsApiResponseSchema,
   SearchPartsQuerySchema,
@@ -14,8 +16,8 @@ import {
   type SearchPartsQuery,
   type SearchSetsQuery,
 } from '@lego-matcher/shared-types';
-import { Controller, Get, Query } from '@nestjs/common';
-import { ApiOperation, ApiQuery } from '@nestjs/swagger';
+import { Controller, Get, Param, Query } from '@nestjs/common';
+import { ApiOperation, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { ZodValidationPipe } from 'src/common/pipes/zod-validation.pipe';
 import { CatalogService } from './catalog.service';
 
@@ -63,6 +65,19 @@ export class CatalogController {
   ): Promise<SearchPartsApiResponse> {
     const result = await this.catalogService.searchParts(query);
     return SearchPartsApiResponseSchema.parse(result);
+  }
+
+  @Get('parts/:partNum/colors')
+  @ApiOperation({ summary: 'Get colors available for a part' })
+  @ApiParam({
+    name: 'partNum',
+    description: 'Rebrickable part number',
+  })
+  async getPartColors(
+    @Param('partNum') partNum: string,
+  ): Promise<PartColorsApiResponse> {
+    const result = await this.catalogService.getPartColors(partNum);
+    return PartColorsApiResponseSchema.parse(result);
   }
 
   @Get('colors')
