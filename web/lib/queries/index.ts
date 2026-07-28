@@ -1,3 +1,4 @@
+export * from "@/lib/queries/auth/account"
 export * from "@/lib/queries/auth/login"
 export * from "@/lib/queries/auth/logout"
 export * from "@/lib/queries/auth/me"
