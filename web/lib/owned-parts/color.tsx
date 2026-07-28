@@ -14,6 +14,20 @@ export function isLightColor(hex: string) {
   return luminance > 0.6
 }
 
+export function filterColorsByIds(
+  data: ColorsApiResponse,
+  colorIds: readonly number[],
+  includeColorIds: readonly number[] = [],
+): ColorsApiResponse {
+  const idSet = new Set([...colorIds, ...includeColorIds])
+  const colors = data.data.colors.filter((color) => idSet.has(color.colorId))
+
+  return {
+    data: { colors },
+    meta: { count: colors.length },
+  }
+}
+
 export function toColorOptions(data: ColorsApiResponse) {
   return data.data.colors.map((color) => ({
     value: color.colorId,
