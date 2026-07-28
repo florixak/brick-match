@@ -2,6 +2,7 @@ import {
   PartCategoriesApiResponse,
   ThemesApiResponse,
   type ColorsApiResponse,
+  type PartColorsApiResponse,
   type SearchPartsApiResponse,
   type SearchPartsQuery,
   type SearchSetsApiResponse,
@@ -12,6 +13,7 @@ import { asc, eq, or, sql } from 'drizzle-orm';
 import { DatabaseService } from 'src/database/database.service';
 import {
   colors,
+  inventoryParts,
   partCategories,
   parts,
   sets,
@@ -139,6 +141,23 @@ export class CatalogService {
       data: { themes: results },
       meta: {
         count: results.length,
+      },
+    };
+  }
+
+  async getPartColors(partNum: string): Promise<PartColorsApiResponse> {
+    const results = await this.databaseService.db
+      .selectDistinct({ colorId: inventoryParts.colorId })
+      .from(inventoryParts)
+      .where(eq(inventoryParts.partNum, partNum))
+      .orderBy(asc(inventoryParts.colorId));
+
+    const colorIds = results.map((row) => row.colorId);
+
+    return {
+      data: { colorIds },
+      meta: {
+        count: colorIds.length,
       },
     };
   }

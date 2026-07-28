@@ -13,6 +13,15 @@ function createSelectChain<T>(result: T) {
   return { select, from, innerJoin, where, orderBy, limit };
 }
 
+function createDistinctSelectChain<T>(result: T) {
+  const orderBy = jest.fn().mockResolvedValue(result);
+  const where = jest.fn().mockReturnValue({ orderBy });
+  const from = jest.fn().mockReturnValue({ where });
+  const selectDistinct = jest.fn().mockReturnValue({ from });
+
+  return { selectDistinct, from, where, orderBy };
+}
+
 function createListSelectChain<T>(result: T) {
   const orderBy = jest.fn().mockResolvedValue(result);
   const from = jest.fn().mockReturnValue({ orderBy });
@@ -24,9 +33,11 @@ function createListSelectChain<T>(result: T) {
 describe('CatalogService', () => {
   let service: CatalogService;
   let selectChain: ReturnType<typeof createSelectChain>;
+  let distinctChain: ReturnType<typeof createDistinctSelectChain>;
 
   beforeEach(async () => {
     selectChain = createSelectChain([]);
+    distinctChain = createDistinctSelectChain([]);
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -36,6 +47,7 @@ describe('CatalogService', () => {
           useValue: {
             db: {
               select: selectChain.select,
+              selectDistinct: distinctChain.selectDistinct,
             },
           },
         },
@@ -234,6 +246,33 @@ describe('CatalogService', () => {
       expect(result.meta).toEqual({ count: 1 });
       expect(listChain.select).toHaveBeenCalled();
       expect(listChain.orderBy).toHaveBeenCalled();
+    });
+  });
+
+  describe('getPartColors', () => {
+    it('should get distinct color ids for a part', async () => {
+      distinctChain.orderBy.mockResolvedValue([
+        { colorId: 1 },
+        { colorId: 15 },
+        { colorId: 72 },
+      ]);
+
+      const result = await service.getPartColors('3024');
+
+      expect(result.data.colorIds).toEqual([1, 15, 72]);
+      expect(result.meta).toEqual({ count: 3 });
+      expect(distinctChain.selectDistinct).toHaveBeenCalled();
+      expect(distinctChain.where).toHaveBeenCalled();
+      expect(distinctChain.orderBy).toHaveBeenCalled();
+    });
+
+    it('should return empty color ids when part has no inventory rows', async () => {
+      distinctChain.orderBy.mockResolvedValue([]);
+
+      const result = await service.getPartColors('unknown-part');
+
+      expect(result.data.colorIds).toEqual([]);
+      expect(result.meta).toEqual({ count: 0 });
     });
   });
 

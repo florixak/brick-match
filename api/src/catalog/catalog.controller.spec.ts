@@ -8,6 +8,7 @@ describe('CatalogController', () => {
     searchSets: jest.Mock;
     searchParts: jest.Mock;
     getColors: jest.Mock;
+    getPartColors: jest.Mock;
     getThemes: jest.Mock;
     getPartCategories: jest.Mock;
   };
@@ -17,6 +18,7 @@ describe('CatalogController', () => {
       searchSets: jest.fn(),
       searchParts: jest.fn(),
       getColors: jest.fn(),
+      getPartColors: jest.fn(),
       getThemes: jest.fn(),
       getPartCategories: jest.fn(),
     };
@@ -87,6 +89,21 @@ describe('CatalogController', () => {
       search: '21459',
       limit: 10,
     });
+    expect(result).toEqual(mockResponse);
+  });
+
+  it('should get part colors', async () => {
+    const mockResponse = {
+      data: {
+        colorIds: [1, 15, 72],
+      },
+      meta: { count: 3 },
+    };
+    catalogService.getPartColors.mockResolvedValue(mockResponse);
+
+    const result = await controller.getPartColors('3024');
+
+    expect(catalogService.getPartColors).toHaveBeenCalledWith('3024');
     expect(result).toEqual(mockResponse);
   });
 
