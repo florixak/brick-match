@@ -121,3 +121,14 @@ export const ThemesApiResponseSchema = z.object({
   meta: CatalogListMetaSchema,
 });
 export type ThemesApiResponse = z.infer<typeof ThemesApiResponseSchema>;
+
+export const PartColorsResponseSchema = z.object({
+  colorIds: z.array(ColorIdSchema),
+});
+export type PartColorsResponse = z.infer<typeof PartColorsResponseSchema>;
+
+export const PartColorsApiResponseSchema = z.object({
+  data: PartColorsResponseSchema,
+  meta: CatalogListMetaSchema,
+});
+export type PartColorsApiResponse = z.infer<typeof PartColorsApiResponseSchema>;
