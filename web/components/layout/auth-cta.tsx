@@ -2,12 +2,15 @@
 
 import { LogInIcon, LogOutIcon, UserIcon, UserPlusIcon } from "lucide-react"
 import Link from "next/link"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { useCurrentUser, useLogoutMutation } from "@/lib/queries"
+import AccountDialog from "../dialogs/account-dialog"
 
 export default function AuthCTA() {
   const { data: user, isPending: isUserPending } = useCurrentUser()
   const { mutate: logout, isPending: isLoggingOut } = useLogoutMutation()
+  const [accountDialogOpen, setAccountDialogOpen] = useState(false)
 
   const isLoggedIn = !!user
   const name = user?.email.split("@")[0]
@@ -16,14 +19,28 @@ export default function AuthCTA() {
     logout()
   }
 
+  const handleAccountDialogOpenChange = (open: boolean) => {
+    setAccountDialogOpen(open)
+  }
+
   if (isUserPending) {
     return null
   }
 
   if (isLoggedIn) {
     return (
-      <div className="flex items-center gap-1 md:gap-2 text-primary-foreground">
-        <span className="md:inline text-sm font-semibold">{name}</span>
+      <div className="flex items-center gap-2 md:gap-2 text-primary-foreground">
+        <Button
+          variant="header"
+          size="icon"
+          className="md:h-8 md:w-auto md:px-2.5 md:gap-1.5"
+          onClick={() => setAccountDialogOpen(true)}
+          disabled={isLoggingOut}
+          aria-label="Account"
+        >
+          <UserIcon />
+          <span className="hidden md:inline text-sm font-semibold">{name}</span>
+        </Button>
         <Button
           variant="header"
           size="icon"
@@ -34,6 +51,10 @@ export default function AuthCTA() {
         >
           <LogOutIcon />
         </Button>
+        <AccountDialog
+          open={accountDialogOpen}
+          onOpenChange={handleAccountDialogOpenChange}
+        />
       </div>
     )
   }
