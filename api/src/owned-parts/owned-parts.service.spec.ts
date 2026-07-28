@@ -9,8 +9,28 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { eq, type SQL } from 'drizzle-orm';
+import { PgDialect } from 'drizzle-orm/pg-core';
 import { DatabaseService } from 'src/database/database.service';
+import { userOwnedParts } from 'src/database/schema';
 import { OwnedPartsService } from './owned-parts.service';
+
+const pgDialect = new PgDialect();
+const otherUserId = '22222222-2222-2222-2222-222222222222';
+
+function expectDeleteWhereScopedToUser(
+  whereMock: jest.Mock,
+  targetUserId: string,
+) {
+  expect(whereMock).toHaveBeenCalledTimes(1);
+  const [whereClause] = whereMock.mock.calls[0] as [SQL];
+  const expected = eq(userOwnedParts.userId, targetUserId);
+
+  expect(pgDialect.sqlToQuery(whereClause)).toEqual(
+    pgDialect.sqlToQuery(expected),
+  );
+  expect(pgDialect.sqlToQuery(whereClause).params).not.toContain(otherUserId);
+}
 
 function createInsertChain<T>(result: T[]) {
   const returning = jest.fn().mockResolvedValue(result);
@@ -452,6 +472,27 @@ describe('OwnedPartsService', () => {
           to: { partNum: '3001', colorId: 999, quantity: 1 },
         }),
       ).rejects.toThrow(BadRequestException);
+    });
+  });
+
+  describe('removeAll', () => {
+    it('should delete only the requesting user owned parts', async () => {
+      deleteChain.where.mockResolvedValue(undefined);
+
+      await expect(service.removeAll(userId)).resolves.toBeUndefined();
+
+      expect(deleteChain.delete).toHaveBeenCalled();
+      expectDeleteWhereScopedToUser(deleteChain.where, userId);
+      expect(deleteChain.returning).not.toHaveBeenCalled();
+    });
+
+    it('should succeed when the user has no owned parts', async () => {
+      deleteChain.where.mockResolvedValue(undefined);
+
+      await expect(service.removeAll(userId)).resolves.toBeUndefined();
+
+      expect(deleteChain.delete).toHaveBeenCalled();
+      expectDeleteWhereScopedToUser(deleteChain.where, userId);
     });
   });
 });

@@ -1,5 +1,5 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { UpdateOwnedPartRequestSchema } from '@lego-matcher/shared-types';
+import { Test, TestingModule } from '@nestjs/testing';
 import { OwnedPartsController } from './owned-parts.controller';
 import { OwnedPartsService } from './owned-parts.service';
 
@@ -11,6 +11,7 @@ describe('OwnedPartsController', () => {
     findAll: jest.Mock;
     remove: jest.Mock;
     update: jest.Mock;
+    removeAll: jest.Mock;
   };
 
   const userId = '11111111-1111-1111-1111-111111111111';
@@ -22,6 +23,7 @@ describe('OwnedPartsController', () => {
       findAll: jest.fn(),
       remove: jest.fn(),
       update: jest.fn(),
+      removeAll: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -158,5 +160,16 @@ describe('OwnedPartsController', () => {
     });
 
     expect(result.success).toBe(false);
+  });
+
+  describe('removeAll', () => {
+    it('should remove all owned parts', async () => {
+      ownedPartsService.removeAll.mockResolvedValue(undefined);
+
+      await expect(controller.removeAll(userId)).resolves.toBeUndefined();
+
+      expect(ownedPartsService.removeAll).toHaveBeenCalledWith(userId);
+      expect(ownedPartsService.removeAll).toHaveBeenCalledTimes(1);
+    });
   });
 });
