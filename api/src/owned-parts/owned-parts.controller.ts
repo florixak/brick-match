@@ -104,4 +104,11 @@ export class OwnedPartsController {
     const data = await this.ownedPartsService.update(userId, request);
     return UpdateOwnedPartApiResponseSchema.parse({ data, meta: {} });
   }
+
+  @Delete('all')
+  @HttpCode(204)
+  @ApiOperation({ summary: 'Remove all owned parts' })
+  async removeAll(@CurrentUser('sub') userId: string): Promise<void> {
+    await this.ownedPartsService.removeAll(userId);
+  }
 }

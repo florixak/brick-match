@@ -306,4 +306,10 @@ export class OwnedPartsService {
       merged: row.merged,
     };
   }
+
+  async removeAll(userId: string): Promise<void> {
+    await this.databaseService.db
+      .delete(userOwnedParts)
+      .where(eq(userOwnedParts.userId, userId));
+  }
 }

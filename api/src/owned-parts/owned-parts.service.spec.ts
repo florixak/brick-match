@@ -454,4 +454,25 @@ describe('OwnedPartsService', () => {
       ).rejects.toThrow(BadRequestException);
     });
   });
+
+  describe('removeAll', () => {
+    it('should remove all owned parts for the user', async () => {
+      deleteChain.where.mockResolvedValue(undefined);
+
+      await expect(service.removeAll(userId)).resolves.toBeUndefined();
+
+      expect(deleteChain.delete).toHaveBeenCalled();
+      expect(deleteChain.where).toHaveBeenCalled();
+      expect(deleteChain.returning).not.toHaveBeenCalled();
+    });
+
+    it('should succeed when the user has no owned parts', async () => {
+      deleteChain.where.mockResolvedValue(undefined);
+
+      await expect(service.removeAll(userId)).resolves.toBeUndefined();
+
+      expect(deleteChain.delete).toHaveBeenCalled();
+      expect(deleteChain.where).toHaveBeenCalled();
+    });
+  });
 });
