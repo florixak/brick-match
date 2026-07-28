@@ -5,7 +5,7 @@ import toast from "react-hot-toast"
 import useIsAuthenticated from "@/hooks/use-is-authenticated"
 import { parseApiError } from "@/lib/api/client"
 import { toColorOptions } from "@/lib/owned-parts/color"
-import { useAddOwnedPartMutation, useCatalogColors } from "@/lib/queries"
+import { useAddOwnedPartMutation, usePartColorSelect } from "@/lib/queries"
 import SelectErrorFallback from "../fallbacks/select-error"
 import { AsyncQueryState } from "../query/async-query-state"
 import { searchSurfaceClassName } from "../search/search"
@@ -30,7 +30,7 @@ type PartDialogProps = {
 const PartDialog = ({ selectedPart, setSelectedPart }: PartDialogProps) => {
   const [colorId, setColorId] = useState<number | null>(null)
   const [quantity, setQuantity] = useState(1)
-  const colors = useCatalogColors()
+  const colors = usePartColorSelect(selectedPart?.partNum ?? null)
   const isAuthenticated = useIsAuthenticated()
   const { mutate: addPart, isPending } = useAddOwnedPartMutation()
 
@@ -86,7 +86,7 @@ const PartDialog = ({ selectedPart, setSelectedPart }: PartDialogProps) => {
                 <SearchableSelect
                   id="owned-parts-color"
                   label="Color"
-                  placeholder="All colors"
+                  placeholder="Select color"
                   emptyMessage="No colors found."
                   value={colorId}
                   onValueChange={(colorId) => {

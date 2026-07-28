@@ -9,7 +9,7 @@ import useIsAuthenticated from "@/hooks/use-is-authenticated"
 import { parseApiError } from "@/lib/api/client"
 import { toColorOptions } from "@/lib/owned-parts/color"
 import {
-  useCatalogColors,
+  usePartColorSelect,
   useRemoveOwnedPartMutation,
   useUpdateOwnedPartMutation,
 } from "@/lib/queries"
@@ -44,7 +44,10 @@ const OwnedPartDialog = ({
     selectedPart?.colorId ?? null,
   )
   const [quantity, setQuantity] = useState(selectedPart?.quantity ?? 1)
-  const colors = useCatalogColors()
+  const colors = usePartColorSelect(
+    selectedPart?.partNum ?? null,
+    selectedPart ? [selectedPart.colorId] : [],
+  )
   const isAuthenticated = useIsAuthenticated()
   const { mutate: removePart, isPending: isRemovingPart } =
     useRemoveOwnedPartMutation()
@@ -160,7 +163,7 @@ const OwnedPartDialog = ({
                 <SearchableSelect
                   id="owned-parts-color"
                   label="Color"
-                  placeholder="All colors"
+                  placeholder="Select color"
                   emptyMessage="No colors found."
                   value={colorId}
                   onValueChange={(colorId) => {
