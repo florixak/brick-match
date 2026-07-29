@@ -1,5 +1,6 @@
 import type * as React from "react"
 import { cn } from "@/lib/utils"
+import { Label } from "./label"
 
 export const fieldLabelClassName =
   "text-xs font-black uppercase tracking-wide text-muted-foreground"
@@ -12,9 +13,9 @@ type FieldLabelProps = {
 
 export function FieldLabel({ htmlFor, className, children }: FieldLabelProps) {
   return (
-    <label htmlFor={htmlFor} className={cn(fieldLabelClassName, className)}>
+    <Label htmlFor={htmlFor} className={cn(fieldLabelClassName, className)}>
       {children}
-    </label>
+    </Label>
   )
 }
 

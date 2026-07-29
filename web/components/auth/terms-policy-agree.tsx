@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { useId } from "react"
 import { Checkbox } from "../ui/checkbox"
+import { Label } from "../ui/label"
 
 type TermsPolicyAgreeProps = {
   agreed: boolean
@@ -26,7 +27,7 @@ const TermsPolicyAgree = ({
         disabled={isPending}
         className="mt-0.5 size-5 shrink-0 rounded-full border-2 border-border accent-primary disabled:opacity-50"
       />
-      <label
+      <Label
         htmlFor={id}
         className="text-sm text-muted-foreground font-semibold leading-snug cursor-pointer"
       >
@@ -38,7 +39,7 @@ const TermsPolicyAgree = ({
         <Link href="/" className="text-primary font-black hover:underline">
           Terms of Service
         </Link>
-      </label>
+      </Label>
     </div>
   )
 }
