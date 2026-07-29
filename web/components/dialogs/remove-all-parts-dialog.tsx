@@ -70,6 +70,7 @@ const RemoveAllPartsDialog = ({
 
         <Input
           type="text"
+          aria-label="Confirmation phrase"
           placeholder={`Type "${confirmationText}" to confirm`}
           value={confirmation}
           onChange={(e) => setConfirmation(e.target.value)}
