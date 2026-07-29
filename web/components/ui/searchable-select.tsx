@@ -10,6 +10,7 @@ import {
   ComboboxList,
 } from "@/components/ui/combobox"
 import { cn } from "@/lib/utils"
+import { Label } from "./label"
 
 export type SearchableSelectOption<T extends string | number> = {
   value: T
@@ -56,9 +57,9 @@ function SearchableSelect<T extends string | number>({
 
   return (
     <div className={cn("flex flex-col gap-1.5", className)}>
-      <label htmlFor={id} className={labelClassName}>
+      <Label htmlFor={id} className={labelClassName}>
         {label}
-      </label>
+      </Label>
       <Combobox
         items={options}
         itemToStringValue={(option) => option.label}
