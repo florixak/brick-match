@@ -10,7 +10,10 @@ import SearchableSelect from "@/components/ui/searchable-select"
 import { PAGE_SIZE_OPTIONS } from "@/constants"
 import { toPartCategoryOptions } from "@/lib/owned-parts/category"
 import { toColorOptions } from "@/lib/owned-parts/color"
-import { ownedPartsSearchParams } from "@/lib/owned-parts/search-params"
+import {
+  DEFAULT_OWNED_PARTS_PAGE_SIZE,
+  ownedPartsSearchParams,
+} from "@/lib/owned-parts/search-params"
 import { useCatalogColors, useCatalogPartCategories } from "@/lib/queries"
 import { cn } from "@/lib/utils"
 import SelectErrorFallback from "../fallbacks/select-error"
@@ -140,7 +143,7 @@ const Filters = () => {
               colorId: null,
               partCategoryId: null,
               page: 1,
-              pageSize: 50,
+              pageSize: DEFAULT_OWNED_PARTS_PAGE_SIZE,
             })
           }}
         >
