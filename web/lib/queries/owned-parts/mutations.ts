@@ -112,3 +112,17 @@ export function useRemoveOwnedPartMutation() {
     },
   })
 }
+
+export function useRemoveAllOwnedPartsMutation() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: () =>
+      apiFetch("/api/v1/owned-parts/all", {
+        method: "DELETE",
+      }),
+    onSuccess: async () => {
+      await invalidateCollectionQueries(queryClient)
+    },
+  })
+}

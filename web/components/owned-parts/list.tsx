@@ -1,6 +1,7 @@
 "use client"
 
 import type { GetOwnedPartsApiResponse } from "@lego-matcher/shared-types"
+import { useQueryClient } from "@tanstack/react-query"
 import { useQueryStates } from "nuqs"
 import { Fragment, useEffect, useMemo, useRef, useState } from "react"
 import Pagination from "@/components/layout/pagination"
@@ -18,11 +19,13 @@ import {
   toOwnedPartsQuery,
 } from "@/lib/owned-parts/search-params"
 import {
+  ownedPartsQueryOptions,
   useCatalogColors,
   useCatalogPartCategories,
   useOwnedParts,
 } from "@/lib/queries"
 import OwnedPartDialog from "../dialogs/owned-part-dialog"
+import RemoveAllPartsDialog from "../dialogs/remove-all-parts-dialog"
 
 function isEmptyOwnedParts(data: GetOwnedPartsApiResponse) {
   return data.data.items.length === 0
@@ -34,6 +37,9 @@ function ownedPartKey(part: { partNum: string; colorId: number }) {
 
 const List = () => {
   const [selectedPartKey, setSelectedPartKey] = useState<string | null>(null)
+  const [removeAllOpen, setRemoveAllOpen] = useState(false)
+  const [removeAllTotalItems, setRemoveAllTotalItems] = useState(0)
+  const queryClient = useQueryClient()
   const [queryParams, setQueryParams] = useQueryStates(ownedPartsSearchParams)
   const colors = useCatalogColors()
   const partCategories = useCatalogPartCategories()
@@ -161,6 +167,18 @@ const List = () => {
             <ListHeader
               totalItems={data.meta.totalItems}
               activeFilters={activeFilters}
+              onClearCollection={async () => {
+                const totalItems = hasFilters
+                  ? (
+                      await queryClient.ensureQueryData(
+                        ownedPartsQueryOptions({ page: 1, pageSize: 1 }),
+                      )
+                    ).meta.totalItems
+                  : data.meta.totalItems
+
+                setRemoveAllTotalItems(totalItems)
+                setRemoveAllOpen(true)
+              }}
             />
 
             <div
@@ -202,6 +220,11 @@ const List = () => {
         selectedPart={selectedPart}
         setSelectedPart={() => setSelectedPartKey(null)}
         listQuery={query}
+      />
+      <RemoveAllPartsDialog
+        open={removeAllOpen}
+        onOpenChange={setRemoveAllOpen}
+        totalItems={removeAllTotalItems}
       />
     </>
   )
