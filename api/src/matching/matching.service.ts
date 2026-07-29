@@ -171,6 +171,10 @@ export class MatchingService {
       set_num: string;
       part_num: string;
       color_id: number;
+      part_name: string;
+      color_name: string;
+      color_rgb: string;
+      color_is_trans: boolean;
       missing_qty: number;
     }>(sql`
       WITH owned AS (
@@ -193,10 +197,16 @@ export class MatchingService {
         r.set_num,
         r.part_num,
         r.color_id,
+        p.name AS part_name,
+        c.name AS color_name,
+        c.rgb AS color_rgb,
+        c.is_trans AS color_is_trans,
         GREATEST(r.required_qty - COALESCE(o.quantity, 0), 0)::int AS missing_qty
       FROM required r
       LEFT JOIN owned o
         ON o.part_num = r.part_num AND o.color_id = r.color_id
+      INNER JOIN parts p ON p.part_num = r.part_num
+      INNER JOIN colors c ON c.color_id = r.color_id
       WHERE GREATEST(r.required_qty - COALESCE(o.quantity, 0), 0) > 0
       ORDER BY r.set_num, r.part_num
     `);
@@ -208,6 +218,10 @@ export class MatchingService {
         partNum: row.part_num,
         colorId: Number(row.color_id),
         quantity: Number(row.missing_qty),
+        partName: row.part_name,
+        colorName: row.color_name,
+        colorRgb: row.color_rgb,
+        colorIsTrans: Boolean(row.color_is_trans),
       };
 
       const existing = missingBySet.get(row.set_num) ?? [];

@@ -18,6 +18,10 @@ export type OwnedPart = z.infer<typeof OwnedPartSchema>;
 
 export const MissingPartSchema = PartRefSchema.extend({
   quantity: z.number().int().positive(),
+  partName: z.string(),
+  colorName: z.string(),
+  colorRgb: z.string(),
+  colorIsTrans: z.boolean(),
 });
 export type MissingPart = z.infer<typeof MissingPartSchema>;
 
