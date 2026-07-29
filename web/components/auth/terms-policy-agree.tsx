@@ -32,11 +32,14 @@ const TermsPolicyAgree = ({
         className="text-sm text-muted-foreground font-semibold leading-snug cursor-pointer"
       >
         I agree to the{" "}
-        <Link href="/" className="text-primary font-black hover:underline">
+        <Link
+          href="/privacy"
+          className="text-primary font-black hover:underline"
+        >
           Privacy Policy
         </Link>{" "}
         and{" "}
-        <Link href="/" className="text-primary font-black hover:underline">
+        <Link href="/terms" className="text-primary font-black hover:underline">
           Terms of Service
         </Link>
       </Label>
