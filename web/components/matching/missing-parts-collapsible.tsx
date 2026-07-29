@@ -35,7 +35,8 @@ const MissingPartsCollapsible = ({
               Missing Parts
             </h3>
             <p className="mt-0.5 text-muted-foreground text-xs">
-              {missingLineCount} lines · {missingPieceCount} pieces
+              {missingLineCount} line{missingLineCount === 1 ? "" : "s"} ·{" "}
+              {missingPieceCount} pieces
             </p>
           </div>
           <ChevronDownIcon className="size-4 shrink-0 text-muted-foreground transition-transform group-aria-expanded:rotate-180" />
