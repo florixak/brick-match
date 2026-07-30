@@ -29,7 +29,7 @@ const TermsPolicyAgree = ({
       />
       <Label
         htmlFor={id}
-        className="text-sm text-muted-foreground font-semibold leading-snug cursor-pointer"
+        className="block min-w-0 flex-1 text-sm text-muted-foreground font-semibold leading-snug cursor-pointer"
       >
         I agree to the{" "}
         <Link
