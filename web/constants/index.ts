@@ -101,3 +101,5 @@ export const FALLBACK_TIPS: Theme[] = [
     parentId: null,
   },
 ]
+
+export const PAGE_SIZE_OPTIONS = [25, 50, 100, 200] as const
