@@ -1,0 +1,13 @@
+**/node_modules
+**/dist
+**/.next
+**/.git
+**/.DS_Store
+**/*.log
+**/.env
+**/.env.*
+!**/.env.example
+api/data
+web
+coverage
+**/.pnpm-store
