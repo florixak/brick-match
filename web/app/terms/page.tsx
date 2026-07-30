@@ -1,14 +1,14 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import ContactLink from "@/components/legal/contact-link"
+import LegalSection from "@/components/legal/legal-section"
 import { siteConfig } from "@/lib/config"
+import { LAST_UPDATED } from "@/lib/legal"
 
 export const metadata: Metadata = {
   title: "Terms of Service",
   description: `Terms of Service for ${siteConfig.name} — the rules governing your use of the application.`,
 }
-
-const CONTACT_EMAIL = "ondrej@ondrejptak.dev"
-const LAST_UPDATED = "2026-07-29"
 
 export default function TermsPage() {
   return (
@@ -21,11 +21,7 @@ export default function TermsPage() {
           Last updated: {LAST_UPDATED}
         </p>
 
-        {/* 1. Acceptance and Age */}
-        <section className="mb-8">
-          <h2 className="text-xl font-bold mb-3">
-            1. Acceptance of Terms and Age Eligibility
-          </h2>
+        <LegalSection title="1. Acceptance of Terms and Age Eligibility">
           <p className="text-muted-foreground leading-relaxed">
             By creating an account or using BrickMatch, you agree to be bound by
             these Terms of Service and our{" "}
@@ -45,11 +41,9 @@ export default function TermsPage() {
             reserve the right to terminate accounts of users who do not meet
             this requirement.
           </p>
-        </section>
+        </LegalSection>
 
-        {/* 2. Service Description */}
-        <section className="mb-8">
-          <h2 className="text-xl font-bold mb-3">2. Service Description</h2>
+        <LegalSection title="2. Service Description">
           <p className="text-muted-foreground leading-relaxed">
             BrickMatch is a free personal project that allows registered users
             to manage their LEGO® part collection and discover which LEGO® sets
@@ -58,13 +52,9 @@ export default function TermsPage() {
             parts for each set. BrickMatch is not a commercial service and is
             provided at no charge.
           </p>
-        </section>
+        </LegalSection>
 
-        {/* 3. Account Registration */}
-        <section className="mb-8">
-          <h2 className="text-xl font-bold mb-3">
-            3. Account Registration and Responsibility
-          </h2>
+        <LegalSection title="3. Account Registration and Responsibility">
           <p className="text-muted-foreground leading-relaxed mb-3">
             When registering, you agree to provide accurate and truthful
             information. You are responsible for:
@@ -85,11 +75,9 @@ export default function TermsPage() {
             access to your account caused by your failure to keep your
             credentials secure.
           </p>
-        </section>
+        </LegalSection>
 
-        {/* 4. Permissible Use */}
-        <section className="mb-8">
-          <h2 className="text-xl font-bold mb-3">4. Permissible Use</h2>
+        <LegalSection title="4. Permissible Use">
           <p className="text-muted-foreground leading-relaxed mb-3">
             You agree to use BrickMatch only for its intended personal purpose.
             The following are prohibited:
@@ -113,18 +101,16 @@ export default function TermsPage() {
             </li>
             <li>Violating any applicable law or regulation.</li>
           </ul>
-        </section>
+        </LegalSection>
 
-        {/* 5. Intellectual Property */}
-        <section className="mb-8">
-          <h2 className="text-xl font-bold mb-3">5. Intellectual Property</h2>
-
+        <LegalSection title="5. Intellectual Property">
           <h3 className="text-base font-semibold mb-2 mt-4">
             LEGO® Trademark Disclaimer
           </h3>
           <p className="text-muted-foreground leading-relaxed">
-            LEGO® is a trademark of the LEGO Group. BrickMatch is an independent
-            personal project and is{" "}
+            LEGO® is a trademark of the LEGO Group of companies which does not
+            sponsor, authorize or endorse this site. BrickMatch is an
+            independent personal project and is{" "}
             <strong className="text-foreground">
               not affiliated with, sponsored by, endorsed by, or approved by the
               LEGO Group
@@ -172,13 +158,9 @@ export default function TermsPage() {
             modify, distribute, or create derivative works from the application
             code.
           </p>
-        </section>
+        </LegalSection>
 
-        {/* 6. Data Accuracy */}
-        <section className="mb-8">
-          <h2 className="text-xl font-bold mb-3">
-            6. Data Accuracy and No Guarantee of Results
-          </h2>
+        <LegalSection title="6. Data Accuracy and No Guarantee of Results">
           <p className="text-muted-foreground leading-relaxed">
             The LEGO® catalog data used by BrickMatch is sourced from a
             third-party database (Rebrickable) and may be incomplete, outdated,
@@ -192,11 +174,9 @@ export default function TermsPage() {
             You should verify results independently before making purchasing
             decisions.
           </p>
-        </section>
+        </LegalSection>
 
-        {/* 7. Service Availability */}
-        <section className="mb-8">
-          <h2 className="text-xl font-bold mb-3">7. Service Availability</h2>
+        <LegalSection title="7. Service Availability">
           <p className="text-muted-foreground leading-relaxed">
             BrickMatch is a personal project provided free of charge with no
             service level agreement (SLA). We make no guarantees regarding
@@ -205,16 +185,21 @@ export default function TermsPage() {
             notice. We are not liable for any loss resulting from service
             unavailability.
           </p>
-        </section>
+        </LegalSection>
 
-        {/* 8. Termination */}
-        <section className="mb-8">
-          <h2 className="text-xl font-bold mb-3">8. Termination</h2>
+        <LegalSection title="8. Termination">
           <p className="text-muted-foreground leading-relaxed mb-3">
             <strong className="text-foreground">By you:</strong> You may delete
             your account at any time using the account deletion feature in the
-            application. Upon deletion, all your personal data is permanently
-            removed from our systems.
+            application. Upon deletion, your active account record and all
+            associated owned-parts data are deleted immediately from the
+            application database. Provider-managed database history, snapshots,
+            and recovery copies may retain this data for a period according to
+            applicable retention settings. See our{" "}
+            <Link href="/privacy" className="text-primary hover:underline">
+              Privacy Policy
+            </Link>{" "}
+            for details.
           </p>
           <p className="text-muted-foreground leading-relaxed">
             <strong className="text-foreground">By us:</strong> We reserve the
@@ -223,13 +208,9 @@ export default function TermsPage() {
             Terms of Service, misused the service, or engaged in any activity
             that could harm the service or other users.
           </p>
-        </section>
+        </LegalSection>
 
-        {/* 9. Disclaimer of Warranties */}
-        <section className="mb-8">
-          <h2 className="text-xl font-bold mb-3">
-            9. Disclaimer of Warranties and Limitation of Liability
-          </h2>
+        <LegalSection title="9. Disclaimer of Warranties and Limitation of Liability">
           <p className="text-muted-foreground leading-relaxed mb-3">
             BrickMatch is provided{" "}
             <strong className="text-foreground">&ldquo;as is&rdquo;</strong> and{" "}
@@ -247,13 +228,9 @@ export default function TermsPage() {
             connection with your use of the service, even if advised of the
             possibility of such damages.
           </p>
-        </section>
+        </LegalSection>
 
-        {/* 10. Governing Law */}
-        <section className="mb-8">
-          <h2 className="text-xl font-bold mb-3">
-            10. Governing Law and Jurisdiction
-          </h2>
+        <LegalSection title="10. Governing Law and Jurisdiction">
           <p className="text-muted-foreground leading-relaxed">
             These Terms of Service are governed by and construed in accordance
             with the laws of the{" "}
@@ -262,11 +239,9 @@ export default function TermsPage() {
             arising from these terms or your use of the service shall be subject
             to the exclusive jurisdiction of the courts of the Czech Republic.
           </p>
-        </section>
+        </LegalSection>
 
-        {/* 11. Changes to Terms */}
-        <section className="mb-8">
-          <h2 className="text-xl font-bold mb-3">11. Changes to These Terms</h2>
+        <LegalSection title="11. Changes to These Terms">
           <p className="text-muted-foreground leading-relaxed">
             We reserve the right to update these Terms of Service at any time.
             When we do, we will update the &ldquo;Last updated&rdquo; date at
@@ -275,23 +250,14 @@ export default function TermsPage() {
             before the changes take effect. Continued use of the service after
             the effective date constitutes your acceptance of the updated terms.
           </p>
-        </section>
+        </LegalSection>
 
-        {/* 12. Contact */}
-        <section className="mb-8">
-          <h2 className="text-xl font-bold mb-3">12. Contact</h2>
+        <LegalSection title="12. Contact">
           <p className="text-muted-foreground leading-relaxed">
             If you have any questions about these Terms of Service, please
-            contact us at:{" "}
-            <a
-              href={`mailto:${CONTACT_EMAIL}`}
-              className="text-primary font-semibold hover:underline"
-            >
-              {CONTACT_EMAIL}
-            </a>
-            .
+            contact us at: <ContactLink />.
           </p>
-        </section>
+        </LegalSection>
 
         <div className="border-t border-border pt-6 mt-8">
           <p className="text-xs text-muted-foreground">

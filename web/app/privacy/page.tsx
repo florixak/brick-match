@@ -1,14 +1,14 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import ContactLink from "@/components/legal/contact-link"
+import LegalSection from "@/components/legal/legal-section"
 import { siteConfig } from "@/lib/config"
+import { CONTROLLER_NAME, LAST_UPDATED } from "@/lib/legal"
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
   description: `Privacy Policy for ${siteConfig.name} — how we collect, use, and protect your personal data.`,
 }
-
-const CONTACT_EMAIL = "ondrej@ondrejptak.dev"
-const LAST_UPDATED = "2026-07-29"
 
 export default function PrivacyPage() {
   return (
@@ -21,28 +21,17 @@ export default function PrivacyPage() {
           Last updated: {LAST_UPDATED}
         </p>
 
-        {/* 1. Data Controller */}
-        <section className="mb-8">
-          <h2 className="text-xl font-bold mb-3">1. Data Controller</h2>
+        <LegalSection title="1. Data Controller">
           <p className="text-muted-foreground leading-relaxed">
-            The data controller responsible for processing your personal data is
-            the operator of BrickMatch, a personal project. If you have any
+            The data controller responsible for processing your personal data is{" "}
+            <strong className="text-foreground">{CONTROLLER_NAME}</strong>,
+            operator of BrickMatch, a personal project. If you have any
             questions about how your data is handled, please contact us at:{" "}
-            <a
-              href={`mailto:${CONTACT_EMAIL}`}
-              className="text-primary font-semibold hover:underline"
-            >
-              {CONTACT_EMAIL}
-            </a>
-            .
+            <ContactLink />.
           </p>
-        </section>
+        </LegalSection>
 
-        {/* 2. Personal Data Collected */}
-        <section className="mb-8">
-          <h2 className="text-xl font-bold mb-3">
-            2. Personal Data We Collect
-          </h2>
+        <LegalSection title="2. Personal Data We Collect">
           <p className="text-muted-foreground leading-relaxed mb-3">
             When you use BrickMatch, we collect the following personal data:
           </p>
@@ -70,20 +59,20 @@ export default function PrivacyPage() {
             </li>
             <li>
               <strong className="text-foreground">
-                Session cookie (JWT token)
+                Authentication cookie (JWT token)
               </strong>{" "}
-              — an httpOnly cookie containing an authentication token is set
-              when you log in. It is not accessible to JavaScript and is used
-              solely to maintain your login session.
+              — a persistent httpOnly cookie named{" "}
+              <code className="text-foreground font-mono text-xs">
+                access_token
+              </code>{" "}
+              containing an authentication token is set when you log in. It
+              expires after 24 hours by default, is not accessible to
+              JavaScript, and is used solely to maintain your login session.
             </li>
           </ul>
-        </section>
+        </LegalSection>
 
-        {/* 3. Legal Basis */}
-        <section className="mb-8">
-          <h2 className="text-xl font-bold mb-3">
-            3. Legal Basis for Processing (GDPR)
-          </h2>
+        <LegalSection title="3. Legal Basis for Processing (GDPR)">
           <p className="text-muted-foreground leading-relaxed mb-3">
             We process your personal data on the following legal grounds under
             Article 6 of the GDPR:
@@ -105,11 +94,9 @@ export default function PrivacyPage() {
               rights and freedoms.
             </li>
           </ul>
-        </section>
+        </LegalSection>
 
-        {/* 4. Purposes */}
-        <section className="mb-8">
-          <h2 className="text-xl font-bold mb-3">4. How We Use Your Data</h2>
+        <LegalSection title="4. How We Use Your Data">
           <p className="text-muted-foreground leading-relaxed mb-3">
             Your data is used for the following purposes:
           </p>
@@ -138,13 +125,9 @@ export default function PrivacyPage() {
             run any advertising campaigns and do not share your personal data
             with advertisers.
           </p>
-        </section>
+        </LegalSection>
 
-        {/* 5. Third-Party Processors */}
-        <section className="mb-8">
-          <h2 className="text-xl font-bold mb-3">
-            5. Third-Party Service Providers
-          </h2>
+        <LegalSection title="5. Third-Party Service Providers">
           <p className="text-muted-foreground leading-relaxed mb-3">
             We use the following third-party infrastructure providers who may
             process your personal data on our behalf:
@@ -159,8 +142,8 @@ export default function PrivacyPage() {
               <strong className="text-foreground">
                 AWS Europe (Frankfurt) region
               </strong>{" "}
-              within the EU/EEA. No data transfer outside the EEA takes place in
-              connection with the database.
+              within the EU/EEA. The physical storage location of your data is
+              within the EU.
             </li>
             <li>
               <strong className="text-foreground">
@@ -201,31 +184,26 @@ export default function PrivacyPage() {
             — it is solely a source of publicly available catalog data imported
             locally into our database.
           </p>
-        </section>
+        </LegalSection>
 
-        {/* 6. Data Retention */}
-        <section className="mb-8">
-          <h2 className="text-xl font-bold mb-3">6. Data Retention</h2>
+        <LegalSection title="6. Data Retention">
           <p className="text-muted-foreground leading-relaxed">
             Your account data (email, password hash, and LEGO collection) is
             retained for as long as your account exists. When you delete your
-            account through the in-app account deletion feature, all of your
-            personal data is permanently and immediately deleted from our
-            database. This is a hard delete — no backup copies of your personal
-            data are retained after account deletion.
+            account through the in-app account deletion feature, your active
+            account record and all associated owned-parts data are deleted
+            immediately from the application database.
           </p>
           <p className="text-muted-foreground leading-relaxed mt-3">
-            Server logs containing IP addresses may be retained for a short
-            period (typically a few days) for security purposes before being
-            automatically purged.
+            Provider-managed database history, snapshots, and recovery copies
+            maintained by Neon may retain this data for a period determined by
+            their applicable retention settings, over which we have no
+            individual-record control. Server logs containing IP addresses are
+            subject to Vercel&rsquo;s logging retention policies.
           </p>
-        </section>
+        </LegalSection>
 
-        {/* 7. User Rights */}
-        <section className="mb-8">
-          <h2 className="text-xl font-bold mb-3">
-            7. Your Rights Under GDPR (Art. 15–22)
-          </h2>
+        <LegalSection title="7. Your Rights Under GDPR (Art. 15–22)">
           <p className="text-muted-foreground leading-relaxed mb-3">
             As a data subject, you have the following rights:
           </p>
@@ -262,20 +240,12 @@ export default function PrivacyPage() {
           <p className="text-muted-foreground leading-relaxed mt-3">
             <strong className="text-foreground">Account deletion</strong> can be
             performed directly within the app. For all other rights requests,
-            please contact us at{" "}
-            <a
-              href={`mailto:${CONTACT_EMAIL}`}
-              className="text-primary font-semibold hover:underline"
-            >
-              {CONTACT_EMAIL}
-            </a>
-            . We will respond within 30 days as required by the GDPR.
+            please contact us at <ContactLink />. We will respond within 30 days
+            as required by the GDPR.
           </p>
-        </section>
+        </LegalSection>
 
-        {/* 8. Cookies */}
-        <section className="mb-8">
-          <h2 className="text-xl font-bold mb-3">8. Cookies</h2>
+        <LegalSection title="8. Cookies">
           <p className="text-muted-foreground leading-relaxed mb-3">
             BrickMatch uses a single cookie:
           </p>
@@ -295,12 +265,12 @@ export default function PrivacyPage() {
               </thead>
               <tbody>
                 <tr>
-                  <td className="pt-2 pr-4 font-mono">session</td>
+                  <td className="pt-2 pr-4 font-mono">access_token</td>
                   <td className="pt-2 pr-4">
                     Maintains your login session (JWT authentication token)
                   </td>
                   <td className="pt-2 pr-4">Necessary / Functional</td>
-                  <td className="pt-2">Session / configurable</td>
+                  <td className="pt-2">Persistent (default: 24 hours)</td>
                 </tr>
               </tbody>
             </table>
@@ -308,17 +278,15 @@ export default function PrivacyPage() {
           <p className="text-muted-foreground leading-relaxed mt-3">
             This cookie is classified as a strictly necessary/functional cookie
             under the ePrivacy Directive — it is required for the service to
-            function. It is set as{" "}
+            function and is not used for tracking or analytics. It is set as{" "}
             <code className="text-foreground font-mono text-xs">httpOnly</code>,
             meaning it cannot be accessed by JavaScript, which protects it from
             cross-site scripting attacks. No marketing, tracking, or advertising
             cookies are used.
           </p>
-        </section>
+        </LegalSection>
 
-        {/* 9. Security */}
-        <section className="mb-8">
-          <h2 className="text-xl font-bold mb-3">9. Security</h2>
+        <LegalSection title="9. Security">
           <p className="text-muted-foreground leading-relaxed">
             We take reasonable technical measures to protect your personal data.
             Passwords are hashed using the Argon2 algorithm before storage —
@@ -327,11 +295,9 @@ export default function PrivacyPage() {
             are stored in httpOnly cookies, reducing the risk of theft via
             client-side scripts.
           </p>
-        </section>
+        </LegalSection>
 
-        {/* 10. Age Restriction */}
-        <section className="mb-8">
-          <h2 className="text-xl font-bold mb-3">10. Age Restriction</h2>
+        <LegalSection title="10. Age Restriction">
           <p className="text-muted-foreground leading-relaxed">
             BrickMatch is not intended for use by children below the age of
             digital consent. In the Czech Republic, the minimum age for
@@ -342,37 +308,25 @@ export default function PrivacyPage() {
             do not knowingly collect personal data from children below the age
             of digital consent.
           </p>
-        </section>
+        </LegalSection>
 
-        {/* 11. Policy Changes */}
-        <section className="mb-8">
-          <h2 className="text-xl font-bold mb-3">11. Changes to This Policy</h2>
+        <LegalSection title="11. Changes to This Policy">
           <p className="text-muted-foreground leading-relaxed">
             We may update this Privacy Policy from time to time. When we do, we
-            will update the "Last updated" date at the top of this page. For
-            material changes that affect your rights, we will notify you via the
-            email address associated with your account at least 14 days before
-            the changes take effect. Continued use of the service after the
-            effective date constitutes your acceptance of the updated policy.
+            will update the &ldquo;Last updated&rdquo; date at the top of this
+            page. For material changes that affect your rights, we will notify
+            you via the email address associated with your account at least 14
+            days before the changes take effect. Continued use of the service
+            after the effective date constitutes your acceptance of the updated
+            policy.
           </p>
-        </section>
+        </LegalSection>
 
-        {/* 12. Contact and Complaints */}
-        <section className="mb-8">
-          <h2 className="text-xl font-bold mb-3">
-            12. Contact and Supervisory Authority
-          </h2>
+        <LegalSection title="12. Contact and Supervisory Authority">
           <p className="text-muted-foreground leading-relaxed mb-3">
             For any questions, requests, or complaints regarding this Privacy
             Policy or the processing of your personal data, please contact us
-            at:{" "}
-            <a
-              href={`mailto:${CONTACT_EMAIL}`}
-              className="text-primary font-semibold hover:underline"
-            >
-              {CONTACT_EMAIL}
-            </a>
-            .
+            at: <ContactLink />.
           </p>
           <p className="text-muted-foreground leading-relaxed">
             You also have the right to lodge a complaint with the supervisory
@@ -387,7 +341,7 @@ export default function PrivacyPage() {
             </a>{" "}
             — Pplk. Sochora 27, 170 00 Praha 7, Czech Republic.
           </p>
-        </section>
+        </LegalSection>
 
         <div className="border-t border-border pt-6 mt-8">
           <p className="text-xs text-muted-foreground">
