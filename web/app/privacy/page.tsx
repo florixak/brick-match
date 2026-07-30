@@ -240,8 +240,11 @@ export default function PrivacyPage() {
           <p className="text-muted-foreground leading-relaxed mt-3">
             <strong className="text-foreground">Account deletion</strong> can be
             performed directly within the app. For all other rights requests,
-            please contact us at <ContactLink />. We will respond within 30 days
-            as required by the GDPR.
+            please contact us at <ContactLink />. We will respond without undue
+            delay and, in any event, within one month of receiving your request.
+            Where permitted, this period may be extended by up to two further
+            months; we will notify you within the first month if an extension is
+            necessary.
           </p>
         </LegalSection>
 
