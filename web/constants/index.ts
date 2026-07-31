@@ -41,16 +41,7 @@ export const NAV_LINKS: NavLink[] = [
   },
 ]
 
-export const MOBILE_NAV_LINKS: NavLink[] = [
-  ...NAV_LINKS,
-  {
-    label: "Me",
-    href: {
-      pathname: "/me",
-    },
-    icon: UserIcon,
-  },
-]
+export const MOBILE_NAV_LINKS: NavLink[] = [...NAV_LINKS]
 
 export const SEARCH_DEBOUNCE_MS = 500
 
