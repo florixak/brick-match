@@ -1,6 +1,6 @@
 import type { PartSummary } from "@lego-matcher/shared-types"
 import { Loader2 } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import useIsAuthenticated from "@/hooks/use-is-authenticated"
 import { parseApiError } from "@/lib/api/client"
@@ -51,6 +51,12 @@ const PartDialog = ({ selectedPart, setSelectedPart }: PartDialogProps) => {
       )
     }
   }
+
+  useEffect(() => {
+    if (!selectedPart) return
+    setColorId(null)
+    setQuantity(1)
+  }, [selectedPart])
 
   return (
     <Dialog
