@@ -12,7 +12,7 @@ import OwnedPart from "@/components/owned-parts/owned-part"
 import { AsyncQueryState } from "@/components/query/async-query-state"
 import OwnedPartsListSkeleton from "@/components/skeletons/owned-parts-list"
 import { Button } from "@/components/ui/button"
-import { SEARCH_DEBOUNCE_MS } from "@/constants"
+import { FILTER_DEBOUNCE_MS } from "@/constants"
 import { useDebouncedValue } from "@/hooks/use-debounced-value"
 import {
   ownedPartsSearchParams,
@@ -46,7 +46,7 @@ const List = () => {
 
   const debouncedSearch = useDebouncedValue(
     queryParams.search,
-    SEARCH_DEBOUNCE_MS,
+    FILTER_DEBOUNCE_MS,
   )
   const query = toOwnedPartsQuery({
     ...queryParams,

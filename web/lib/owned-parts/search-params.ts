@@ -1,6 +1,6 @@
 import type { GetOwnedPartsQuery } from "@lego-matcher/shared-types"
 import { createParser, debounce, parseAsInteger, parseAsString } from "nuqs"
-import { PAGE_SIZE_OPTIONS, SEARCH_DEBOUNCE_MS } from "@/constants"
+import { FILTER_DEBOUNCE_MS, PAGE_SIZE_OPTIONS } from "@/constants"
 
 export const DEFAULT_OWNED_PARTS_PAGE_SIZE = 50
 
@@ -23,7 +23,7 @@ const parseAsOwnedPartsPageSize = createParser({
 export const ownedPartsSearchParams = {
   search: parseAsString
     .withDefault("")
-    .withOptions({ limitUrlUpdates: debounce(SEARCH_DEBOUNCE_MS) }),
+    .withOptions({ limitUrlUpdates: debounce(FILTER_DEBOUNCE_MS) }),
   page: parseAsInteger.withDefault(1),
   pageSize: parseAsOwnedPartsPageSize,
   colorId: parseAsInteger,

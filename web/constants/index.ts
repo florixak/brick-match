@@ -43,7 +43,8 @@ export const NAV_LINKS: NavLink[] = [
 
 export const MOBILE_NAV_LINKS: NavLink[] = [...NAV_LINKS]
 
-export const SEARCH_DEBOUNCE_MS = 500
+export const CATALOG_SEARCH_DEBOUNCE_MS = 750
+export const FILTER_DEBOUNCE_MS = 450
 
 export const TIPS_COUNT = 6
 

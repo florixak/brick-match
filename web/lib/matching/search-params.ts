@@ -3,14 +3,14 @@ import {
   type GetMatchesQuery,
 } from "@lego-matcher/shared-types"
 import { debounce, parseAsFloat, parseAsInteger } from "nuqs"
-import { SEARCH_DEBOUNCE_MS } from "@/constants"
+import { FILTER_DEBOUNCE_MS } from "@/constants"
 
 export const matchingSearchParams = {
   /** Fraction 0–1, matches the backend field directly */
   minMatchPercentage: parseAsFloat
     .withDefault(DEFAULT_MIN_MATCH_PERCENTAGE)
     .withOptions({
-      limitUrlUpdates: debounce(SEARCH_DEBOUNCE_MS),
+      limitUrlUpdates: debounce(FILTER_DEBOUNCE_MS),
     }),
   limit: parseAsInteger.withDefault(50),
   themeId: parseAsInteger,
