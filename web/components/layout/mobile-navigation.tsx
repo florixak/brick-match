@@ -15,7 +15,7 @@ export default function MobileNavigation() {
       aria-label="Mobile navigation"
       className="fixed inset-x-0 bottom-5 z-50 mx-2 md:hidden"
     >
-      <ButtonGroup className="w-full rounded-lg bg-card">
+      <ButtonGroup className="w-full overflow-hidden rounded-lg bg-card">
         {MOBILE_NAV_LINKS.map((link) => {
           const isActive = pathname === link.href.pathname
           const Icon = link.icon
