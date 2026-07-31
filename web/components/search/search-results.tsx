@@ -10,7 +10,7 @@ import { useQueryStates } from "nuqs"
 import { useState } from "react"
 import { AsyncQueryState } from "@/components/query/async-query-state"
 import { Button } from "@/components/ui/button"
-import { SEARCH_DEBOUNCE_MS } from "@/constants"
+import { CATALOG_SEARCH_DEBOUNCE_MS } from "@/constants"
 import { useDebouncedValue } from "@/hooks/use-debounced-value"
 import { useCatalogParts, useCatalogSets } from "@/lib/queries"
 import { catalogSearchParams } from "@/lib/search/search-params"
@@ -41,7 +41,10 @@ function isEmptyParts(data: SearchPartsApiResponse) {
 
 const SearchResults = () => {
   const [queryParams] = useQueryStates(catalogSearchParams)
-  const debouncedSearch = useDebouncedValue(queryParams.q, SEARCH_DEBOUNCE_MS)
+  const debouncedSearch = useDebouncedValue(
+    queryParams.q,
+    CATALOG_SEARCH_DEBOUNCE_MS,
+  )
   const [selectedSet, setSelectedSet] = useState<SetSummary | null>(null)
   const [selectedPart, setSelectedPart] = useState<PartSummary | null>(null)
 
