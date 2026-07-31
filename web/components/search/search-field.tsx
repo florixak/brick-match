@@ -41,7 +41,7 @@ const SearchField = () => {
           id="search-results"
           className={cn(
             searchPanelClassName,
-            "absolute top-full z-50 mt-2 w-full max-h-60 overflow-x-hidden overflow-y-auto overscroll-y-contain thin-scrollbar",
+            "absolute top-full z-50 mt-2 w-full max-h-60 md:max-h-86 overflow-x-hidden overflow-y-auto overscroll-y-contain thin-scrollbar",
           )}
         >
           <SearchResults />
