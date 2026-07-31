@@ -7,7 +7,7 @@ export const searchSurfaceClassName =
   "!border-border !bg-card dark:!border-input dark:!bg-input/30"
 
 export const searchPanelClassName = cn(
-  "overflow-hidden rounded-lg border border-border bg-card text-card-foreground shadow-md",
+  "rounded-lg border border-border bg-card text-card-foreground shadow-md",
   "dark:border-input dark:bg-card",
 )
 

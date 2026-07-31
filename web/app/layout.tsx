@@ -52,7 +52,9 @@ export default function RootLayout({
           <QueryProvider>
             <NuqsAdapter defaultOptions={{ scroll: true }}>
               <Header />
-              <main className="flex-1 overflow-x-hidden">{children}</main>
+              <main className="relative z-10 flex-1 overflow-x-hidden">
+                {children}
+              </main>
               <Footer />
               <MobileNavigation />
               <Toaster position="bottom-right" />

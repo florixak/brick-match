@@ -39,7 +39,10 @@ const SearchField = () => {
       {queryParams.q ? (
         <div
           id="search-results"
-          className={cn("absolute top-full mt-2 w-full", searchPanelClassName)}
+          className={cn(
+            searchPanelClassName,
+            "absolute top-full z-50 mt-2 w-full max-h-60 overflow-x-hidden overflow-y-auto overscroll-y-contain thin-scrollbar",
+          )}
         >
           <SearchResults />
         </div>
