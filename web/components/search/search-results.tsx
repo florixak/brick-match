@@ -14,17 +14,22 @@ import { SEARCH_DEBOUNCE_MS } from "@/constants"
 import { useDebouncedValue } from "@/hooks/use-debounced-value"
 import { useCatalogParts, useCatalogSets } from "@/lib/queries"
 import { catalogSearchParams } from "@/lib/search/search-params"
-import { formatSetNumber } from "@/lib/utils"
+import { cn, formatSetNumber } from "@/lib/utils"
 import PartDialog from "../dialogs/part-dialog"
 import SetDialog from "../dialogs/set-dialog"
 import SetAvatar from "./set-avatar"
 
 const MIN_SEARCH_LENGTH = 2
-const RESULTS_LIMIT = 10
+const RESULTS_LIMIT = 20
 
 const resultMessageClassName = "px-3 py-2 text-muted-foreground text-sm"
 const resultItemClassName =
-  "px-3 py-2 transition-colors hover:bg-muted/50 dark:hover:bg-input/30"
+  "min-w-0 px-3 py-1 transition-colors hover:bg-muted/50 dark:hover:bg-input/30"
+
+const resultButtonClassName =
+  "h-auto min-h-0 w-full min-w-0 shrink whitespace-normal text-left px-0 py-2"
+
+const resultTextClassName = "w-full min-w-0 text-sm wrap-break-word"
 
 function isEmptySets(data: SearchSetsApiResponse) {
   return data.data.sets.length === 0
@@ -96,12 +101,15 @@ const SearchResults = () => {
                   <Button
                     variant="ghost"
                     onClick={() => setSelectedPart(part)}
-                    className="w-full flex flex-col items-start justify-center px-0 py-6 gap-0"
+                    className={cn(
+                      resultButtonClassName,
+                      "flex-col items-stretch justify-center gap-0",
+                    )}
                   >
                     <span className="font-mono text-muted-foreground text-xs">
                       {part.partNum}
                     </span>
-                    <span className="block text-sm">{part.name}</span>
+                    <span className={resultTextClassName}>{part.name}</span>
                   </Button>
                 </li>
               ))}
@@ -150,16 +158,19 @@ const SearchResults = () => {
                 <Button
                   variant="ghost"
                   onClick={() => setSelectedSet(set)}
-                  className="w-full flex flex-row items-center justify-start px-0 py-6 gap-4"
+                  className={cn(
+                    resultButtonClassName,
+                    "flex-row items-center justify-start gap-3",
+                  )}
                 >
                   <SetAvatar
                     themeId={set.themeId}
                     themeName={set.themeName}
                     setNum={set.setNum}
-                    size="lg"
+                    size="default"
                   />
-                  <div className="flex flex-col items-start justify-center">
-                    <span className="block text-sm">{set.name}</span>
+                  <div className="flex min-w-0 flex-1 flex-col items-stretch justify-center">
+                    <span className={resultTextClassName}>{set.name}</span>
                     <span className="text-muted-foreground text-xs">
                       {formatSetNumber(set.setNum)} · {set.year} ·{" "}
                       {set.numParts} parts
