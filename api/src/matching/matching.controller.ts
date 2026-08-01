@@ -1,10 +1,21 @@
 import {
+  CompleteSetResponse,
   GetMatchesApiResponse,
   GetMatchesApiResponseSchema,
   GetMatchesQuerySchema,
   type GetMatchesQuery,
 } from '@lego-matcher/shared-types';
-import { Controller, Get, Param, Query, Res, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Post,
+  Query,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { type Response } from 'express';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -51,5 +62,17 @@ export class MatchingController {
       'Content-Disposition': `attachment; filename="${setNum}-missing-parts.csv"`,
     });
     res.send(csv);
+  }
+
+  @Post(':setNum/build')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Mark a set as built and remove its parts from inventory',
+  })
+  async buildSet(
+    @CurrentUser('sub') userId: string,
+    @Param('setNum') setNum: string,
+  ): Promise<CompleteSetResponse> {
+    return await this.matchingService.buildSet(userId, setNum);
   }
 }

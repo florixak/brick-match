@@ -9,6 +9,7 @@ describe('MatchingController', () => {
   const matchingService = {
     findMatches: jest.fn(),
     buildMissingPartsCsv: jest.fn(),
+    buildSet: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -69,5 +70,15 @@ describe('MatchingController', () => {
       'Content-Disposition': 'attachment; filename="60001-1-missing-parts.csv"',
     });
     expect(res.send).toHaveBeenCalledWith('Part,Color,Quantity\n3003,1,2');
+  });
+
+  it('should call buildSet with the correct parameters', async () => {
+    const response = { partsAffected: 12 };
+    matchingService.buildSet.mockResolvedValue(response);
+
+    const result = await controller.buildSet('user-1', '60001-1');
+
+    expect(result).toEqual(response);
+    expect(matchingService.buildSet).toHaveBeenCalledWith('user-1', '60001-1');
   });
 });

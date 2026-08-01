@@ -1,7 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DatabaseService } from 'src/database/database.service';
 import { MatchingService } from './matching.service';
-import { NotFoundException } from '@nestjs/common';
+import {
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 
 function createOwnedPartsSelectChain<T>(result: T) {
   const where = jest.fn().mockResolvedValue(result);
@@ -262,6 +265,44 @@ describe('MatchingService', () => {
       const csv = await service.buildMissingPartsCsv(userId, '60001-1');
       expect(csv).toBe('Part,Color,Quantity\n3003,1,2');
       expect(execute).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe('buildSet', () => {
+    it('should throw NotFoundException if set does not exist', async () => {
+      execute.mockResolvedValueOnce({ rows: [] });
+
+      await expect(service.buildSet(userId, 'invalid-1')).rejects.toThrow(
+        NotFoundException,
+      );
+      expect(execute).toHaveBeenCalledTimes(1);
+    });
+
+    it('should throw UnprocessableEntityException if user is missing parts', async () => {
+      execute
+        .mockResolvedValueOnce({ rows: [{ '?column?': 1 }] })
+        .mockResolvedValueOnce({
+          rows: [{ can_build: false, parts_affected: 0 }],
+        });
+
+      await expect(service.buildSet(userId, '60001-1')).rejects.toThrow(
+        UnprocessableEntityException,
+      );
+      expect(execute).toHaveBeenCalledTimes(2);
+    });
+
+    it('should return partsAffected when set is built successfully', async () => {
+      execute
+        .mockResolvedValueOnce({ rows: [{ '?column?': 1 }] })
+        .mockResolvedValueOnce({
+          rows: [{ can_build: true, parts_affected: 12 }],
+        })
+        .mockResolvedValueOnce({ rows: [] });
+
+      const response = await service.buildSet(userId, '60001-1');
+
+      expect(response).toEqual({ partsAffected: 12 });
+      expect(execute).toHaveBeenCalledTimes(3);
     });
   });
 });
