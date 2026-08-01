@@ -14,7 +14,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { and, asc, count, eq, or, sql } from 'drizzle-orm';
+import { and, asc, count, eq, gt, or, sql } from 'drizzle-orm';
 import { DatabaseService } from 'src/database/database.service';
 import { isFkViolation } from 'src/database/pg-error';
 import {
@@ -117,7 +117,10 @@ export class OwnedPartsService {
       .toLowerCase()
       .replace(/[\\%_]/g, '\\$&');
 
-    const conditions = [eq(userOwnedParts.userId, userId)];
+    const conditions = [
+      eq(userOwnedParts.userId, userId),
+      gt(userOwnedParts.quantity, 0),
+    ];
 
     if (term) {
       conditions.push(
