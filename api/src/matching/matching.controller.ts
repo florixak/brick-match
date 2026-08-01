@@ -66,6 +66,7 @@ export class MatchingController {
 
   @Post(':setNum/build')
   @HttpCode(HttpStatus.OK)
+  @MatchingThrottle()
   @ApiOperation({
     summary: 'Mark a set as built and remove its parts from inventory',
   })
