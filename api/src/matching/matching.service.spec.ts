@@ -282,7 +282,20 @@ describe('MatchingService', () => {
       execute
         .mockResolvedValueOnce({ rows: [{ '?column?': 1 }] })
         .mockResolvedValueOnce({
-          rows: [{ can_build: false, parts_affected: 0 }],
+          rows: [{ can_build: false, required_parts: 12, parts_affected: 0 }],
+        });
+
+      await expect(service.buildSet(userId, '60001-1')).rejects.toThrow(
+        UnprocessableEntityException,
+      );
+      expect(execute).toHaveBeenCalledTimes(2);
+    });
+
+    it('should throw UnprocessableEntityException when consumption is incomplete', async () => {
+      execute
+        .mockResolvedValueOnce({ rows: [{ '?column?': 1 }] })
+        .mockResolvedValueOnce({
+          rows: [{ can_build: true, required_parts: 12, parts_affected: 5 }],
         });
 
       await expect(service.buildSet(userId, '60001-1')).rejects.toThrow(
@@ -295,7 +308,7 @@ describe('MatchingService', () => {
       execute
         .mockResolvedValueOnce({ rows: [{ '?column?': 1 }] })
         .mockResolvedValueOnce({
-          rows: [{ can_build: true, parts_affected: 12 }],
+          rows: [{ can_build: true, required_parts: 12, parts_affected: 12 }],
         })
         .mockResolvedValueOnce({ rows: [] });
 

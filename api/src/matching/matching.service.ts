@@ -269,6 +269,7 @@ export class MatchingService {
     await this.assertSetExists(setNum);
     const result = await this.databaseService.db.execute<{
       can_build: boolean;
+      required_parts: number;
       parts_affected: number;
     }>(sql`WITH required AS (
         SELECT part_num, color_id, SUM(quantity)::int AS required_qty
@@ -276,13 +277,19 @@ export class MatchingService {
         WHERE set_num = ${setNum} AND is_spare = false
         GROUP BY part_num, color_id
       ),
+      locked AS (
+        SELECT o.part_num, o.color_id, o.quantity
+        FROM user_owned_parts o
+        INNER JOIN required r
+          ON o.part_num = r.part_num AND o.color_id = r.color_id
+        WHERE o.user_id = ${userId}
+        FOR UPDATE
+      ),
       has_all AS (
-        SELECT BOOL_AND(COALESCE(o.quantity, 0) >= r.required_qty) AS can_build
+        SELECT BOOL_AND(COALESCE(l.quantity, 0) >= r.required_qty) AS can_build
         FROM required r
-        LEFT JOIN user_owned_parts o
-          ON o.user_id = ${userId}
-          AND o.part_num = r.part_num
-          AND o.color_id = r.color_id
+        LEFT JOIN locked l
+          ON l.part_num = r.part_num AND l.color_id = r.color_id
       ),
       deleted AS (
         DELETE FROM user_owned_parts uop
@@ -307,6 +314,7 @@ export class MatchingService {
       )
       SELECT
         (SELECT can_build FROM has_all) AS can_build,
+        (SELECT COUNT(*)::int FROM required) AS required_parts,
         (
           (SELECT COUNT(*)::int FROM deleted)
           + (SELECT COUNT(*)::int FROM updated)
@@ -315,7 +323,7 @@ export class MatchingService {
 
     const row = result.rows[0];
 
-    if (!row?.can_build) {
+    if (!row?.can_build || row.parts_affected !== row.required_parts) {
       throw new UnprocessableEntityException(
         'Not enough parts to build this set',
       );
@@ -326,6 +334,6 @@ export class MatchingService {
       WHERE user_id = ${userId} AND quantity <= 0
     `);
 
-    return { partsAffected: row.parts_affected };
+    return { partsAffected: Number(row.parts_affected) };
   }
 }
