@@ -3,7 +3,10 @@ import Link from "next/link"
 import { toast } from "react-hot-toast"
 import useIsAuthenticated from "@/hooks/use-is-authenticated"
 import { parseApiError } from "@/lib/api/client"
-import { useExportMissingPartsMutation } from "@/lib/queries"
+import {
+  useBuildSetMutation,
+  useExportMissingPartsMutation,
+} from "@/lib/queries"
 import { cn, formatSetNumber, getThemeTextClassName } from "@/lib/utils"
 import MissingPartsCollapsible from "../matching/missing-parts-collapsible"
 import SetImage from "../search/set-image"
@@ -25,16 +28,7 @@ const MatchDialog = ({ selectedMatch, setSelectedMatch }: MatchDialogProps) => {
   const isAuthenticated = useIsAuthenticated()
   const { mutate: exportMissingParts, isPending: isExportingMissingParts } =
     useExportMissingPartsMutation()
-
-  const handleExportMissingParts = () => {
-    if (!selectedMatch) return
-    exportMissingParts(selectedMatch.setNum, {
-      onError: (error: unknown) => {
-        const apiError = parseApiError(error)
-        toast.error(apiError?.body.message ?? "Failed to export missing parts.")
-      },
-    })
-  }
+  const { mutate: buildSet, isPending: isBuildingSet } = useBuildSetMutation()
 
   const missingLineCount = selectedMatch?.missingParts.length ?? 0
   const missingPieceCount =
@@ -46,6 +40,33 @@ const MatchDialog = ({ selectedMatch, setSelectedMatch }: MatchDialogProps) => {
     ? Math.round(selectedMatch.matchPercentage * 100)
     : 0
   const hasMissingParts = missingLineCount > 0
+
+  const showExportMissingPartsButton = isAuthenticated && hasMissingParts
+  const showBuildSetButton = isAuthenticated && !hasMissingParts
+
+  const handleExportMissingParts = () => {
+    if (!selectedMatch || isExportingMissingParts || !hasMissingParts) return
+    exportMissingParts(selectedMatch.setNum, {
+      onError: (error: unknown) => {
+        const apiError = parseApiError(error)
+        toast.error(apiError?.body.message ?? "Failed to export missing parts.")
+      },
+    })
+  }
+
+  const handleBuildSet = () => {
+    if (!selectedMatch || isBuildingSet || hasMissingParts) return
+    buildSet(selectedMatch.setNum, {
+      onSuccess: () => {
+        toast.success("Set built successfully.")
+        setSelectedMatch(null)
+      },
+      onError: (error: unknown) => {
+        const apiError = parseApiError(error)
+        toast.error(apiError?.body.message ?? "Failed to build set.")
+      },
+    })
+  }
 
   return (
     <Dialog
@@ -128,19 +149,26 @@ const MatchDialog = ({ selectedMatch, setSelectedMatch }: MatchDialogProps) => {
                   </Link>
                 }
               />
-              <Button
-                disabled={
-                  !isAuthenticated ||
-                  isExportingMissingParts ||
-                  !hasMissingParts
-                }
-                className="h-10 w-full sm:flex-1 sm:basis-0"
-                onClick={handleExportMissingParts}
-              >
-                {isExportingMissingParts
-                  ? "Exporting..."
-                  : "Export Missing Parts"}
-              </Button>
+              {showExportMissingPartsButton ? (
+                <Button
+                  disabled={isExportingMissingParts}
+                  className="h-10 w-full sm:flex-1 sm:basis-0"
+                  onClick={handleExportMissingParts}
+                >
+                  {isExportingMissingParts
+                    ? "Exporting..."
+                    : "Export Missing Parts"}
+                </Button>
+              ) : null}
+              {showBuildSetButton ? (
+                <Button
+                  disabled={isBuildingSet}
+                  className="h-10 w-full sm:flex-1 sm:basis-0"
+                  onClick={handleBuildSet}
+                >
+                  {isBuildingSet ? "Building..." : "Build Set"}
+                </Button>
+              ) : null}
             </DialogFooter>
           </>
         ) : null}
