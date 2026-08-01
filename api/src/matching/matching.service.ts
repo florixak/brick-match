@@ -1,4 +1,5 @@
 import {
+  CompleteSetResponse,
   DEFAULT_MIN_MATCH_PERCENTAGE,
   GetMatchesApiResponse,
   GetMatchesQuery,
@@ -6,7 +7,11 @@ import {
   MissingPart,
   OwnedPart as OwnedPartRow,
 } from '@lego-matcher/shared-types';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { eq, sql } from 'drizzle-orm';
 import { DatabaseService } from 'src/database/database.service';
 import { userOwnedParts } from 'src/database/schema';
@@ -258,5 +263,77 @@ export class MatchingService {
       'Part,Color,Quantity',
       ...missingParts.map((p) => `${p.partNum},${p.colorId},${p.quantity}`),
     ].join('\n');
+  }
+
+  async buildSet(userId: string, setNum: string): Promise<CompleteSetResponse> {
+    await this.assertSetExists(setNum);
+    const result = await this.databaseService.db.execute<{
+      can_build: boolean;
+      required_parts: number;
+      parts_affected: number;
+    }>(sql`WITH required AS (
+        SELECT part_num, color_id, SUM(quantity)::int AS required_qty
+        FROM inventory_parts
+        WHERE set_num = ${setNum} AND is_spare = false
+        GROUP BY part_num, color_id
+      ),
+      locked AS (
+        SELECT o.part_num, o.color_id, o.quantity
+        FROM user_owned_parts o
+        INNER JOIN required r
+          ON o.part_num = r.part_num AND o.color_id = r.color_id
+        WHERE o.user_id = ${userId}
+        FOR UPDATE
+      ),
+      has_all AS (
+        SELECT BOOL_AND(COALESCE(l.quantity, 0) >= r.required_qty) AS can_build
+        FROM required r
+        LEFT JOIN locked l
+          ON l.part_num = r.part_num AND l.color_id = r.color_id
+      ),
+      deleted AS (
+        DELETE FROM user_owned_parts uop
+        USING required r, has_all
+        WHERE has_all.can_build = true
+          AND uop.user_id = ${userId}
+          AND uop.part_num = r.part_num
+          AND uop.color_id = r.color_id
+          AND uop.quantity = r.required_qty
+        RETURNING uop.id
+      ),
+      updated AS (
+        UPDATE user_owned_parts uop
+        SET quantity = uop.quantity - r.required_qty
+        FROM required r, has_all
+        WHERE has_all.can_build = true
+          AND uop.user_id = ${userId}
+          AND uop.part_num = r.part_num
+          AND uop.color_id = r.color_id
+          AND uop.quantity > r.required_qty
+        RETURNING uop.id
+      )
+      SELECT
+        (SELECT can_build FROM has_all) AS can_build,
+        (SELECT COUNT(*)::int FROM required) AS required_parts,
+        (
+          (SELECT COUNT(*)::int FROM deleted)
+          + (SELECT COUNT(*)::int FROM updated)
+        ) AS parts_affected
+`);
+
+    const row = result.rows[0];
+
+    if (!row?.can_build || row.parts_affected !== row.required_parts) {
+      throw new UnprocessableEntityException(
+        'Not enough parts to build this set',
+      );
+    }
+
+    await this.databaseService.db.execute(sql`
+      DELETE FROM user_owned_parts
+      WHERE user_id = ${userId} AND quantity <= 0
+    `);
+
+    return { partsAffected: Number(row.parts_affected) };
   }
 }

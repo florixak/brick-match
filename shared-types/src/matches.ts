@@ -21,3 +21,8 @@ export const GetMatchesApiResponseSchema = ApiSuccessResponseSchema(
   GetMatchesResponseSchema,
 );
 export type GetMatchesApiResponse = z.infer<typeof GetMatchesApiResponseSchema>;
+
+export const CompleteSetResponseSchema = z.object({
+  partsAffected: z.number().int(),
+});
+export type CompleteSetResponse = z.infer<typeof CompleteSetResponseSchema>;
