@@ -38,6 +38,11 @@ ORDER BY match_percentage DESC;
 - **Auth** — email/password with argon2 hashing, JWT delivered via an `httpOnly` cookie, password-confirmation required for changing email/password/deleting the account.
 - **Account & data deletion** — hard delete, no soft-delete state anywhere in the schema; deleting your account or your whole collection is immediate and irreversible by design.
 
+## Screenshots
+![Home/Search](./docs/screenshots/search.png)
+![Owned parts](./docs/screenshots/owned-parts.png)
+![Matching results](./docs/screenshots/matches.png)
+
 ## Tech stack
 
 `Next.js` · `NestJS` · `PostgreSQL` (`Neon`) · `Drizzle ORM` · `Zod` · `pnpm workspaces` · `TypeScript` throughout
