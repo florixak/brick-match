@@ -14,9 +14,10 @@ import { CATALOG_SEARCH_DEBOUNCE_MS } from "@/constants"
 import { useDebouncedValue } from "@/hooks/use-debounced-value"
 import { useCatalogParts, useCatalogSets } from "@/lib/queries"
 import { catalogSearchParams } from "@/lib/search/search-params"
-import { cn, formatSetNumber } from "@/lib/utils"
+import { cn, formatSetNumber, PART_AVATAR_PREVIEW_COLOR_ID } from "@/lib/utils"
 import PartDialog from "../dialogs/part-dialog"
 import SetDialog from "../dialogs/set-dialog"
+import PartAvatar from "./part-avatar"
 import SetAvatar from "./set-avatar"
 
 const MIN_SEARCH_LENGTH = 2
@@ -106,13 +107,20 @@ const SearchResults = () => {
                     onClick={() => setSelectedPart(part)}
                     className={cn(
                       resultButtonClassName,
-                      "flex-col items-stretch justify-center gap-0",
+                      "flex-row items-center justify-start gap-3",
                     )}
                   >
-                    <span className="font-mono text-muted-foreground text-xs">
-                      {part.partNum}
-                    </span>
-                    <span className={resultTextClassName}>{part.name}</span>
+                    <PartAvatar
+                      partNum={part.partNum}
+                      colorId={PART_AVATAR_PREVIEW_COLOR_ID}
+                      size="default"
+                    />
+                    <div className="flex min-w-0 flex-1 flex-col items-stretch justify-center">
+                      <span className={resultTextClassName}>{part.name}</span>
+                      <span className="font-mono text-muted-foreground text-xs">
+                        {part.partNum}
+                      </span>
+                    </div>
                   </Button>
                 </li>
               ))}
