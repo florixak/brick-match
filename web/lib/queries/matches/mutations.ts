@@ -1,6 +1,11 @@
-import { ApiErrorResponseSchema } from "@lego-matcher/shared-types"
-import { useMutation } from "@tanstack/react-query"
-import { ApiRequestError, buildUrl } from "@/lib/api/client"
+import {
+  ApiErrorResponseSchema,
+  CompleteSetApiResponseSchema,
+  type CompleteSetResponse,
+} from "@lego-matcher/shared-types"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { ApiRequestError, apiFetch, buildUrl } from "@/lib/api/client"
+import { invalidateCollectionQueries } from "../invalidation"
 
 async function fetchMissingPartsCsv(setNum: string): Promise<string> {
   const response = await fetch(
@@ -29,6 +34,17 @@ async function fetchMissingPartsCsv(setNum: string): Promise<string> {
   return response.text()
 }
 
+async function buildSet(setNum: string): Promise<CompleteSetResponse> {
+  const response = await apiFetch(
+    `/api/v1/matching/${encodeURIComponent(setNum)}/build`,
+    {
+      method: "POST",
+      schema: CompleteSetApiResponseSchema,
+    },
+  )
+  return response.data
+}
+
 function downloadCsv(csv: string, filename: string) {
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8" })
   const url = URL.createObjectURL(blob)
@@ -43,5 +59,16 @@ export function useExportMissingPartsMutation() {
   return useMutation({
     mutationFn: (setNum: string) => fetchMissingPartsCsv(setNum),
     onSuccess: (csv, setNum) => downloadCsv(csv, `${setNum}-missing-parts.csv`),
+  })
+}
+
+export function useBuildSetMutation() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (setNum: string) => buildSet(setNum),
+    onSuccess: async () => {
+      await invalidateCollectionQueries(queryClient)
+    },
   })
 }

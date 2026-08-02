@@ -26,3 +26,8 @@ export const CompleteSetResponseSchema = z.object({
   partsAffected: z.number().int(),
 });
 export type CompleteSetResponse = z.infer<typeof CompleteSetResponseSchema>;
+
+export const CompleteSetApiResponseSchema = ApiSuccessResponseSchema(
+  CompleteSetResponseSchema,
+);
+export type CompleteSetApiResponse = z.infer<typeof CompleteSetApiResponseSchema>;

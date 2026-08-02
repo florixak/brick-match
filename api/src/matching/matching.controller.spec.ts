@@ -73,12 +73,12 @@ describe('MatchingController', () => {
   });
 
   it('should call buildSet with the correct parameters', async () => {
-    const response = { partsAffected: 12 };
-    matchingService.buildSet.mockResolvedValue(response);
+    const data = { partsAffected: 12 };
+    matchingService.buildSet.mockResolvedValue(data);
 
     const result = await controller.buildSet('user-1', '60001-1');
 
-    expect(result).toEqual(response);
+    expect(result).toEqual({ data, meta: {} });
     expect(matchingService.buildSet).toHaveBeenCalledWith('user-1', '60001-1');
   });
 });

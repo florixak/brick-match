@@ -1,5 +1,6 @@
 import {
-  CompleteSetResponse,
+  CompleteSetApiResponse,
+  CompleteSetApiResponseSchema,
   GetMatchesApiResponse,
   GetMatchesApiResponseSchema,
   GetMatchesQuerySchema,
@@ -73,7 +74,8 @@ export class MatchingController {
   async buildSet(
     @CurrentUser('sub') userId: string,
     @Param('setNum') setNum: string,
-  ): Promise<CompleteSetResponse> {
-    return await this.matchingService.buildSet(userId, setNum);
+  ): Promise<CompleteSetApiResponse> {
+    const data = await this.matchingService.buildSet(userId, setNum);
+    return CompleteSetApiResponseSchema.parse({ data, meta: {} });
   }
 }
