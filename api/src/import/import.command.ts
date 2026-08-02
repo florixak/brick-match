@@ -4,6 +4,8 @@ import { NestFactory } from '@nestjs/core';
 import { Logger } from '@nestjs/common';
 import { ImportModule } from './import.module';
 import { ImportService } from './import.service';
+import { downloadCsvFiles } from './download';
+import { DATA_DIR } from './paths';
 
 const logger = new Logger('ImportCommand');
 
@@ -14,6 +16,12 @@ async function main() {
 
   try {
     const importService = app.get(ImportService);
+    const paths = await downloadCsvFiles(undefined, DATA_DIR, (message) =>
+      logger.log(message),
+    );
+    logger.log(
+      `Downloaded ${Object.keys(paths).length} CSV archives to ${DATA_DIR}`,
+    );
     await importService.importAll();
     process.exit(0);
   } catch (err) {

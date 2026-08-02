@@ -4,6 +4,7 @@ import { parse } from 'csv-parse';
 import { createReadStream, existsSync } from 'fs';
 import { join } from 'path';
 import { createGunzip } from 'zlib';
+import { DATA_DIR } from './paths';
 import { DatabaseService } from '../database/database.service';
 import { isFkViolation } from '../database/pg-error';
 import {
@@ -15,7 +16,6 @@ import {
   themes,
 } from '../database/schema/catalog';
 
-const DATA_DIR = join(process.cwd(), 'data');
 const BATCH_SIZE = 1000;
 
 type CsvRecord = Record<string, string>;
