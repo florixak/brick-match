@@ -73,3 +73,21 @@ export function getSetImageUrlCandidates(setNum: string) {
 export function getSetImageUrl(setNum: string) {
   return getSetImageUrlCandidates(setNum)[0]
 }
+
+export const PART_AVATAR_PREVIEW_COLOR_ID = 0
+const COMMON_PART_PREVIEW_COLORS = [0, 15, 1, 4, 14, 72, 19]
+
+function getPartImageUrl(partNum: string, colorId: number) {
+  return `https://cdn.rebrickable.com/media/thumbs/parts/ldraw/${colorId}/${partNum}.png/250x250p.png`
+}
+
+export function getPartImageUrlCandidates(
+  partNum: string,
+  preferredColorId = PART_AVATAR_PREVIEW_COLOR_ID,
+) {
+  const colorIds = [
+    preferredColorId,
+    ...COMMON_PART_PREVIEW_COLORS.filter((id) => id !== preferredColorId),
+  ]
+  return colorIds.map((colorId) => getPartImageUrl(partNum, colorId))
+}
