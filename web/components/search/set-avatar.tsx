@@ -1,69 +1,36 @@
 "use client"
 
-import { useMemo, useState } from "react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   cn,
   getFirstTwoLetters,
   getSetImageUrlCandidates,
   getThemeDotClassName,
 } from "@/lib/utils"
+import CatalogAvatar, { type CatalogAvatarSize } from "./catalog-avatar"
 
 type SetAvatarProps = {
   themeId: number
   themeName: string
   setNum: string
-  size?: "default" | "lg" | "xl"
+  size?: CatalogAvatarSize
 }
 
-const sizeClasses = {
-  default: "size-10",
-  lg: "size-16",
-  xl: "size-24",
-} as const
-
-function SetAvatarContent({
+const SetAvatar = ({
   themeId,
   themeName,
   setNum,
   size = "default",
-}: SetAvatarProps) {
-  const candidates = useMemo(() => getSetImageUrlCandidates(setNum), [setNum])
-  const [candidateIndex, setCandidateIndex] = useState(0)
-
-  return (
-    <Avatar
-      key={`${setNum}-${candidateIndex}`}
-      className={cn("rounded-lg shadow-md after:rounded-lg", sizeClasses[size])}
-      size={size === "lg" ? "lg" : "default"}
-    >
-      <AvatarImage
-        src={candidates[candidateIndex]}
-        alt=""
-        className="rounded-lg object-contain"
-        onLoadingStatusChange={(status) => {
-          if (status === "error") {
-            setCandidateIndex((index) =>
-              index < candidates.length - 1 ? index + 1 : index,
-            )
-          }
-        }}
-      />
-      <AvatarFallback
-        className={cn(
-          "rounded-lg font-mono font-extrabold text-primary-foreground",
-          getThemeDotClassName(themeId),
-          "text-lg",
-        )}
-      >
-        {getFirstTwoLetters(themeName)}
-      </AvatarFallback>
-    </Avatar>
-  )
-}
-
-const SetAvatar = (props: SetAvatarProps) => (
-  <SetAvatarContent key={props.setNum} {...props} />
+}: SetAvatarProps) => (
+  <CatalogAvatar
+    resetKey={setNum}
+    imageUrls={getSetImageUrlCandidates(setNum)}
+    fallbackLabel={getFirstTwoLetters(themeName)}
+    fallbackClassName={cn(
+      "text-primary-foreground text-lg",
+      getThemeDotClassName(themeId),
+    )}
+    size={size}
+  />
 )
 
 export default SetAvatar

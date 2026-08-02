@@ -1,4 +1,5 @@
 import type { OwnedPartDetail } from "@lego-matcher/shared-types"
+import PartAvatar from "@/components/search/part-avatar"
 import { isLightColor, toCssHex } from "@/lib/owned-parts/color"
 import { cn } from "@/lib/utils"
 
@@ -22,27 +23,17 @@ const OwnedPart = ({ part, className, onClick }: OwnedPartProps) => {
       onClick={onClick}
     >
       <div
-        className="relative flex h-16 items-end justify-end px-2 pb-1.5"
+        className="relative flex h-20 items-center justify-center px-2"
         style={{ backgroundColor: colorHex }}
       >
-        <div className="absolute top-1.5 right-0 left-0 flex justify-center gap-1.5">
-          {[0, 1, 2].map((index) => (
-            <div
-              key={index}
-              className="size-3 rounded-full border"
-              style={{
-                backgroundColor: lightBackground
-                  ? "rgba(0,0,0,0.12)"
-                  : "rgba(255,255,255,0.18)",
-                borderColor: lightBackground
-                  ? "rgba(0,0,0,0.08)"
-                  : "rgba(255,255,255,0.1)",
-              }}
-            />
-          ))}
-        </div>
+        <PartAvatar
+          partNum={part.partNum}
+          colorId={part.colorId}
+          size="lg"
+          className="shadow-none"
+        />
         <span
-          className="font-mono font-bold leading-none text-xs"
+          className="absolute right-1.5 bottom-1 font-mono font-bold leading-none text-xs"
           style={{
             color: lightBackground
               ? "rgba(0,0,0,0.45)"
