@@ -8,6 +8,7 @@ import { toColorOptions } from "@/lib/owned-parts/color"
 import { useAddOwnedPartMutation, usePartColorSelect } from "@/lib/queries"
 import SelectErrorFallback from "../fallbacks/select-error"
 import { AsyncQueryState } from "../query/async-query-state"
+import PartImage from "../search/part-image"
 import { searchSurfaceClassName } from "../search/search"
 import FilterSelect from "../skeletons/filter-select"
 import { Button } from "../ui/button"
@@ -72,6 +73,12 @@ const PartDialog = ({ selectedPart, setSelectedPart }: PartDialogProps) => {
       <DialogContent>
         {selectedPart ? (
           <>
+            <PartImage
+              partNum={selectedPart.partNum}
+              colorId={colorId ?? undefined}
+              alt={selectedPart.name}
+              variant="hero"
+            />
             <DialogHeader>
               <DialogTitle>{selectedPart.name}</DialogTitle>
               <DialogDescription>{selectedPart.partNum}</DialogDescription>
