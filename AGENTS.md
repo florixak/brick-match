@@ -1,4 +1,4 @@
-# AGENTS.md — LEGO Set Matcher (root)
+# AGENTS.md — BrickMatch (root)
 
 ## What this project does
 
