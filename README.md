@@ -1,4 +1,4 @@
-# 🧱 LEGO Set Matcher
+# 🧱 BrickMatch
 
 > Find out which LEGO sets you can build from the parts you already own — and exactly what's missing to finish the rest.
 
