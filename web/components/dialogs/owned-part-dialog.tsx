@@ -15,6 +15,7 @@ import {
 } from "@/lib/queries"
 import SelectErrorFallback from "../fallbacks/select-error"
 import { AsyncQueryState } from "../query/async-query-state"
+import PartImage from "../search/part-image"
 import { searchSurfaceClassName } from "../search/search"
 import FilterSelect from "../skeletons/filter-select"
 import { Button } from "../ui/button"
@@ -143,6 +144,12 @@ const OwnedPartDialog = ({
       <DialogContent>
         {selectedPart ? (
           <>
+            <PartImage
+              partNum={selectedPart.partNum}
+              colorId={colorId ?? undefined}
+              alt={selectedPart.partName}
+              variant="hero"
+            />
             <DialogHeader>
               <DialogTitle>{selectedPart.partName}</DialogTitle>
               <DialogDescription>{selectedPart.partNum}</DialogDescription>
