@@ -1,4 +1,4 @@
-import type { ColorsApiResponse } from "@lego-matcher/shared-types"
+import type { Color } from "@lego-matcher/shared-types"
 import { filterColorsByIds } from "@/lib/owned-parts/color"
 import { useCatalogColors } from "@/lib/queries/catalog/colors"
 import { useCatalogPartColors } from "@/lib/queries/catalog/part-colors"
@@ -18,16 +18,12 @@ export function usePartColorSelect(
     colors.isSuccess && (partNum === null || partColors.isSuccess)
   const error = colors.error ?? partColors.error ?? null
 
-  let data: ColorsApiResponse | undefined
+  let data: Color[] | undefined
   if (colors.data && (partNum === null || partColors.data)) {
     data =
       partNum === null
         ? colors.data
-        : filterColorsByIds(
-            colors.data,
-            partColors.data!.data.colorIds,
-            includeColorIds,
-          )
+        : filterColorsByIds(colors.data, partColors.data!, includeColorIds)
   }
 
   const refetch = async () => {

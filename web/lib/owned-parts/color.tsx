@@ -1,4 +1,4 @@
-import type { ColorsApiResponse } from "@lego-matcher/shared-types"
+import type { Color } from "@lego-matcher/shared-types"
 
 const TRANSPARENT_CHECKERBOARD =
   "linear-gradient(45deg, #ccc 25%, transparent 25%), linear-gradient(-45deg, #ccc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ccc 75%), linear-gradient(-45deg, transparent 75%, #ccc 75%)"
@@ -63,21 +63,16 @@ export function isLightColor(hex: string) {
 }
 
 export function filterColorsByIds(
-  data: ColorsApiResponse,
+  colors: Color[],
   colorIds: readonly number[],
   includeColorIds: readonly number[] = [],
-): ColorsApiResponse {
+): Color[] {
   const idSet = new Set([...colorIds, ...includeColorIds])
-  const colors = data.data.colors.filter((color) => idSet.has(color.colorId))
-
-  return {
-    data: { colors },
-    meta: { count: colors.length },
-  }
+  return colors.filter((color) => idSet.has(color.colorId))
 }
 
-export function toColorOptions(data: ColorsApiResponse) {
-  return data.data.colors.map((color) => ({
+export function toColorOptions(colors: Color[]) {
+  return colors.map((color) => ({
     value: color.colorId,
     label: color.name,
     prefix: <ColorSwatch rgb={color.rgb} isTrans={color.isTrans} />,

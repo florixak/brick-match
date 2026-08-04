@@ -1,4 +1,4 @@
-import type { Theme, ThemesApiResponse } from "@lego-matcher/shared-types"
+import type { Theme } from "@lego-matcher/shared-types"
 
 function buildThemeLabel(theme: Theme, index: Map<number, Theme>): string {
   const parts: string[] = [theme.name]
@@ -17,10 +17,10 @@ function buildThemeLabel(theme: Theme, index: Map<number, Theme>): string {
   return parts.join(" > ")
 }
 
-export function toThemeOptions(data: ThemesApiResponse) {
-  const index = new Map(data.data.themes.map((t) => [t.id, t]))
+export function toThemeOptions(themes: Theme[]) {
+  const index = new Map(themes.map((t) => [t.id, t]))
 
-  return data.data.themes
+  return themes
     .map((theme) => ({
       value: theme.id,
       label: buildThemeLabel(theme, index),
