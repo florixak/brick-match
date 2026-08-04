@@ -1,6 +1,6 @@
 import type { PartSummary } from "@lego-matcher/shared-types"
 import { Loader2 } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import toast from "react-hot-toast"
 import useIsAuthenticated from "@/hooks/use-is-authenticated"
 import { parseApiError } from "@/lib/api/client"
@@ -26,31 +26,56 @@ import SearchableSelect from "../ui/searchable-select"
 type PartDialogProps = {
   selectedPart: PartSummary | null
   setSelectedPart: (part: PartSummary | null) => void
+  onPendingChange?: (pending: boolean) => void
 }
 
-const PartDialog = ({ selectedPart, setSelectedPart }: PartDialogProps) => {
+const PartDialog = ({
+  selectedPart,
+  setSelectedPart,
+  onPendingChange,
+}: PartDialogProps) => {
   const [colorId, setColorId] = useState<number | null>(null)
   const [quantity, setQuantity] = useState(1)
+  const selectedPartRef = useRef(selectedPart)
+  selectedPartRef.current = selectedPart
   const colors = usePartColorSelect(selectedPart?.partNum ?? null)
   const isAuthenticated = useIsAuthenticated()
   const { mutate: addPart, isPending } = useAddOwnedPartMutation()
 
+  useEffect(() => {
+    onPendingChange?.(isPending)
+  }, [isPending, onPendingChange])
+
   const handleAddPart = () => {
-    if (selectedPart && colorId !== null) {
-      addPart(
-        { partNum: selectedPart.partNum, colorId, quantity },
-        {
-          onSuccess: () => {
-            toast.success(`Added ×${quantity} ${selectedPart.name}`)
-            setSelectedPart(null)
-          },
-          onError: (error) => {
-            const apiError = parseApiError(error)
-            toast.error(apiError?.body.message ?? "Failed to add part.")
-          },
+    if (!selectedPart || colorId === null || !colors.data) return
+
+    const selectedColorName = toColorOptions(colors.data).find(
+      (option) => option.value === colorId,
+    )?.label
+    if (!selectedColorName) return
+
+    const addedQuantity = quantity
+    const partName = selectedPart.name
+    const submittedPartNum = selectedPart.partNum
+
+    addPart(
+      { partNum: submittedPartNum, colorId, quantity },
+      {
+        onSuccess: () => {
+          toast.success(
+            `Added ×${addedQuantity} ${selectedColorName} ${partName}`,
+          )
+          if (selectedPartRef.current?.partNum === submittedPartNum) {
+            setColorId(null)
+            setQuantity(1)
+          }
         },
-      )
-    }
+        onError: (error) => {
+          const apiError = parseApiError(error)
+          toast.error(apiError?.body.message ?? "Failed to add part.")
+        },
+      },
+    )
   }
 
   useEffect(() => {
@@ -107,6 +132,7 @@ const PartDialog = ({ selectedPart, setSelectedPart }: PartDialogProps) => {
                   }}
                   options={toColorOptions(data)}
                   triggerClassName={searchSurfaceClassName}
+                  disabled={isPending}
                 />
               )}
             </AsyncQueryState>
