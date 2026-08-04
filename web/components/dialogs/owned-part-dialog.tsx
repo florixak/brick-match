@@ -89,7 +89,7 @@ const OwnedPartDialog = ({
               `Merged into existing part, now ×${part.quantity} total.`,
             )
           } else if (colorId !== selectedPart.colorId) {
-            const color = colors.data?.data.colors.find(
+            const color = colors.data?.find(
               (color) => color.colorId === colorId,
             )
             if (color) {

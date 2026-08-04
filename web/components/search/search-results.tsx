@@ -1,11 +1,6 @@
 "use client"
 
-import type {
-  PartSummary,
-  SearchPartsApiResponse,
-  SearchSetsApiResponse,
-  SetSummary,
-} from "@lego-matcher/shared-types"
+import type { PartSummary, SetSummary } from "@lego-matcher/shared-types"
 import { useQueryStates } from "nuqs"
 import { useState } from "react"
 import { AsyncQueryState } from "@/components/query/async-query-state"
@@ -32,13 +27,7 @@ const resultButtonClassName =
 
 const resultTextClassName = "w-full min-w-0 text-sm wrap-break-word"
 
-function isEmptySets(data: SearchSetsApiResponse) {
-  return data.data.sets.length === 0
-}
-
-function isEmptyParts(data: SearchPartsApiResponse) {
-  return data.data.parts.length === 0
-}
+const isEmptyArray = <T,>(data: T[]) => data.length === 0
 
 const SearchResults = () => {
   const [queryParams] = useQueryStates(catalogSearchParams)
@@ -82,7 +71,7 @@ const SearchResults = () => {
           isStale={partsQuery.isStale}
           error={partsQuery.error}
           data={partsQuery.data}
-          isEmpty={isEmptyParts}
+          isEmpty={isEmptyArray}
           onRetry={() => void partsQuery.refetch()}
           skeleton={<p className={resultMessageClassName}>Searching…</p>}
           empty={
@@ -101,7 +90,7 @@ const SearchResults = () => {
         >
           {(data) => (
             <ul className="divide-y divide-border">
-              {data.data.parts.map((part) => (
+              {data.map((part) => (
                 <li key={part.partNum} className={resultItemClassName}>
                   <Button
                     variant="ghost"
@@ -148,7 +137,7 @@ const SearchResults = () => {
         isStale={setsQuery.isStale}
         error={setsQuery.error}
         data={setsQuery.data}
-        isEmpty={isEmptySets}
+        isEmpty={isEmptyArray}
         onRetry={() => void setsQuery.refetch()}
         skeleton={<p className={resultMessageClassName}>Searching…</p>}
         empty={
@@ -167,7 +156,7 @@ const SearchResults = () => {
       >
         {(data) => (
           <ul className="divide-y divide-border">
-            {data.data.sets.map((set) => (
+            {data.map((set) => (
               <li key={set.setNum} className={resultItemClassName}>
                 <Button
                   variant="ghost"
