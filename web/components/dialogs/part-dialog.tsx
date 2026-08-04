@@ -41,12 +41,14 @@ const PartDialog = ({ selectedPart, setSelectedPart }: PartDialogProps) => {
         { partNum: selectedPart.partNum, colorId, quantity },
         {
           onSuccess: () => {
-            toast.success(`Added ×${quantity} ${selectedPart.name}`)
-            setSelectedPart(null)
-          },
-          onError: (error) => {
-            const apiError = parseApiError(error)
-            toast.error(apiError?.body.message ?? "Failed to add part.")
+            const color = colors.data?.data.colors.find(
+              (c) => c.colorId === colorId,
+            )
+            toast.success(
+              `Added ×${quantity} ${color?.name ?? "unknown color"} ${selectedPart.name}`,
+            )
+            setColorId(null)
+            setQuantity(1)
           },
         },
       )
