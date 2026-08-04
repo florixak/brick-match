@@ -15,11 +15,9 @@ import { APP_GUARD } from '@nestjs/core';
   imports: [
     AppConfigModule,
     DatabaseModule,
-    ThrottlerModule.forRoot([
-      { name: 'default', ...RATE_LIMITS.default },
-      { name: 'auth', ...RATE_LIMITS.auth },
-      { name: 'matching', ...RATE_LIMITS.matching },
-    ]),
+    ThrottlerModule.forRoot({
+      throttlers: [{ name: 'default', ...RATE_LIMITS.default }],
+    }),
     CatalogModule,
     OwnedPartsModule,
     MatchingModule,

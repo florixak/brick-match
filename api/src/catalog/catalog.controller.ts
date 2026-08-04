@@ -20,12 +20,14 @@ import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { ZodValidationPipe } from 'src/common/pipes/zod-validation.pipe';
 import { CatalogService } from './catalog.service';
+import { SearchThrottle } from 'src/common/decorators/throttle.decorator';
 
 @Controller({ path: 'catalog', version: '1' })
 export class CatalogController {
   constructor(private readonly catalogService: CatalogService) {}
 
   @Get('sets')
+  @SearchThrottle()
   @ApiOperation({ summary: 'Search sets' })
   @ApiQuery({
     name: 'search',
@@ -47,6 +49,7 @@ export class CatalogController {
   }
 
   @Get('parts')
+  @SearchThrottle()
   @ApiOperation({ summary: 'Search parts' })
   @ApiQuery({
     name: 'search',
