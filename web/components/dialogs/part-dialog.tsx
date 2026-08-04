@@ -36,23 +36,32 @@ const PartDialog = ({ selectedPart, setSelectedPart }: PartDialogProps) => {
   const { mutate: addPart, isPending } = useAddOwnedPartMutation()
 
   const handleAddPart = () => {
-    if (selectedPart && colorId !== null) {
-      addPart(
-        { partNum: selectedPart.partNum, colorId, quantity },
-        {
-          onSuccess: () => {
-            const color = colors.data?.data.colors.find(
-              (c) => c.colorId === colorId,
-            )
-            toast.success(
-              `Added ×${quantity} ${color?.name ?? "unknown color"} ${selectedPart.name}`,
-            )
-            setColorId(null)
-            setQuantity(1)
-          },
+    if (!selectedPart || colorId === null || !colors.data) return
+
+    const selectedColorName = toColorOptions(colors.data).find(
+      (option) => option.value === colorId,
+    )?.label
+    if (!selectedColorName) return
+
+    const addedQuantity = quantity
+    const partName = selectedPart.name
+
+    addPart(
+      { partNum: selectedPart.partNum, colorId, quantity },
+      {
+        onSuccess: () => {
+          toast.success(
+            `Added ×${addedQuantity} ${selectedColorName} ${partName}`,
+          )
+          setColorId(null)
+          setQuantity(1)
         },
-      )
-    }
+        onError: (error) => {
+          const apiError = parseApiError(error)
+          toast.error(apiError?.body.message ?? "Failed to add part.")
+        },
+      },
+    )
   }
 
   useEffect(() => {
