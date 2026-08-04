@@ -24,6 +24,7 @@ export function catalogPartColorsQueryOptions(partNum: string) {
     queryKey: queryKeys.catalog.partColors(partNum),
     queryFn: () => fetchCatalogPartColors(partNum),
     staleTime: PART_COLORS_STALE_TIME,
+    select: (response): number[] => response.data.colorIds,
   })
 }
 
