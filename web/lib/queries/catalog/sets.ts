@@ -2,6 +2,7 @@ import {
   type SearchSetsApiResponse,
   SearchSetsApiResponseSchema,
   type SearchSetsQuery,
+  type SetSummary,
 } from "@lego-matcher/shared-types"
 import { queryOptions, useQuery } from "@tanstack/react-query"
 import { apiFetch } from "@/lib/api/client"
@@ -30,6 +31,7 @@ export function catalogSetsQueryOptions(
     queryFn: () => fetchCatalogSets(query),
     staleTime: SEARCH_STALE_TIME,
     enabled: enabled && search.length >= MIN_SEARCH_LENGTH,
+    select: (response): SetSummary[] => response.data.sets,
   })
 }
 

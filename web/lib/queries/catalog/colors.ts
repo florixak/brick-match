@@ -1,4 +1,5 @@
 import {
+  type Color,
   type ColorsApiResponse,
   ColorsApiResponseSchema,
 } from "@lego-matcher/shared-types"
@@ -19,6 +20,7 @@ export function catalogColorsQueryOptions() {
     queryKey: queryKeys.catalog.colors(),
     queryFn: fetchCatalogColors,
     staleTime: COLORS_STALE_TIME,
+    select: (response): Color[] => response.data.colors,
   })
 }
 

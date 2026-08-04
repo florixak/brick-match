@@ -1,6 +1,6 @@
 "use client"
 
-import type { Theme, ThemesApiResponse } from "@lego-matcher/shared-types"
+import type { Theme } from "@lego-matcher/shared-types"
 import { useQueryStates } from "nuqs"
 import { useMemo } from "react"
 import { AsyncQueryState } from "@/components/query/async-query-state"
@@ -16,8 +16,8 @@ const pickRandomTips = (themes: Theme[], count: number): Theme[] => {
   return [...themes].sort(() => Math.random() - 0.5).slice(0, count)
 }
 
-const isEmptyThemes = (data: ThemesApiResponse) => {
-  return data.data.themes.length === 0
+const isEmptyThemes = (data: Theme[]) => {
+  return data.length === 0
 }
 
 const SearchTipsList = ({ tips }: { tips: Theme[] }) => {
@@ -73,7 +73,7 @@ const SearchTips = () => {
       empty={<SearchTipsList tips={FALLBACK_TIPS} />}
       errorFallback={() => <SearchTipsList tips={FALLBACK_TIPS} />}
     >
-      {(data) => <RandomThemeTips themes={data.data.themes} />}
+      {(data) => <RandomThemeTips themes={data} />}
     </AsyncQueryState>
   )
 }

@@ -89,9 +89,8 @@ const List = () => {
 
     if (queryParams.colorId != null) {
       const colorName =
-        colors.data?.data.colors.find(
-          (color) => color.colorId === queryParams.colorId,
-        )?.name ?? `Color ${queryParams.colorId}`
+        colors.data?.find((color) => color.colorId === queryParams.colorId)
+          ?.name ?? `Color ${queryParams.colorId}`
 
       filters.push({
         label: colorName,
@@ -103,7 +102,7 @@ const List = () => {
 
     if (queryParams.partCategoryId != null) {
       const categoryName =
-        partCategories.data?.data.partCategories.find(
+        partCategories.data?.find(
           (category) => category.id === queryParams.partCategoryId,
         )?.name ?? `Category ${queryParams.partCategoryId}`
 

@@ -1,7 +1,7 @@
-import type { PartCategoriesApiResponse } from "@lego-matcher/shared-types"
+import type { PartCategory } from "@lego-matcher/shared-types"
 
-export function toPartCategoryOptions(data: PartCategoriesApiResponse) {
-  return data.data.partCategories.map((category) => ({
+export function toPartCategoryOptions(categories: PartCategory[]) {
+  return categories.map((category) => ({
     value: category.id,
     label: category.name,
   }))

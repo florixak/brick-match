@@ -1,6 +1,7 @@
 import {
   type PartCategoriesApiResponse,
   PartCategoriesApiResponseSchema,
+  type PartCategory,
 } from "@lego-matcher/shared-types"
 import { queryOptions, useQuery } from "@tanstack/react-query"
 import { apiFetch } from "@/lib/api/client"
@@ -19,6 +20,7 @@ export function catalogPartCategoriesQueryOptions() {
     queryKey: queryKeys.catalog.partCategories(),
     queryFn: fetchCatalogPartCategories,
     staleTime: PART_CATEGORIES_STALE_TIME,
+    select: (response): PartCategory[] => response.data.partCategories,
   })
 }
 

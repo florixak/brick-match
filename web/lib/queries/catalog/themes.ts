@@ -1,4 +1,5 @@
 import {
+  type Theme,
   type ThemesApiResponse,
   ThemesApiResponseSchema,
 } from "@lego-matcher/shared-types"
@@ -19,6 +20,7 @@ export function catalogThemesQueryOptions() {
     queryKey: queryKeys.catalog.themes(),
     queryFn: fetchCatalogThemes,
     staleTime: THEMES_STALE_TIME,
+    select: (response): Theme[] => response.data.themes,
   })
 }
 

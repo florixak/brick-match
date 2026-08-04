@@ -1,4 +1,5 @@
 import {
+  type PartSummary,
   type SearchPartsApiResponse,
   SearchPartsApiResponseSchema,
   type SearchPartsQuery,
@@ -30,6 +31,7 @@ export function catalogPartsQueryOptions(
     queryFn: () => fetchCatalogParts(query),
     staleTime: SEARCH_STALE_TIME,
     enabled: enabled && search.length >= MIN_SEARCH_LENGTH,
+    select: (response): PartSummary[] => response.data.parts,
   })
 }
 
