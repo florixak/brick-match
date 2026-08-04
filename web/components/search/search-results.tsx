@@ -48,6 +48,7 @@ const SearchResults = () => {
   )
   const [selectedSet, setSelectedSet] = useState<SetSummary | null>(null)
   const [selectedPart, setSelectedPart] = useState<PartSummary | null>(null)
+  const [isAddingPart, setIsAddingPart] = useState(false)
 
   const trimmedSearch = debouncedSearch.trim()
   const immediateTrimmedSearch = queryParams.q.trim()
@@ -104,6 +105,7 @@ const SearchResults = () => {
                 <li key={part.partNum} className={resultItemClassName}>
                   <Button
                     variant="ghost"
+                    disabled={isAddingPart}
                     onClick={() => setSelectedPart(part)}
                     className={cn(
                       resultButtonClassName,
@@ -130,6 +132,7 @@ const SearchResults = () => {
         <PartDialog
           selectedPart={selectedPart}
           setSelectedPart={setSelectedPart}
+          onPendingChange={setIsAddingPart}
         />
       </>
     )
