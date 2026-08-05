@@ -1,10 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { eq, sql } from 'drizzle-orm';
 import { parse } from 'csv-parse';
+import { and, eq, isNull, or, sql } from 'drizzle-orm';
 import { createReadStream, existsSync } from 'fs';
 import { join } from 'path';
 import { createGunzip } from 'zlib';
-import { DATA_DIR } from './paths';
 import { DatabaseService } from '../database/database.service';
 import { isFkViolation } from '../database/pg-error';
 import {
@@ -15,6 +14,7 @@ import {
   sets,
   themes,
 } from '../database/schema/catalog';
+import { DATA_DIR } from './paths';
 
 const BATCH_SIZE = 1000;
 
@@ -206,6 +206,7 @@ export class ImportService {
       minifigComponents,
     );
     await this.importInventoryParts(setInventoryMap, minifigParts);
+    await this.pruneSetsWithoutInventory();
     this.logger.log('Catalog import complete.');
   }
 
@@ -333,19 +334,51 @@ export class ImportService {
     this.logger.log(`  → ${count} rows`);
   }
 
+  /**
+   * Theme ids under the Rebrickable "Books" root (and the root itself).
+   * Resolved by parent relationship so child themes like "Technic" under
+   * Books are excluded without dropping the main Technic catalog theme.
+   */
+  private async getBookThemeIds(): Promise<Set<number>> {
+    const [booksRoot] = await this.db
+      .select({ id: themes.id })
+      .from(themes)
+      .where(and(eq(themes.name, 'Books'), isNull(themes.parentId)));
+
+    if (!booksRoot) return new Set();
+
+    const bookThemeRows = await this.db
+      .select({ id: themes.id })
+      .from(themes)
+      .where(
+        or(eq(themes.id, booksRoot.id), eq(themes.parentId, booksRoot.id)),
+      );
+
+    return new Set(bookThemeRows.map((t) => t.id));
+  }
+
   private async importSets(): Promise<void> {
     this.logger.log('Importing sets...');
+    const excludedThemeIds = await this.getBookThemeIds();
+    let setCount = 0;
     const count = await processBatched(
       readCsv('sets.csv'),
       BATCH_SIZE,
       async (batch) => {
-        const rows = batch.map((r) => ({
-          setNum: r.set_num,
-          name: r.name,
-          year: parseInt(r.year),
-          themeId: parseInt(r.theme_id),
-          numParts: parseInt(r.num_parts),
-        }));
+        const rows = batch
+          .filter((r) => !excludedThemeIds.has(parseInt(r.theme_id)))
+          .map((r) => ({
+            setNum: r.set_num,
+            name: r.name,
+            year: parseInt(r.year),
+            themeId: parseInt(r.theme_id),
+            numParts: parseInt(r.num_parts),
+          }));
+
+        if (rows.length === 0) return;
+
+        setCount += rows.length;
+
         await this.db
           .insert(sets)
           .values(rows)
@@ -360,7 +393,18 @@ export class ImportService {
           });
       },
     );
-    this.logger.log(`  → ${count} rows`);
+    this.logger.log(`  → ${setCount} sets imported out of ${count} total`);
+  }
+
+  private async pruneSetsWithoutInventory(): Promise<void> {
+    this.logger.log('Pruning sets with no inventory_parts...');
+    const result = await this.db.execute(sql`
+      DELETE FROM sets s
+      WHERE NOT EXISTS (
+        SELECT 1 FROM inventory_parts ip WHERE ip.set_num = s.set_num
+      )
+    `);
+    this.logger.log(`  → ${result.rowCount} sets pruned`);
   }
 
   /**
