@@ -29,7 +29,9 @@ export function createMetadata({
     ? `${title} | ${siteConfig.name}`
     : siteConfig.name
   const resolvedDescription = description ?? siteConfig.description
-  const resolvedImage = image ?? `${siteConfig.url}/og.png`
+  const images = image
+    ? [{ url: image, width: 1200, height: 630, alt: resolvedTitle }]
+    : undefined
 
   return {
     title: resolvedTitle,
@@ -42,14 +44,14 @@ export function createMetadata({
       description: resolvedDescription,
       url: canonicalUrl ?? siteConfig.url,
       siteName: siteConfig.name,
-      images: [{ url: resolvedImage }],
       type: "website",
+      ...(images ? { images } : {}),
     },
     twitter: {
       card: "summary_large_image",
       title: resolvedTitle,
       description: resolvedDescription,
-      images: [resolvedImage],
+      ...(image ? { images: [image] } : {}),
     },
     robots: noIndex
       ? { index: false, follow: false }
