@@ -39,9 +39,9 @@ ORDER BY match_percentage DESC;
 - **Account & data deletion** — hard delete, no soft-delete state anywhere in the schema; deleting your account or your whole collection is immediate and irreversible by design.
 
 ## Screenshots
-![Home/Search](./docs/screenshots/search.png)
-![Owned parts](./docs/screenshots/owned-parts.png)
 ![Matching results](./docs/screenshots/matches.png)
+![Missing parts](./docs/screenshots/missing-parts.png)
+![Owned parts](./docs/screenshots/owned-parts.png)
 
 ## Tech stack
 
