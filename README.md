@@ -1,6 +1,6 @@
 # 🧱 BrickMatch
 
-> Find out which LEGO sets you can build from the parts you already own — and exactly what's missing to finish the rest.
+> Find out which LEGO sets you can build from the parts you already own and exactly what's missing to finish the rest.
 
 Point it at your collection (by set number or piece by piece), and it tells you, out of every set Rebrickable knows about, which ones you're closest to completing and what to buy to get there.
 
@@ -8,7 +8,8 @@ Point it at your collection (by set number or piece by piece), and it tells you,
 
 ## Why this exists
 
-Most "LEGO inventory" tools solve one narrow slice of this problem, or solve it by scanning bricks with AI — which sounds great until you realize color/part recognition from a photo still isn't reliable enough to be trustworthy, and existing apps (Brickit, Rebrickable's own Build feature) already cover that ground.
+
+Most "LEGO inventory" tools solve one narrow slice of this problem, or solve it by scanning bricks with AI, which sounds great until you realize color/part recognition from a photo still isn't reliable enough to be trustworthy, and existing apps (Brickit, Rebrickable's own Build feature) already cover that ground.
 
 This project deliberately isn't an AI wrapper. The interesting part is a **matching engine**: given an arbitrary set of owned parts, quickly find which of ~20,000+ sets in the catalog are worth pursuing, without brute-forcing the entire catalog on every request.
 
