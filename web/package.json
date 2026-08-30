@@ -11,6 +11,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest",
     "test:run": "vitest run",
+    "test:watch": "vitest watch",
     "prepare": "cd .. && husky web/.husky"
   },
   "dependencies": {
