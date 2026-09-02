@@ -11,6 +11,11 @@ import { ApiSuccessResponse } from '@lego-matcher/shared-types';
 @Injectable()
 export class ResponseInterceptor<T> implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
+    const req = context.switchToHttp().getRequest<{ url: string }>();
+    if (req.url.startsWith('/health')) {
+      return next.handle();
+    }
+
     return next.handle().pipe(
       map((data: T) => {
         if (data === undefined) {
