@@ -45,6 +45,11 @@ addPart(@Body() dto: AddOwnedPartRequest) { /* typed and validated */ }
 - **`@nestjs/throttler`** — rate limiting on two specific attack/failure surfaces, not a generic "best practice" add: (1) `/auth/login` is a brute-force target even on a small app; (2) the matching endpoint is the most computationally expensive route, and needs protection from accidental overload (e.g. a buggy frontend retry loop), not just malicious traffic.
 - **`helmet`** — sets standard security HTTP headers (CSP, X-Frame-Options, etc.). Low cost, and worth having from the start rather than retrofitting once the API is public-facing.
 
+### Health checks
+- **`@nestjs/terminus`** — official Nest health-check module. Gives a standard 200/503 JSON payload (`status` / `info` / `error` / `details`) that Render (and other orchestrators) can probe, plus aggregation of multiple indicators. A hand-rolled `"OK"` string on `/` does not ping Postgres and gets wrapped by the global success interceptor.
+- Terminus has no Drizzle indicator. `DrizzleHealthIndicator` runs `SELECT 1` via `HealthIndicatorService` (`up()` / `down()`). Do not add TypeORM/Prisma just to get a built-in ping.
+- **`GET /health/live`** — process is up (empty `check([])`). **`GET /health/ready`** — Neon answers `SELECT 1`. Both are `VERSION_NEUTRAL`, skipped by the throttler, and excluded from the `/api` prefix so probes hit `/health/...` not `/api/v1/health/...`. Do not put a heap/RSS check on ready: Render Free is 512 MB RAM and OOM-kills the process anyway; a tight heap threshold can 503 on a GC spike.
+
 ### Data import
 - **`csv-parse`** — streaming CSV parser. `inventory_parts.csv` has millions of rows; it must be processed line-by-line/in chunks, never loaded fully into memory.
 - **No gzip library** — Node's built-in `zlib` module handles `.csv.gz` decompression; no need for an extra dependency.
@@ -86,7 +91,8 @@ api/src/
 ├── owned-parts/       CRUD over user_owned_parts
 ├── matching/           MatchingService — the core of the project, see below
 ├── import/             script/CLI for importing Rebrickable CSV into the DB
-└── auth/                registration, login, guards
+├── auth/                registration, login, guards
+└── health/              Terminus live/ready probes (see Health checks above)
 ```
 
 ## Data model
