@@ -1,15 +1,12 @@
+import type { UrlObject } from "node:url"
 import type { Theme } from "@lego-matcher/shared-types"
 import {
-  BoxIcon,
-  HomeIcon,
   type LucideIcon,
   PackageIcon,
   PuzzleIcon,
   SearchIcon,
-  UserIcon,
   ZapIcon,
 } from "lucide-react"
-import type { UrlObject } from "url"
 
 type NavLink = {
   label: string

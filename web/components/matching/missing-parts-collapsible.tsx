@@ -1,6 +1,5 @@
 import type { MatchResult } from "@lego-matcher/shared-types"
 import { ChevronDownIcon } from "lucide-react"
-import React from "react"
 import { ColorSwatch } from "@/lib/owned-parts/color"
 import {
   Collapsible,
