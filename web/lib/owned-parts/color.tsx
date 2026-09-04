@@ -1,4 +1,4 @@
-import type { Color } from "@lego-matcher/shared-types"
+import type { Color } from "@brick-match/shared-types"
 
 const TRANSPARENT_CHECKERBOARD =
   "linear-gradient(45deg, #ccc 25%, transparent 25%), linear-gradient(-45deg, #ccc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ccc 75%), linear-gradient(-45deg, transparent 75%, #ccc 75%)"

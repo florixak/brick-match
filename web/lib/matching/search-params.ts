@@ -1,7 +1,7 @@
 import {
   DEFAULT_MIN_MATCH_PERCENTAGE,
   type GetMatchesQuery,
-} from "@lego-matcher/shared-types"
+} from "@brick-match/shared-types"
 import { debounce, parseAsFloat, parseAsInteger } from "nuqs"
 import { FILTER_DEBOUNCE_MS } from "@/constants"
 

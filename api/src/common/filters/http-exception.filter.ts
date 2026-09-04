@@ -6,7 +6,7 @@ import {
   HttpStatus,
   Logger,
 } from '@nestjs/common';
-import { ApiErrorResponse } from '@lego-matcher/shared-types';
+import { ApiErrorResponse } from '@brick-match/shared-types';
 import type { Request, Response } from 'express';
 
 type ExceptionResponseBody = {

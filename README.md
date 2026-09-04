@@ -56,7 +56,7 @@ ORDER BY match_percentage DESC;
 ## Project structure
 
 ```
-lego-matcher/
+brick-match/
 ├── api/                 NestJS — REST API, matching engine, catalog import
 ├── web/                 Next.js — UI
 ├── shared-types/        Zod schemas + inferred TS types, shared between api and web
@@ -69,13 +69,13 @@ lego-matcher/
 pnpm install
 
 # Build the shared types package first — api/web consume its compiled output
-pnpm --filter @lego-matcher/shared-types build
+pnpm --filter @brick-match/shared-types build
 
 # Import the LEGO catalog (downloads and parses the Rebrickable CSV export)
-pnpm --filter api import:catalog
+pnpm --filter @brick-match/api import:catalog
 
-pnpm --filter api start:dev
-pnpm --filter @lego-matcher/web dev
+pnpm --filter @brick-match/api start:dev
+pnpm --filter @brick-match/web dev
 ```
 
 Requires a Postgres connection string (`DATABASE_URL`) — developed against [Neon](https://neon.tech).

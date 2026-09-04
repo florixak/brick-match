@@ -1,5 +1,5 @@
 {
-  "name": "@lego-matcher/shared-types",
+  "name": "@brick-match/shared-types",
   "version": "0.0.1",
   "private": true,
   "main": "dist/index.js",

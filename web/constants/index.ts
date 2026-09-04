@@ -1,5 +1,5 @@
 import type { UrlObject } from "node:url"
-import type { Theme } from "@lego-matcher/shared-types"
+import type { Theme } from "@brick-match/shared-types"
 import {
   type LucideIcon,
   PackageIcon,

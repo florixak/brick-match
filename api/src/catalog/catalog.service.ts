@@ -7,7 +7,7 @@ import {
   type SearchPartsQuery,
   type SearchSetsApiResponse,
   type SearchSetsQuery,
-} from '@lego-matcher/shared-types';
+} from '@brick-match/shared-types';
 import { Injectable } from '@nestjs/common';
 import { asc, eq, or, sql } from 'drizzle-orm';
 import { DatabaseService } from 'src/database/database.service';

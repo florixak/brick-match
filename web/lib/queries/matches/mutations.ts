@@ -2,7 +2,7 @@ import {
   ApiErrorResponseSchema,
   CompleteSetApiResponseSchema,
   type CompleteSetResponse,
-} from "@lego-matcher/shared-types"
+} from "@brick-match/shared-types"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { ApiRequestError, apiFetch, buildUrl } from "@/lib/api/client"
 import { invalidateCollectionQueries } from "../invalidation"

@@ -3,7 +3,7 @@ import type {
   GetOwnedPartsQuery,
   SearchPartsQuery,
   SearchSetsQuery,
-} from "@lego-matcher/shared-types"
+} from "@brick-match/shared-types"
 
 export const queryKeys = {
   auth: {

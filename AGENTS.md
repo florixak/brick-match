@@ -9,7 +9,7 @@ The core value is **not** AI or a polished UI — it's a matching algorithm over
 ## Monorepo structure
 
 ```
-lego-matcher/
+brick-match/
 ├── AGENTS.md                 ← this file
 ├── api/                       NestJS — API, matching engine, data import
 │   └── AGENTS.md

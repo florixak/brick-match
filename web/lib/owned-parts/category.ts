@@ -1,4 +1,4 @@
-import type { PartCategory } from "@lego-matcher/shared-types"
+import type { PartCategory } from "@brick-match/shared-types"
 
 export function toPartCategoryOptions(categories: PartCategory[]) {
   return categories.map((category) => ({

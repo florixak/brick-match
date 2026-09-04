@@ -1,4 +1,4 @@
-import type { Theme } from "@lego-matcher/shared-types"
+import type { Theme } from "@brick-match/shared-types"
 
 function buildThemeLabel(theme: Theme, index: Map<number, Theme>): string {
   const parts: string[] = [theme.name]

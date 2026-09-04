@@ -1,6 +1,6 @@
 "use client"
 
-import type { GetMatchesQuery } from "@lego-matcher/shared-types"
+import type { GetMatchesQuery } from "@brick-match/shared-types"
 import { ZapIcon } from "lucide-react"
 import { useQueryStates } from "nuqs"
 import { useState } from "react"

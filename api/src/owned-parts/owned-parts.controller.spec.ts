@@ -1,4 +1,4 @@
-import { UpdateOwnedPartRequestSchema } from '@lego-matcher/shared-types';
+import { UpdateOwnedPartRequestSchema } from '@brick-match/shared-types';
 import { Test, TestingModule } from '@nestjs/testing';
 import { OwnedPartsController } from './owned-parts.controller';
 import { OwnedPartsService } from './owned-parts.service';

@@ -2,7 +2,7 @@ import type {
   AddOwnedPartResponse,
   GetOwnedPartsQuery,
   OwnedPartDetail,
-} from '@lego-matcher/shared-types';
+} from '@brick-match/shared-types';
 import {
   BadRequestException,
   InternalServerErrorException,

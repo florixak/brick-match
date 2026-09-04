@@ -19,9 +19,9 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm --filter @lego-matcher/web check
-      - run: pnpm --filter @lego-matcher/web typecheck
-      - run: pnpm --filter @lego-matcher/web test:run
+      - run: pnpm --filter @brick-match/web check
+      - run: pnpm --filter @brick-match/web typecheck
+      - run: pnpm --filter @brick-match/web test:run
   api:
     runs-on: ubuntu-latest
     steps:
@@ -32,4 +32,4 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm --filter api test
+      - run: pnpm --filter @brick-match/api test

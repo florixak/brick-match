@@ -1,4 +1,4 @@
-import type { AuthUser } from "@lego-matcher/shared-types"
+import type { AuthUser } from "@brick-match/shared-types"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { ApiRequestError, apiFetch } from "@/lib/api/client"
 import { fetchCurrentUser } from "./me"

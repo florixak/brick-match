@@ -1,4 +1,4 @@
-import type { SetSummary } from "@lego-matcher/shared-types"
+import type { SetSummary } from "@brick-match/shared-types"
 import { Loader2 } from "lucide-react"
 import Link from "next/link"
 import toast from "react-hot-toast"

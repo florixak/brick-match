@@ -1,4 +1,4 @@
-import type { Color } from "@lego-matcher/shared-types"
+import type { Color } from "@brick-match/shared-types"
 import { describe, expect, it } from "vitest"
 import { filterColorsByIds, isLightColor, toCssHex } from "./color"
 

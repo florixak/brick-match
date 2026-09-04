@@ -15,10 +15,10 @@ RUN pnpm install --frozen-lockfile --ignore-scripts
 COPY shared-types ./shared-types
 COPY api ./api
 
-RUN pnpm --filter @lego-matcher/shared-types build && \
-    pnpm --filter api build && \
+RUN pnpm --filter @brick-match/shared-types build && \
+    pnpm --filter @brick-match/api build && \
     pnpm rebuild argon2 && \
-    pnpm deploy --filter api --prod --legacy /app/deploy
+    pnpm deploy --filter @brick-match/api --prod --legacy /app/deploy
 
 FROM node:22-bookworm-slim AS runner
 WORKDIR /app

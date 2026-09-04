@@ -49,9 +49,9 @@ Wishlists, tags, social sharing, mobile UI — if you find yourself designing fo
 ## Commands (fill in once the project is set up)
 
 ```
-pnpm --filter @lego-matcher/web dev
-pnpm --filter @lego-matcher/web build
-pnpm --filter @lego-matcher/web check
-pnpm --filter @lego-matcher/web typecheck
-pnpm --filter @lego-matcher/web test:run
+pnpm --filter @brick-match/web dev
+pnpm --filter @brick-match/web build
+pnpm --filter @brick-match/web check
+pnpm --filter @brick-match/web typecheck
+pnpm --filter @brick-match/web test:run
 ```

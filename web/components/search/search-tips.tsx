@@ -1,6 +1,6 @@
 "use client"
 
-import type { Theme } from "@lego-matcher/shared-types"
+import type { Theme } from "@brick-match/shared-types"
 import { useQueryStates } from "nuqs"
 import { useMemo } from "react"
 import { AsyncQueryState } from "@/components/query/async-query-state"

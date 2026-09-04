@@ -1,4 +1,4 @@
-import type { GetOwnedPartsQuery } from "@lego-matcher/shared-types"
+import type { GetOwnedPartsQuery } from "@brick-match/shared-types"
 import { createParser, debounce, parseAsInteger, parseAsString } from "nuqs"
 import { FILTER_DEBOUNCE_MS, PAGE_SIZE_OPTIONS } from "@/constants"
 

@@ -1,4 +1,4 @@
-import type { OwnedPartDetail } from "@lego-matcher/shared-types"
+import type { OwnedPartDetail } from "@brick-match/shared-types"
 import PartAvatar from "@/components/search/part-avatar"
 import { isLightColor, toCssHex } from "@/lib/owned-parts/color"
 import { cn } from "@/lib/utils"

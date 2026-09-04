@@ -1,4 +1,4 @@
-import type { PartSummary } from "@lego-matcher/shared-types"
+import type { PartSummary } from "@brick-match/shared-types"
 import { Loader2 } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import toast from "react-hot-toast"

@@ -5,7 +5,7 @@ import {
   LoginRequest,
   RegisterRequest,
   UpdateEmailRequest,
-} from '@lego-matcher/shared-types';
+} from '@brick-match/shared-types';
 import {
   BadRequestException,
   Injectable,
