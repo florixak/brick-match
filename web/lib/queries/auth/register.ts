@@ -2,7 +2,7 @@ import {
   RegisterApiResponseSchema,
   type RegisterRequest,
   RegisterRequestSchema,
-} from "@lego-matcher/shared-types"
+} from "@brick-match/shared-types"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
 import toast from "react-hot-toast"

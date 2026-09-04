@@ -1,4 +1,4 @@
-import { type AuthUser, MeApiResponseSchema } from "@lego-matcher/shared-types"
+import { type AuthUser, MeApiResponseSchema } from "@brick-match/shared-types"
 import { queryOptions, useQuery } from "@tanstack/react-query"
 import { apiFetch, parseApiError } from "@/lib/api/client"
 import { queryKeys } from "@/lib/queries/keys"

@@ -2,7 +2,7 @@ import {
   type GetOwnedPartsApiResponse,
   GetOwnedPartsApiResponseSchema,
   type GetOwnedPartsQuery,
-} from "@lego-matcher/shared-types"
+} from "@brick-match/shared-types"
 import { keepPreviousData, queryOptions, useQuery } from "@tanstack/react-query"
 import { apiFetch } from "@/lib/api/client"
 import { queryKeys } from "@/lib/queries/keys"

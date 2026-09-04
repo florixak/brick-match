@@ -1,5 +1,5 @@
 {
-  "name": "api",
+  "name": "@brick-match/api",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -29,7 +29,7 @@
     }
   },
   "dependencies": {
-    "@lego-matcher/shared-types": "workspace:*",
+    "@brick-match/shared-types": "workspace:*",
     "@neondatabase/serverless": "^1.1.0",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.4",

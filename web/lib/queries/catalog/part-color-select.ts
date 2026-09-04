@@ -1,4 +1,4 @@
-import type { Color } from "@lego-matcher/shared-types"
+import type { Color } from "@brick-match/shared-types"
 import { filterColorsByIds } from "@/lib/owned-parts/color"
 import { useCatalogColors } from "@/lib/queries/catalog/colors"
 import { useCatalogPartColors } from "@/lib/queries/catalog/part-colors"

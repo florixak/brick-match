@@ -11,7 +11,7 @@ import {
   UpdateOwnedPartApiResponseSchema,
   type UpdateOwnedPartRequest,
   UpdateOwnedPartRequestSchema,
-} from "@lego-matcher/shared-types"
+} from "@brick-match/shared-types"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { apiFetch } from "@/lib/api/client"
 import { invalidateCollectionQueries } from "@/lib/queries/invalidation"

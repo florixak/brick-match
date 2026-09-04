@@ -5,7 +5,7 @@ import {
   GetMatchesApiResponseSchema,
   GetMatchesQuerySchema,
   type GetMatchesQuery,
-} from '@lego-matcher/shared-types';
+} from '@brick-match/shared-types';
 import {
   Controller,
   Get,

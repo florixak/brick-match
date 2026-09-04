@@ -1,6 +1,6 @@
 "use client"
 
-import type { MatchResult } from "@lego-matcher/shared-types"
+import type { MatchResult } from "@brick-match/shared-types"
 import Link from "next/link"
 import { useRef, useState } from "react"
 import { toast } from "react-hot-toast"

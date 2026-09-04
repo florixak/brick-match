@@ -6,7 +6,7 @@ import {
   MatchResult,
   MissingPart,
   OwnedPart as OwnedPartRow,
-} from '@lego-matcher/shared-types';
+} from '@brick-match/shared-types';
 import {
   Injectable,
   NotFoundException,

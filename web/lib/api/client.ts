@@ -1,7 +1,7 @@
 import {
   type ApiErrorResponse,
   ApiErrorResponseSchema,
-} from "@lego-matcher/shared-types"
+} from "@brick-match/shared-types"
 import type { z } from "zod"
 import { env } from "@/lib/env"
 

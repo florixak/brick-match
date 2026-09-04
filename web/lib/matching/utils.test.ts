@@ -1,4 +1,4 @@
-import type { Theme } from "@lego-matcher/shared-types"
+import type { Theme } from "@brick-match/shared-types"
 import { describe, expect, it } from "vitest"
 import { toThemeOptions } from "./utils"
 

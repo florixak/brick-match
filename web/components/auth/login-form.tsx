@@ -1,6 +1,6 @@
 "use client"
 
-import { LoginRequestSchema } from "@lego-matcher/shared-types"
+import { LoginRequestSchema } from "@brick-match/shared-types"
 import { LogInIcon } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"

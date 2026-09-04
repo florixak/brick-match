@@ -1,2 +1,2 @@
 commit_msg_file="$(cd "$(dirname "$1")" && pwd)/$(basename "$1")"
-pnpm --filter `@lego-matcher/web` exec commitlint --edit "$commit_msg_file"
+pnpm --filter @brick-match/web exec commitlint --edit "$commit_msg_file"

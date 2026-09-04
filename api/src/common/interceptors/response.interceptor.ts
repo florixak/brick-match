@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { ApiSuccessResponse } from '@lego-matcher/shared-types';
+import { ApiSuccessResponse } from '@brick-match/shared-types';
 
 @Injectable()
 export class ResponseInterceptor<T> implements NestInterceptor {

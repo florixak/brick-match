@@ -1,4 +1,4 @@
-import { AuthUser } from '@lego-matcher/shared-types';
+import { AuthUser } from '@brick-match/shared-types';
 
 export interface AuthSession {
   user: AuthUser;

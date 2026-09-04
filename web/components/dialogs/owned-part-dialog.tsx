@@ -1,7 +1,7 @@
 import type {
   GetOwnedPartsQuery,
   OwnedPartDetail,
-} from "@lego-matcher/shared-types"
+} from "@brick-match/shared-types"
 import { Loader2 } from "lucide-react"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"

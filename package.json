@@ -1,14 +1,13 @@
 {
-  "name": "lego-matcher",
+  "name": "brick-match",
   "private": true,
   "version": "0.0.0",
   "packageManager": "pnpm@11.5.1",
   "scripts": {
-    "dev:web": "pnpm --filter @lego-matcher/web dev",
-    "dev:api": "pnpm --filter api start:dev",
-    "build": "pnpm --filter @lego-matcher/shared-types build && pnpm -r --filter=!@lego-matcher/shared-types build",
+    "dev:web": "pnpm --filter @brick-match/web dev",
+    "dev:api": "pnpm --filter @brick-match/api start:dev",
+    "build": "pnpm --filter @brick-match/shared-types build && pnpm -r --filter=!@brick-match/shared-types build",
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm -r test"
   }
 }
-

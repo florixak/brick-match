@@ -1,4 +1,4 @@
-import type { MatchResult } from "@lego-matcher/shared-types"
+import type { MatchResult } from "@brick-match/shared-types"
 import SetImage from "@/components/search/set-image"
 import { cn } from "@/lib/utils"
 

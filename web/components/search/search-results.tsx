@@ -1,6 +1,6 @@
 "use client"
 
-import type { PartSummary, SetSummary } from "@lego-matcher/shared-types"
+import type { PartSummary, SetSummary } from "@brick-match/shared-types"
 import { useQueryStates } from "nuqs"
 import { useState } from "react"
 import { AsyncQueryState } from "@/components/query/async-query-state"

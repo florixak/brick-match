@@ -30,9 +30,9 @@ Every dependency here is justified architecturally, not added by default. If you
 
 `api/src/common/pipes/zod-validation.pipe.ts`:
 
-No DTO class is needed at all — the schema and its inferred type both come straight from `@lego-matcher/shared-types`:
+No DTO class is needed at all — the schema and its inferred type both come straight from `@brick-match/shared-types`:
 ```typescript
-import { AddOwnedPartRequestSchema, AddOwnedPartRequest } from '@lego-matcher/shared-types';
+import { AddOwnedPartRequestSchema, AddOwnedPartRequest } from '@brick-match/shared-types';
 
 @Post()
 @UsePipes(new ZodValidationPipe(AddOwnedPartRequestSchema))
@@ -231,14 +231,14 @@ Import script (runnable as a Nest CLI command, not an HTTP endpoint):
 ## Conventions
 
 - TypeScript strict mode enabled
-- Import request/response Zod schemas and their inferred types from `@lego-matcher/shared-types`; don't redefine validation rules locally with `class-validator`
+- Import request/response Zod schemas and their inferred types from `@brick-match/shared-types`; don't redefine validation rules locally with `class-validator`
 - Write `MatchingService` tests against a small seed dataset (a few sets, a few parts), not the full imported catalog — tests must be fast and deterministic
 
 ## Commands (fill in once the project is set up)
 
 ```
-pnpm --filter api dev             # local dev server
-pnpm --filter api test             # unit tests
-pnpm --filter api import:catalog   # runs the Rebrickable data import
-pnpm --filter api db:migrate       # Drizzle migrations
+pnpm --filter @brick-match/api dev             # local dev server
+pnpm --filter @brick-match/api test             # unit tests
+pnpm --filter @brick-match/api import:catalog   # runs the Rebrickable data import
+pnpm --filter @brick-match/api db:migrate       # Drizzle migrations
 ```

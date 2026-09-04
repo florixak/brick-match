@@ -17,7 +17,7 @@ import {
   type GetOwnedPartsQuery,
   type RemoveOwnedPartQuery,
   type UpdateOwnedPartRequest,
-} from '@lego-matcher/shared-types';
+} from '@brick-match/shared-types';
 import {
   Body,
   Controller,

@@ -4,7 +4,7 @@ import {
   ChangePasswordRequestSchema,
   DeleteAccountRequestSchema,
   UpdateEmailRequestSchema,
-} from "@lego-matcher/shared-types"
+} from "@brick-match/shared-types"
 import { ChevronDownIcon, Loader2Icon } from "lucide-react"
 import { useState } from "react"
 import toast from "react-hot-toast"

@@ -15,7 +15,7 @@ import {
   ThemesApiResponseSchema,
   type SearchPartsQuery,
   type SearchSetsQuery,
-} from '@lego-matcher/shared-types';
+} from '@brick-match/shared-types';
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { ZodValidationPipe } from 'src/common/pipes/zod-validation.pipe';

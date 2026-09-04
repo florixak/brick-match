@@ -1,6 +1,6 @@
 "use client"
 
-import type { GetOwnedPartsApiResponse } from "@lego-matcher/shared-types"
+import type { GetOwnedPartsApiResponse } from "@brick-match/shared-types"
 import { useQueryClient } from "@tanstack/react-query"
 import { useQueryStates } from "nuqs"
 import { Fragment, useEffect, useMemo, useRef, useState } from "react"

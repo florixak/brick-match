@@ -17,7 +17,7 @@ import {
   UpdateEmailApiResponseSchema,
   type UpdateEmailRequest,
   UpdateEmailRequestSchema,
-} from '@lego-matcher/shared-types';
+} from '@brick-match/shared-types';
 import {
   Body,
   Controller,

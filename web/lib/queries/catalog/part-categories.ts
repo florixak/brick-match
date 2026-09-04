@@ -2,7 +2,7 @@ import {
   type PartCategoriesApiResponse,
   PartCategoriesApiResponseSchema,
   type PartCategory,
-} from "@lego-matcher/shared-types"
+} from "@brick-match/shared-types"
 import { queryOptions, useQuery } from "@tanstack/react-query"
 import { apiFetch } from "@/lib/api/client"
 import { queryKeys } from "@/lib/queries/keys"

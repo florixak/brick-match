@@ -1,4 +1,4 @@
-import type { MatchResult } from "@lego-matcher/shared-types"
+import type { MatchResult } from "@brick-match/shared-types"
 import { ChevronDownIcon } from "lucide-react"
 import { ColorSwatch } from "@/lib/owned-parts/color"
 import {

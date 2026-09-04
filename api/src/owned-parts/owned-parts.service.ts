@@ -7,7 +7,7 @@ import {
   GetOwnedPartsQuery,
   UpdateOwnedPartRequest,
   UpdateOwnedPartResponse,
-} from '@lego-matcher/shared-types';
+} from '@brick-match/shared-types';
 import {
   BadRequestException,
   Injectable,
