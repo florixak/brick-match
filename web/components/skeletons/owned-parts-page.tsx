@@ -2,7 +2,8 @@ import FilterSelect from "@/components/skeletons/filter-select"
 import OwnedPartsListSkeleton from "@/components/skeletons/owned-parts-list"
 import { Skeleton } from "@/components/ui/skeleton"
 
-const pageShellClassName = "mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 md:py-8"
+const pageShellClassName =
+  "mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 md:py-8 mt-8 md:mt-0"
 
 function OwnedPartsPageSkeleton() {
   return (
