@@ -37,7 +37,11 @@ export function AsyncQueryState<TData>({
 }: AsyncQueryStateProps<TData>) {
   if (isLoading) {
     return (
-      skeleton ?? <div className="text-muted-foreground text-sm">Loading…</div>
+      skeleton ?? (
+        <div className="text-muted-foreground text-sm flex items-center justify-center h-full">
+          Loading…
+        </div>
+      )
     )
   }
 
